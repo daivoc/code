@@ -1,0 +1,11 @@
+* 신규 이벤트 사용자 마감 없이 전체 삭제 기능 버튼 추가
+* 프로토콜에 맞지 않는 비정상 적인 방법이라 데이터베이스는 손대지 않고
+
+* 본 버튼은 화면상 관리를 누르면 표시됨
+
+* 임시 방편으로 화면 상에서 만 삭제 되도록 함
+
+       $ nano ~/MONITOR/its_M_map_templet.html
+        - 1500번 라인 후반(아마도) 근처에서 "__restart__" 란 단어를 검색한다.
+        - 검색된 라인 위에 아래 코드를 삽입 한다.
+            <input type="button" onclick="(function(){ $('#lastEvent').empty();})()" class="subBtn" value="Clear All">

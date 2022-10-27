@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Responsive Smoothie Chart example</title>
+
+__smoothiecharts__	
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+function sleep(ms){
+	ts1 = new Date().getTime() + ms;
+	do ts2 = new Date().getTime(); while (ts2<ts1);
+}
+function myYRangeFunction(range) {
+// TODO implement your calculation using range.min and range.max
+	var min = 0;
+	var max = 1.2;
+	return {min: min, max: max};
+}
+
+function onLoad() {
+// Create the charts ///////////////////////////////////////////////////////
+
+	// Create the charts 참고 : http://smoothiecharts.org/builder/ http://jsfiddle.net/h4wcu/14/ 
+	var chart1 = new SmoothieChart({interpolation:'linear',grid:{sharpLines:true},labels:{fontSize:11},timestampFormatter:SmoothieChart.timeFormatter});
+	var series1 = new TimeSeries();
+	chart1.addTimeSeries(series1);
+	chart1.streamTo(document.getElementById('smoothie-chart1'), 2000); // Delay 0 ~ 2000
+	
+	var chart2 = new SmoothieChart({interpolation:'step'});
+	var series2 = new TimeSeries();
+	chart2.addTimeSeries(series2, {lineWidth:0.5,strokeStyle:'#00ff00',fillStyle:'rgba(0,255,0,0.60)'});
+	chart2.streamTo(document.getElementById('smoothie-chart2'), 500); // Delay 0 ~ 2000
+	
+	var chart3 = new SmoothieChart({millisPerPixel:50,maxValueScale:1.28,minValueScale:1.48,scaleSmoothing:1,grid:{fillStyle:'#404040',strokeStyle:'#c0c0c0',sharpLines:true,millisPerLine:3000,verticalSections:10},labels:{fillStyle:'rgba(255,255,255,0.6)',fontSize:12,precision:3},tooltip:true,timestampFormatter:SmoothieChart.timeFormatter});
+	var series3 = new TimeSeries();
+	chart3.addTimeSeries(series3, {lineWidth:1.3,strokeStyle:'#ff8000',fillStyle:'rgba(255,128,0,0.60)'});
+	chart3.streamTo(document.getElementById('smoothie-chart3'), 0); // Delay 0 ~ 2000
+	
+	var chart4 = new SmoothieChart({millisPerPixel:50,scaleSmoothing:1,interpolation:'step',grid:{fillStyle:'#424242',strokeStyle:'#c0c0c0',sharpLines:true,millisPerLine:3000,verticalSections:10},labels:{fillStyle:'rgba(255,255,255,0.6)',fontSize:10,precision:3},timestampFormatter:SmoothieChart.timeFormatter,tooltip:true,yRangeFunction:myYRangeFunction,horizontalLines:[{color:'#ffffff',lineWidth:0.4,value:0},{color:'yellow',lineWidth:1,value:0.5},{color:'orange',lineWidth:1,value:0.8}]});
+	var series4 = new TimeSeries();
+	chart4.addTimeSeries(series4, {lineWidth:0.5,strokeStyle:'#00ffff',fillStyle:'rgba(0,255,255,0.60)'});
+	chart4.streamTo(document.getElementById('smoothie-chart4'), 0); // Delay 0 ~ 2000
+	
+	// Add random data periodically
+	setInterval(function(){
+		series1.append(new Date().getTime(),0);
+		series2.append(new Date().getTime(),0);
+		series3.append(new Date().getTime(),0);
+		series4.append(new Date().getTime(),0);
+//		sleep(1);
+//		series4.append(new Date().getTime(),0);
+	}, 1000);
+	
+
+// Create the charts ///////////////////////////////////////////////////////
+
+	var socketio = io.connect();
+	socketio.on("message_to_client", function(data) {
+		// 1:'Active_Event',
+		// 2:'Idle_Event',
+		// 9:'Error_Event'
+		var status = data['status'];
+		console.log(status, data);
+		// series1.append(new Date().getTime(),2);
+		// series2.append(new Date().getTime(),2);
+		if(status == 2) series3.append(new Date().getTime(),2);
+		else series4.append(new Date().getTime(),2);
+		sleep(1);
+		// series1.append(new Date().getTime(),0);
+		// series2.append(new Date().getTime(),0);
+		if(status == 2) series3.append(new Date().getTime(),0);
+		else series4.append(new Date().getTime(),0);
+		if(status == 2) beep_A();
+		else beep_C();
+	});
+
+}
+
+var track_A = '';
+for(k = l = 11025; k--;) { track_A += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33)* Math.min((l-k)/83,k/l)*127 + 128);}
+var track_B = '';
+for(k = 11025; k--;) { track_B += String.fromCharCode(Math.sin(k/44100*2*Math.PI*659.26)*127+128); }
+var track_C = '';
+for(i=0;i<4;) { // i: 반복 횟수 8 - 2초
+  i++;
+  for(k = l = 11025; k--;) { track_C += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33) * Math.min((l-k)/83,k/l) * (i%2&&i%8-3?99:33) + 128); }
+}
+function beep_A() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\0'+track_A));
+	snd.play();  
+}
+function beep_B() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_B));
+	snd.play();
+}
+function beep_C() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_C));
+	snd.play();
+}
+</script>
+
+<style>
+body { padding:0;margin:0;background:black; }
+div { float:left;padding:0; }
+div.smoothie-chart-tooltip { background: #444; padding: 1em; margin-top: 20px; font-family: consolas; color: white; font-size: 10px; pointer-events: none; }
+.hide { display:none; }
+</style>
+</head>
+<body onload="onLoad()">
+    <div class="charts hide"><canvas id="smoothie-chart1" width="500" height="120"></canvas></div>
+    <div class="charts hide"><canvas id="smoothie-chart2" width="500" height="120"></canvas></div>
+    <div class="charts"><canvas id="smoothie-chart3" width="500" height="120"></canvas></div>
+    <div class="charts"><canvas id="smoothie-chart4" width="500" height="120"></canvas></div>
+</body>
+</html>

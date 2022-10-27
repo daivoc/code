@@ -1,0 +1,2750 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+<title>IMS</title>
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__svg_pan_zoom__
+__smoothiecharts__
+__global_variables_ims__
+__global_variables_icc__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+var series = new TimeSeries(); // 타임라인 그래프 초기화
+var series24h = new TimeSeries(); // 타임라인 그래프 초기화
+var socketio = io.connect();
+
+var myID = window.performance.now(); // 클라이언트 브라우져 유니크 아이디
+var myIpAddr = ""; // 등록된 자신의 아이피 레벨
+var myLvName = ""; // 등록된 자신의 아이피 레벨
+var myLvID = 0; // 등록된 자신의 아이피 레벨
+var colorAlarm = "red"; // ff0000
+var colorBlock = "yellow"; // 00ff00
+var colorClear = "green"; // 00ff00
+var colorNetError = "purple"; // 00ff00
+var colorNormal = "silver"; 
+
+// 전체 화면 보이기 타이머
+var fitTimer = 0; // ims.timer.fitScreen;
+
+// px Init
+var imageIX = 100; 
+var imageIY = 60; 
+
+// vw vh size
+// width * 0.5625(16:9), * 0.75(4:3)
+var imageSX = 8; 
+var imageSY = 8;
+var imageMX = 16;
+var imageMY = 16;
+var imageLX = 24;
+var imageLY = 24; 
+
+var objFill = {};
+var focusedID = ''; // 선택된 비디오 우브젝트 아이디
+var waiting = "<span><img style='width:20px;' src='http://"+ims.imsIP+ims.file.img_waiting+"'></span>";
+const options = {
+	hour12 : false,
+	hour:  "2-digit",
+	minute: "2-digit",
+	second: "2-digit"
+}
+
+var activeEvent = {};
+
+</script>
+
+<script>
+$(document).ready(function() {
+	// SVG 요소를 클릭시 관련 데이터베이스 내용(과거 1시간)을 검색후 이미지 정보를 포함한 내용을 목록으로 출력, 좌측 상단 리스트 박스 표시
+	socketio.on("sendListLog", function(data) {
+		var logList = data['logList'];
+		var logGroup = ''; 
+		if(logList.length && logList !== undefined){
+			for (var i=logList.length-1; i > 0; i--){
+				if(i % 2) { // 짤홀수간 바탕화면 구분
+					var bgC = " background:#ffffff40;";
+				} else {
+					var bgC = "";
+				}
+				var stamp = formatDate(logList[i]['w_stamp']).replace(/\s+/g, '_');
+				var action = logList[i]['w_action'];
+				var shot = logList[i]['w_shot'];
+				var info = logList[i]['w_description'].replace(/\s+/g, '_');
+				if(shot){ // 사진정보가 있으면 URL Link를 연계한다.
+					var img = "<span style='cursor: pointer; color:orange;' onclick=showSnapshot('"+shot+"','"+info+"','"+stamp+"');>Shot</span>";
+				} else {
+					var img = "";
+				}
+				logGroup += '<div style="color:silver;'+bgC+'">📑 '+stamp+' '+action+' '+img+' '+info+'</div>';
+			}
+		} else { // 내용이 없는 경우
+			// logGroup = '<div style="color:silver;'+bgC+'">No data found<br>within a hour.</div>';
+			logGroup = '';
+		}
+		$("#listDetail").html(logGroup);
+	});
+
+	// 최초 실행시 관련 데이터베이스 검색후 SVG 요소중 Active or Clear 표시 구분
+	socketio.on("getLastSituation", function(data) {
+		var logList = data['logList'];
+		if(logList === undefined) return;
+		for (var i=0; i < logList.length; i++){
+			var t = new Date(logList[i]['w_stamp']);
+			
+			var action = logList[i]['w_action'];
+			var tmpId = logList[i]['w_sensorId'];
+			
+			// 최종 데이타를 센서요소에 적용
+			if(ims.sensor[tmpId] !== undefined) {
+				var objIs = ims.sensor;
+			} else if(ims.box[tmpId] !== undefined) {
+				var objIs = ims.box;
+			} else {
+				return;
+			}
+			var mapID = objIs[tmpId].mapID;
+			// console.log(mapID);
+			$("#"+mapID).attr('data-time', t); // 이벤트 발생시간 저장 
+			if (action == '1' || action == '7' || action == '8') { // Recv. 알람, 네트워크오류, 커버열림(GPWIO)
+				$("#"+mapID).css("fill", colorAlarm);
+				$("#"+mapID).attr('data-event', 'A'); // Alrm
+
+				// 'data-event', 'A' --> Action 이 발생할때 
+				if (activeEvent.hasOwnProperty(mapID)) { // 미등록 정보면 추가함
+					;
+				} else {
+					var id = ims.map[mapID].itsId;
+					// console.log(id);
+					if (id) { // 박스인경우 건너뛰기 : .itsId(그룹이 ZONE인 경우만 해당) 가 존재 하지 않으므로 
+						if (objIs[id].audioName && objIs[id].audioTime) {
+							activeEvent[mapID] = {};
+							activeEvent[mapID]['audioName'] = objIs[id].audioName;
+							activeEvent[mapID]['audioTime'] = objIs[id].audioTime;
+						}
+					}
+				}
+				// 라스트 이벤트 표시
+				if($("div#last_"+mapID).length == 0) {
+					$("#lastEvent").prepend($('<div id="last_'+mapID+'" onclick=triggerID("'+mapID+'")>'+objIs[tmpId].subj+' ['+action+']</div>')); // 우측 상단 실시간 로그리스트 표시
+				}
+				
+			} else if (action == '3') {
+				$( "#"+mapID ).css("fill", objFill[mapID]);
+				// $("#"+mapID).css("fill", colorNormal);
+				$("#"+mapID).attr('data-event', 'W'); // Waiting
+				
+			} else if (action == '0') {
+				$("#"+mapID).css("fill", objFill[mapID]); // 원본(SVG) 색
+				$("#"+mapID).attr('data-event', 'C'); // Clear
+			}
+
+			// $("#lastEventS").append(new Option(objIs[tmpId].subj, mapID));
+		}
+	});
+
+	// 필터링된 이벤트는 알람이벤트와 달리 소리나 카메라 및 정보 팝업을 하지 않는다.
+	socketio.on("sendEventDeny", function(data) {
+		var id = data['id'];
+		var map = data['mapId'];
+		var status = parseInt(data['status']);
+		var subj = data['subj']; 
+		var t = new Date();
+
+		// 관련 그림 빰빡임 기능
+		$( "#"+map ).clearQueue();
+		$( "#"+map ).css("fill", colorBlock);
+		$( "#"+map ).each(function() {
+			var elem = $(this);
+			var count = 1;
+			var intervalId = setInterval(function() {
+				if (elem.css('visibility') == 'hidden') {
+					elem.css('visibility', 'visible');
+					if (count++ === 5) {
+						clearInterval(intervalId);
+					}
+				} else {
+					elem.css('visibility', 'hidden');
+				}    
+			}, 40);
+		});
+		// 페이드 아웃후 사라짐 현상
+		$( "#"+map ).attr('data-event', 'A');
+		$( "#"+map ).attr('data-time', t); // 이벤트 발생시간 저장 
+		
+		// 리스트 박스 표시 - Deny (무시된 이벤트)
+		$("#listingLog").prepend($('<div style="color:orange">🟠 '+subj+' ['+status+']</div>')); // 우측 상단 실시간 로그리스트 표시
+		// if(myLvName == 'admin') $("#statusView").html("sendEventDeny " + id);
+	});
+
+	// 네트워크 오류(단선, 단전)
+	socketio.on("sendEventBox", function(data) {
+		var id = data['id'];
+		var beep = data['beep'];
+		var status = parseInt(data['status']);
+		var t = new Date();
+		
+		var subj = ims.box[id].subj; // data['name']; // ITS에서 보내주는 센서의 아이디
+		var mapID = ims.box[id].mapID;
+		var desc = ims.box[id].desc;
+			
+		// Zone 위치에 관련 비디오 창 띄우기;
+		if(ims.box[id].camera.length) { // 센서 키(센서ID)내에카메라링크가 있으면
+			// console.log(id);
+			var camID = ims.box[id].camera; // 한대 이상일수 있는 카메라 아이디를 정열
+			// console.log(camID);
+			camID.forEach(function(element, position) { // element -> 관련 키(센서ID)값에 연결된 이미지 카메라 ID을 순차로 부른다
+				// console.log(element);
+				if(ims.camera[element] !== undefined) {
+					if(ims.camera[element].video) { // 비디오 링크가 존재하면 
+						showVideo(element, subj, ims.camera[element].video, 'camera', status, position);
+					} else {
+						var tmpURL = "http://" + ims.camera[element].addr
+						showVideo(element, subj, tmpURL, 'camera', status);
+					}
+				}
+			});
+		}
+
+		// 관련 그림 빰빡임 기능
+		$( "#"+mapID ).clearQueue();
+		$( "#"+mapID ).css("fill", colorAlarm);
+		$( "#"+mapID ).each(function() {
+			var elem = $(this);
+			var count = 1;
+			var intervalId = setInterval(function() {
+				if (elem.css('visibility') == 'hidden') {
+					elem.css('visibility', 'visible');
+					if (count++ === 5) {
+						clearInterval(intervalId);
+					}
+				} else {
+					elem.css('visibility', 'hidden');
+				}    
+			}, 40);
+		});
+		// 페이드 아웃후 사라짐 현상
+		$( "#"+mapID ).attr('data-event', 'A');
+		$( "#"+mapID ).attr('data-time', t); // 이벤트 발생시간 저장 
+
+		if (activeEvent.hasOwnProperty(mapID)) { // 미등록 정보면 추가함
+			;
+		} else {
+			// var id = ims.map[mapID].itsId;
+			// console.log(id);
+			if (ims.box[id].audioName && ims.box[id].audioTime) {
+				activeEvent[mapID] = {};
+				activeEvent[mapID]['audioName'] = ims.box[id].audioName;
+				activeEvent[mapID]['audioTime'] = ims.box[id].audioTime;
+			}
+		}
+					
+		
+		// 리스트 박스 표시 - 네트워크 오류(단선, 단전)
+		$("#listingLog").prepend($('<div style="color:'+colorAlarm+'">🟣 '+subj+' ['+status+']</div>')); // 우측 상단 실시간 로그리스트 표시
+				
+		// 소리 알림 - 네트워크 오류(단선, 단전)
+		if ($("#beepToggle").prop('checked')) {
+			if(ims.box[id].audioName){
+				sound(ims.box[id].audioName, ims.box[id].audioTime);
+			} else{
+				beep_A(); // 비프음
+			}
+		}
+		
+		// lastEvent 표시
+		// $("#lastEvent").html($('<div style="color:'+colorAlarm+'">'+subj+' ['+status+']</div>')); // 우측 상단 실시간 로그리스트 표시
+		if($("div#last_"+mapID).length == 0) {
+			$("#lastEvent").prepend($('<div id="last_'+mapID+'" onclick=triggerID("'+mapID+'")>'+subj+' ['+status+']</div>')); // 우측 상단 실시간 로그리스트 표시
+		}
+		
+		// 전체화면 블링킹
+		alarmBlink();
+		
+		// 타임라인 그래프 출력
+		series.append(t.getTime(), 1);
+		t.setSeconds(t.getSeconds() + 1); // 1초를 더한후 
+		series.append(t.getTime(), 0); // 막대그래프를 위해서 값을 초기화 함
+		// if(myLvName == 'admin') $("#statusView").html("sendEventBox " + id);
+	});
+
+	// 실시간 이벤트를 관련 위치와 로그창에 출력(소리및 색변동)
+	socketio.on("sendEventLog", function(data) {
+		// io.sockets.emit('sendEventLog', { id: senId, name: senName, beep: beep, status: status, shot: shot, level: level });
+		// console.log(data)
+		var id = data['id'];
+		var beep = data['beep'];
+		var status = parseInt(data['status']);
+		var shot = data['shot'];
+		var level = data['level'];
+		var t = new Date();
+		var h = (''+t.getHours()).padStart(2, '0');
+		var m = (''+t.getMinutes()).padStart(2, '0');
+		var s = (''+t.getSeconds()).padStart(2, '0');
+
+		// 이벤트 소스가 센서인지 박스인지 구분한다.
+		if (ims.sensor.hasOwnProperty(id)) {
+			var accessID = ims.sensor[id];
+		} else if (ims.box.hasOwnProperty(id)) {
+			var accessID = ims.box[id];
+		} else {
+			return;
+		}
+		
+		
+		var subj = accessID.subj; // data['name']; // ITS에서 보내주는 센서의 아이디
+		var model = accessID.model;
+		var camera = accessID.camera;
+		var mapID = accessID.mapID;
+		var desc = accessID.desc;
+		if (accessID.iFrame) {
+			var iFrame = accessID.iFrame;
+		} else {
+			var iFrame = "";
+		}
+		// 테이블 - 마지막 접속 시간, 상태
+		var due = t.getTime() - $("#tbl_"+id+" .times").attr('data-stamp'); // 대기시간(ms) 계산
+		if(due) due = "<br>" + due + "ms";
+		$("#tbl_"+id+" .times").html(h+":"+m+":"+s+"("+status+") "+due);
+		$("#tbl_"+id+" .times").attr('data-stamp', t.getTime());
+		// $("#tbl_"+id+" span").css('opacity', '0.3');
+
+		// 주화면 -> 스크린 -> 스테이터스 -> 레벨표시
+		if(myLvName == 'admin') {
+			// 현재 GPIO만 Run Level 적용중(2022-01-02 08:50:54)
+			var runLevel = '';
+			let keyName = ['⏶⏷⏸⏹⏺▲ ⯅⬘⯁⯀⯁⯆⬖ △▢◇▢▽ ◯','⯅', '⬘', '⯁', '⬙', '⯆'] // [0]는 사용안함
+			// for (const [key, value] of Object.entries(level)) {
+			for (var key in level) {
+				// console.log(key, level[key]);
+				// runLevel += "<ul class='level_sub' data-id='"+id+"' data-key='"+key+"' data-value='"+level[key]+"'>";
+				if (key == 'holdTime') { // holdTime, pickTime
+					runLevel += "<ul class='level_sub'>";
+					for (i = 1; i < 6; i++) {
+						if(level[key] == i) {
+							runLevel += "<li><b><font color='orange'>"+keyName[i]+"</font></b></li>";
+						} else {
+							// runLevel += "<li data-level='"+i+"'>"+i+"</li>";
+							runLevel += "<li style='cursor: pointer;' onclick=\"setRunLevel('"+id+"', '"+i+"')\" >"+keyName[i]+"</li>";
+						}
+					}; 
+					runLevel += "</ul>";
+				}
+			}
+			$("#tbl_"+id+" .level").html(runLevel);
+			$("#live_info_"+id+" .info_level").html(runLevel);
+		}
+
+		$("#tbl_"+id+" .times").stop( true, true ); // 남아있는 effect buffer 초기화
+		if(status == 1) { // 이벤트 발생
+			$("#tbl_"+id+" .a").css('opacity', '1');
+			$("#tbl_"+id+" .times").effect("highlight", {color: 'red'}, 1000);
+		} else if(status == 0 || status == 2) { // 하트비트 또는 센서레이디
+			$("#tbl_"+id+" .b").css('opacity', '1');
+			$("#tbl_"+id+" .times").effect("highlight", {color: 'green'}, 1000);
+		} else if(status == 7) { // 네트워크 단선
+			$("#tbl_"+id+" .d").css('opacity', '1');
+			$("#tbl_"+id+" .times").effect("highlight", {color: 'violet'}, 1000);
+		} else if(status == 8) { // 함체열림 오류
+			$("#tbl_"+id+" .d").css('opacity', '1');
+			$("#tbl_"+id+" .times").effect("highlight", {color: 'blue'}, 1000);
+		} else if(status == 9) { // 센서 오류
+			$("#tbl_"+id+" .c").css('opacity', '1');
+			$("#tbl_"+id+" .times").effect("highlight", {color: 'orange'}, 1000);
+		} 
+		// $("#tbl_"+id+" .times").effect("highlight", {color: 'blue'}, 100);
+		
+		// console.log("#tbl_"+id);
+		// 알람 발생
+		if (beep == 1) { // Recv. Alarm
+			// console.log($("#"+mapID).closest("[id^='◇']")[0].id);
+			// 자신이 소속된 레이어의 아이디를 확인 후 확대된 화면에 표시한다.
+			// 2022-04-14 16:11:46 추적모드이면 요소를 추적후 일장시간(ims.timer.fitScreen)이 지난후 다시 전체화면으로 북귀한다.
+			if($("#trackLock").prop('checked') && (status == 1)) { // 추적모드이면서 감지(status = 1) 발생시
+				if ($("#"+mapID).closest("[id^='"+ims["groupLayer"]["1st"]+"']").length) {
+					var myLayer = $("#"+mapID).closest("[id^='"+ims["groupLayer"]["1st"]+"']")[0].id;
+					if(myLayer) {
+						$("g[id^='"+ims["groupLayer"]["1st"]+"']").css("display", "none"); // 모든 그룹 표시안함
+						$("#"+myLayer).css("display", "inline"); // 자신 만 출력
+						fitToGroup(myLayer,ims["guiScreen"]["fitGroup"]); 
+					} else {
+						fitToGroup(mapID,ims["guiScreen"]["fitObject"]); 
+					}
+
+					// setInterval(function(){ alert("Popup window!"); }, 1000);
+					// 일정시간 이후 전체화면 채우기
+					if (fitTimer < 1) {
+						fitTimer = ims.timer.fitScreen; // 재실행을 위한 재설정
+						// console.log("set timer");
+						var downloadTimer = setInterval(function(){
+							if(fitTimer-- < 1) {
+								// 전체 요소 보이기
+								panZoom.resize(); // update SVG cached size and controls positions
+								panZoom.fit();
+								panZoom.center();
+								$("g[id^='"+ims["groupLayer"]["1st"]+"']").css("display", "inline"); // ◇와 data-target와 호환성 유지
+								clearInterval(downloadTimer);
+							}
+						}, 1000);
+					} else {
+						fitTimer = ims.timer.fitScreen; // 재실행을 위한 재설정
+					}
+				}
+			} // 화면채움
+
+			showInfo(mapID, subj, model, status, desc, t, iFrame);
+
+			/////////////////////// 릴레이 상태 요청
+			var itsIdTmp = ims.map[mapID].itsId.split('_'); // "g300t100_192_168_0_80_0003" -> 192_168_0_80
+			itsIdTmp.shift();  // Removes the first element
+			itsIdTmp.pop();    // Removes the last element
+			var rIPTmp = itsIdTmp[0] + "." + itsIdTmp[1] + "." + itsIdTmp[2] + "." + itsIdTmp[3]; // 192.168.0.80
+			//// 부모에게 명령문 전송
+			socketio.emit('apiAction', { mapID: mapID, cmd: 'echo \'[{ "gpio": { "status": "9", "id": "", "hold": "", "msg": ""}}]\' | nc '+rIPTmp+' '+ims.itsApi.port+' -q 0' }); 
+			// console.log(mapID, rIPTmp);
+			/////////////////////// 릴레이 상태 요청
+
+			// Zone 위치에 관련 비디오 창 띄우기;
+			if(accessID.camera.length) { // 센서 키(센서ID)내에카메라링크가 있으면
+				// console.log(id);
+				var camID = accessID.camera; // 한대 이상일수 있는 카메라 아이디를 정열
+				// console.log(camID);
+				camID.forEach(function(element, position) { // element -> 관련 키(센서ID)값에 연결된 이미지 카메라 ID을 순차로 부른다
+					// console.log(element, position);
+					if(ims.camera[element] !== undefined) {
+						if(ims.camera[element].video) { // 비디오 링크가 존재하면 
+							showVideo(element, subj, ims.camera[element].video, 'camera', status, position);
+						} else {
+							var tmpURL = "http://" + ims.camera[element].addr
+							showVideo(element, subj, tmpURL, 'camera', status);
+						}
+					}
+				});
+			}
+
+			$( "#"+mapID ).clearQueue();
+			if(status == 7) { // 네트워크 연결 오류
+				$( "#"+mapID ).css("fill", colorNetError); // colorNetError
+			} else { 
+				$( "#"+mapID ).css("fill", colorAlarm); // colorNetError
+			}
+			
+			// 관련 그림 빰빡임 기능
+			$( "#"+mapID ).each(function() {
+				var elem = $(this);
+				var count = 1;
+				var intervalId = setInterval(function() {
+					if (elem.css('visibility') == 'hidden') {
+						elem.css('visibility', 'visible');
+						if (count++ === 5) {
+							clearInterval(intervalId);
+						}
+					} else {
+						elem.css('visibility', 'hidden');
+					}    
+				}, 40);
+			});
+			// 페이드 아웃후 사라짐 현상
+			// $( "#"+mapID ).fadeOut(500);
+			// $( "#"+mapID ).fadeIn(200);
+			$( "#"+mapID ).attr('data-event', 'A');
+			$( "#"+mapID ).attr('data-time', t); // 이벤트 발생시간 저장 
+
+			if (activeEvent.hasOwnProperty(mapID)) { // 미등록 정보면 추가함
+				;
+			} else {
+				// var id = ims.map[mapID].itsId;
+				// console.log(id);
+				if (accessID.audioName && accessID.audioTime) {
+					activeEvent[mapID] = {};
+					activeEvent[mapID]['audioName'] = accessID.audioName;
+					activeEvent[mapID]['audioTime'] = accessID.audioTime;
+				}
+			}
+					
+			
+			// 실시간 Log List 표시 (우측상단)
+			if(shot.length){ // 사진이미지 링크
+				var info = accessID.subj.replace(/ /g, "_");
+				var img = " <span style='cursor:pointer; color:orange;' onclick=showSnapshot('"+shot+"','"+info+"','"+t.toLocaleTimeString("en-US",options)+"');>Shot</span>";
+				// 실시간 이미지 팝업
+				showSnapshot(shot, info, t.toLocaleTimeString("en-US",options)); // 이미지 표출
+			} else {
+				var img = "";
+			}
+			// 리스트 박스 표시 - 알람 이벤트
+			$("#listingLog").prepend($('<div style="color:'+colorAlarm+'">🔴 '+subj+img+' ['+status+']</div>')); // 우측 상단 실시간 로그리스트 표시
+				
+			// 소리 알림 - 알람 발생
+			if ($("#beepToggle").prop('checked')) {
+				if(accessID.audioName){
+					sound(accessID.audioName, accessID.audioTime);
+				} else{
+					beep_A(); // 비프음
+				}
+			}
+			
+			// lastEvent 표시 - 좌측 상단 표시
+			// $("#lastEvent").html($('<div style="color:'+colorAlarm+'">'+subj+' ['+status+']</div>')); //
+			if($("div#last_"+mapID).length == 0) {
+				$("#lastEvent").prepend($('<div id="last_'+mapID+'" onclick=triggerID("'+mapID+'")>'+subj+' ['+status+']</div>')); 
+			}
+
+			// 전체화면 블링킹
+			alarmBlink();
+
+			// 타임라인 그래프 출력
+			series.append(t.getTime(), 1);
+			t.setSeconds(t.getSeconds() + 1); // 1초를 더한후 
+			series.append(t.getTime(), 0); // 막대그래프를 위해서 값을 초기화 함
+		} else if (beep == 2) { // Clear Event
+			$( "#"+mapID ).clearQueue();
+			if (status == 0) {
+				$( "#"+mapID ).css("fill", objFill[mapID]);
+				$( "#"+mapID ).attr('data-event', 'C');
+			} else if(status == 3) {
+				$( "#"+mapID ).css("fill", objFill[mapID]);
+				// $( "#"+mapID ).css("fill", colorNormal);
+				$( "#"+mapID ).attr('data-event', 'W');
+			}
+
+			delete activeEvent[mapID]; // 엑티브이벤트 삭제
+			
+			// if ($("#beepToggle").prop('checked')) beep_B(); // 비프음
+			// 로그 크리어 저장시점 비프 알림
+			beep_B(); // 비프음
+			
+			// 리스트 박스 표시 - 삭제 이벤트
+			$("#listingLog").prepend($('<div style="color:'+colorClear+'">🟡 '+subj+' ['+status+']</div>'));
+			
+			// lastEvent 삭제
+			$("div#last_"+mapID).hide('slow', function(){ $("div#last_"+mapID).remove(); });
+			
+		} else { // Normal Event
+			if ($('#enableIdle').prop('checked')) { // 우측 상단 스냅샷이 체크된상태에서 동작됨
+				// 리스트 박스 표시 - 하트비트 또는 정상 이벤트
+				$("#listingLog").prepend($('<div style="color:'+colorNormal+'">🟢 '+subj+' ['+status+']</div>'));
+				// beep_C(); // 비프음
+			// } else {
+			// 	$("#listingLog").html('');
+			}
+		}
+
+		// 로그이벤트 표시 갯수제한(클라이언트 메모리 때문)
+		var line_max = 20; 
+		if($("#listingLog").children().length >= line_max){
+			$("#listingLog div").last().remove();
+		}
+	});
+
+	// ITS간 통신 오류가 발생시 표시
+	socketio.on("sendOfflineITS", function(data) {
+		// console.log(data);
+
+		if (typeof data["addr"] !== 'undefined') {
+			var rcvIP = data["addr"];
+		} else {
+			console.log('sendOfflineITS: undefined addr')
+			return;
+		}
+		// wdKey = "wd_" + data["fixed"]["ipAddr"].replace(/\./g, "_");
+		wdKey = "wd_" + rcvIP.replace(/\./g, "_");
+		// console.log(wdKey, rcvIP)
+		$("#"+wdKey+" .model").html("Disconnected");
+		$("#"+wdKey+" .model").effect("highlight", {color: 'red'}, 5000); // 화면 효과 
+	});
+
+	// 진단 정보 표시 - 아이티에스 시스템 상태 확인
+	// 크라이언트 /tmp/watchdog.json 참고
+	socketio.on("sendEventHealth", function(data) {
+		// console.log(data);
+
+		if (typeof data["fixed"]["ipAddr"] !== 'undefined') {
+			var rcvIP = data["fixed"]["ipAddr"];
+		} else {
+			console.log('undefined')
+			return;
+		}
+		// wdKey = "wd_" + data["fixed"]["ipAddr"].replace(/\./g, "_");
+		wdKey = "wd_" + rcvIP.replace(/\./g, "_");
+		// console.log(wdKey, rcvIP)
+
+		// $("#"+wdKey+" .title").effect("pulsate", {times: 5}, 200); // https://www.tutorialspoint.com/jquery/effect-pulsate.htm
+		// $("#"+wdKey+" .title").effect("highlight", {color: 'red'}, 800); // 화면 효과 
+
+		// 작동시간
+		var day = Math.floor(data["fixed"]["liveTime"] / 3600 / 24) + "d "; // 지금까지 작동시간
+		var hour = Math.floor(data["fixed"]["liveTime"] / 3600 % 24) + "h "; // 지금까지 작동시간
+		var min = parseInt(data["fixed"]["liveTime"] % 3600 / 60) + "m";
+		$("#"+wdKey+" .times").html(day+hour+min);
+		$("#"+wdKey+" .times").effect("highlight", {color: 'green'}, 1000); // 화면 효과 
+
+		// 크라이언트 시간
+		var timeR = data["fixed"]["dateTime"].split(' ')[1].split('.')[0]; // "dateTime": "2020-10-11 08:03:27.678946" -> 08:03:27,
+		$("#"+wdKey+" .model").html(timeR);
+
+		// CPU
+		$("#"+wdKey+" .idle").css("width", parseInt(data["cpuPcent"]["idle"])+"%"); 
+		$("#"+wdKey+" .idleOv").css("width", (100 - parseInt(data["cpuPcent"]["idle"]))+"%");
+		$("#"+wdKey+" .idle").prop('title', data["cpuPcent"]["idle"]+"% Idle");
+		
+		// 온도
+		$("#"+wdKey+" .temp").css("width", parseInt(data["cpuTemp"])+"%"); 
+		$("#"+wdKey+" .tempOv").css("width", (100 - parseInt(data["cpuTemp"]))+"%");
+		$("#"+wdKey+" .temp").prop('title', data["cpuTemp"]+"℃");
+
+		// 디스크
+		$("#"+wdKey+" .disk").css("width", (100 - parseInt(data["diskGb"]["pcent"].slice(0, -1)))+"%");
+		$("#"+wdKey+" .diskOv").css("width", parseInt(data["diskGb"]["pcent"].slice(0, -1))+"%"); 
+		$("#"+wdKey+" .disk").prop('title', (100 - parseInt(data["diskGb"]["pcent"].slice(0, -1)))+"% Free");
+
+		// 메모리
+		var memFree = parseInt(data["memUseKb"]["free"]) * 100 / parseInt(data["memUseKb"]["total"])
+		$("#"+wdKey+" .mem").css("width", parseInt(memFree)+"%"); 
+		$("#"+wdKey+" .memOv").css("width", (100 - parseInt(memFree))+"%");
+		$("#"+wdKey+" .mem").prop('title', parseInt(memFree)+"% Free");
+
+		// 스왑
+		var swapFree = parseInt(data["swapUseKb"]["free"]) * 100 / parseInt(data["swapUseKb"]["total"])
+		$("#"+wdKey+" .swap").css("width", parseInt(swapFree)+"%"); 
+		$("#"+wdKey+" .swapOv").css("width", (100 - parseInt(swapFree))+"%");
+		$("#"+wdKey+" .swap").prop('title', parseInt(swapFree)+"% Free");
+
+		$("#healthLog").prepend($('<div style="color:'+colorNormal+'">'+'💻 '+data.fixed.ipAddr+'</div>'));
+
+		// 로그이벤트 표시 갯수제한(클라이언트 메모리 때문)
+		var line_max = 20; 
+		if($("#healthLog").children().length >= line_max){
+			$("#healthLog div").last().remove();
+		}
+	});
+
+	/// 지난 1시간의 전체 로그를 시간 테이블에 표시
+	socketio.on("sensorLogOneHour", function(data) {
+		$("#timeLine").show("slow");
+		$('#chkTimeline').prop('checked', true);
+		var logList = data['logList'];
+		// 기존 로그 차트에 표시
+		for (var i=0; i < logList.length; i++){
+			var t = new Date(logList[i]['w_stamp'])
+			// console.log(logList);
+			// 커브표시를 막기위해 기준시간 앞/뒤 1초씩을 0으로 감싼다.
+			t.setSeconds(t.getSeconds() - 1);
+			series.append(t.getTime(), 0);
+			t.setSeconds(t.getSeconds() + 1);
+			series.append(t.getTime(), 1);
+			t.setSeconds(t.getSeconds() + 1);
+			series.append(t.getTime(), 0);
+		}
+		$("#timeLine_wt").empty();
+	});
+		
+	// 특정센서의 지난 24h시간의 로그를 시간 테이블에 표시
+	socketio.on("sensorLogOneDay", function(data) {
+		$("#timeLine24h").show("slow");
+		var logList = data['logList'];
+		// 기존 로그 차트에 표시
+		for (var i=0; i < logList.length; i++){
+			var t = new Date(logList[i]['w_stamp'])
+			// console.log(logList);
+			series24h.append(t.getTime(), 1);
+			t.setSeconds(t.getSeconds() + 1);
+			series24h.append(t.getTime(), 0);
+		}
+		$("#timeLine24h_wt").empty();
+	});
+
+	// 클라이언트 아이피 정보 요청
+	socketio.on("findClientIP", function(data) {
+		var id = data['id'];
+		// console.log(data, myID);
+		if(myID == id) {
+			myIpAddr = data['ip'];
+			// 자신의 레벨을 저장 한다.
+			myLvName = data['lv']; // 레벨의 종류는 admin, manager, viewer, guest
+			$("#myIP").html(data['ip']+" "+myLvName); // 화면 우측 상간에 자신의 아이피와 레벨 표시
+			if(myLvName == 'admin') { // admin 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLvID = 9;
+				// $("#titleScreen, #titleSet, #adminSet, #managerSet, #broadcast").show("slow");
+				$("#titleScreen, #titleSet, #adminSet, #managerSet").show("slow");
+			} else if(myLvName == 'manager') { // manager 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLvID = 7;
+				$("#managerSet").remove();
+				// $("#titleScreen, #titleSet, #adminSet").show("slow");
+				$("#titleScreen, #titleSet").show("slow");
+			} else if(myLvName == 'viewer') { // viewer 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLvID = 5;
+				// $("#titleSet, #mainSetup, #adminSet").remove();
+				$("#titleSet, #mainSetup").remove();
+				$("#titleScreen").show("slow");
+			} else if(myLvName == 'guest') { // guest 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLvID = 1;
+				alert("Abnormal approach!");
+				$("head, body").remove();
+			} 
+			
+			// if (data['ip'] == data['oIp'] || !data['oIp']) { // 설정된 오너 IP와 자신의 IP가 같으면
+			// 	owner = 1; 
+			// } else {
+			// 	owner = 0;
+			// 	// 시스템 셋업 메뉴 감추기
+			// 	$("#mainSetup").html("__owner__");
+			// }
+		}
+		// if(myLvName == 'admin') $("#statusView").html("findClientIP " + id);
+	});
+
+	// 실시간 접속자 로그
+	socketio.on("connectedIP", function(data) {
+		var user = '';
+		for (const [key, value] of Object.entries(data)) {
+			// console.log(key, value);
+			// user += key + ":" + value + " ";
+			user += key + " ";
+		}
+
+		if(myLvName == 'admin') $("#statusView").html("connectedIP " + user);
+	});
+
+	// 정보 표시
+	socketio.on("sysAccInfo", function(data) {
+		$( "#license_ownerIp" ).val(data['ownerIp']);
+		$( "#license_ownerPass" ).val(data['ownerPass']);
+		$( "#its_address" ).val(data['address']);
+		$( "#its_netmask" ).val(data['netmask']);
+		$( "#its_gateway" ).val(data['gateway']);
+		$( "#interface_portIn" ).val(data['portIn']);
+		$( "#interface_portOut" ).val(data['portOut']);
+		$( "#license_key" ).val(data['key']);
+	});
+
+	// GPIO 정보 표시
+	socketio.on("gpioStatus", function(data) {
+		// "response": {"io09": 0, "S09": 0, "io11": 1, "io10": 1, "R05": 0, "io12": 0, "R07": 0, "R06": 0, "S13": 0, "S12": 0, "S11": 0, "S10": 0, "S16": 0, "S15": 0, "S14": 0, "pw02": 1, "pw01": 1, "R08": 0}
+		// console.log(data);
+		var info_mapID = "#api_btn_" + data["mapID"];
+		if(myLvName == "admin") { // myLvName == "manager"
+			$( info_mapID ).css("display","block" );
+		}
+
+		if("io09" in data["status"]){
+			if(data["status"]["io09"]) {
+				$( info_mapID + " #api_btn_R01" ).css("background-color","rgba(136, 0, 0, 0.5)" );
+			} else {
+				$( info_mapID + " #api_btn_R01" ).css("background-color","rgba(0, 0, 0, 0.5)" );
+			}
+		}
+		if("io10" in data["status"]){
+			if(data["status"]["io10"]) {
+				$( info_mapID + " #api_btn_R02" ).css("background-color","rgba(136, 0, 0, 0.5)" );
+			} else {
+				$( info_mapID + " #api_btn_R02" ).css("background-color","rgba(0, 0, 0, 0.5)" );
+			}
+		}
+		if("io11" in data["status"]){
+			if(data["status"]["io11"]) {
+				$( info_mapID + " #api_btn_R03" ).css("background-color","rgba(136, 0, 0, 0.5)" );
+			} else {
+				$( info_mapID + " #api_btn_R03" ).css("background-color","rgba(0, 0, 0, 0.5)" );
+			}
+		}
+		if("pw01" in data["status"]){
+			if(data["status"]["pw01"]) {
+				$( info_mapID + " #api_btn_P01" ).css("background-color","rgba(136, 0, 0, 0.5)" );
+			} else {
+				$( info_mapID + " #api_btn_P01" ).css("background-color","rgba(0, 0, 0, 0.5)" );
+			}
+		}
+	});
+
+	// 거부된 리스트를 서버로 부터 받아 현재의 셀렉트 박스에 적용한다.
+	socketio.on("denyZoneList", function(data) {
+
+		// 멥에서 모든 센서와 박스를 선별하여 기본색으로 만든다.
+		// 차단 해제시 원래색으로 북귀하는 기능인데... 
+		// 이해가 잘 않됨
+		Object.keys(ims.sensor).forEach(function(key, index) {
+			// console.log(this[key].mapID);
+			$("#"+this[key].mapID).css("fill", objFill[this[key].mapID]);
+		}, ims.sensor);
+		Object.keys(ims.box).forEach(function(key, index) {
+			// console.log(this[key].mapID);
+			$("#"+this[key].mapID).css("fill", objFill[this[key].mapID]);
+		}, ims.box);
+
+		var denyList = '<select id="denySelect" style="font-size:8pt;color:silver;background-color:green;border-color:green;width:90px;clear:both;margin: 0 2px 1px 0;" onfocus="this.size=4;" onblur="this.size=1;" onchange="this.size=1; this.blur();"><option value selected></option>';
+		for (var i=0; i < data['denyList'].length; i++) {
+			denyName = "Unknow";
+			if(data['denyList'][i] in ims.sensor){
+				var objIs = ims.sensor[data['denyList'][i]];
+			} else if(data['denyList'][i] in ims.box){
+				var objIs = ims.box[data['denyList'][i]];
+			} else if(data['denyList'][i] in ims.camera){
+				var objIs = ims.camera[data['denyList'][i]];
+			}
+			denyName = objIs.subj;
+			$("#"+objIs.mapID).css("fill", colorBlock); // 칼라변경
+			denyList += '<option value="'+data['denyList'][i]+'">'+denyName+'</option>';
+		}
+		denyList += '</select>';
+
+		$("#denyZoneList #denySelect").remove();
+		$("#denyZoneList").prepend(denyList);
+	});
+
+	//	socketio.on("allowZoneID", function(data) {
+	//		if(data['allowID'] in ims.sensor){
+	//			var objIs = ims.sensor[data['allowID']];
+	//		} else if(data['allowID'] in ims.box){
+	//			var objIs = ims.box[data['allowID']];
+	//		} else if(data['allowID'] in ims.camera){
+	//			var objIs = ims.camera[data['allowID']];
+	//		}
+	//		$("#"+objIs.mapID).css("fill", objFill[mapID]); // 칼라변경
+	//	});
+
+	////////////////////////////////////////////
+	// 마우스오버 기능
+	$( "circle, path, polygon, rect, ellipse, image, text" ).mouseover(function(){
+		if($(this).attr('data-group_map') === undefined) { // data-group_map은 기존의 SVG 요소를 바탕이미지로 간주한다.
+			$(this).css('cursor', 'pointer');
+			$(this).css("stroke", "white");
+		}
+	});
+	$( "circle, path, polygon, rect, ellipse, image, text" ).mouseout(function(){
+		if($(this).attr('data-group_map') === undefined) { // data-group_map은 기존의 SVG 요소를 바탕이미지로 간주한다.
+			$(this).css("stroke", "unset");
+		}
+	});
+
+	////////////////////////////////////////////
+	// 감지요소의 원본 색을 저장 한다.
+	$( "circle, path, polygon, rect, ellipse, image, text" ).each(function () {
+		if($(this).attr('data-group_map') === undefined) {
+			objFill[$(this).attr("id")] = $(this).css("fill");
+		}
+	});
+
+	// 바탕화면 이동및 줌 고정,허용
+	// https://www.npmjs.com/package/svg-pan-zoom
+	// var panZoom = svgPanZoom('#svg_id');
+	var panZoom = svgPanZoom('svg');
+	// 시작시 스크린 잠금
+	panZoom.setMinZoom(0.01);
+	panZoom.setMaxZoom(100);
+	panZoom.disablePan();
+	panZoom.disableZoom();
+	panZoom.disableDblClickZoom();
+	panZoom.disableMouseWheelZoom();
+	$("#screenLock").on('click', function() { 
+		if ($(this).prop('checked')) {
+			panZoom.disablePan();
+			panZoom.disableZoom();
+			panZoom.disableDblClickZoom();
+			panZoom.disableMouseWheelZoom();
+		} else {
+			panZoom.enablePan();
+			panZoom.enableZoom();
+			panZoom.enableDblClickZoom();
+			panZoom.enableMouseWheelZoom();
+		}
+	});	
+	$("#svgFit").on('click', function() { 
+		panZoom.resize(); // update SVG cached size and controls positions
+		panZoom.fit();
+		panZoom.center();
+		$("g[id^='"+ims["groupLayer"]["1st"]+"']").css("display", "inline"); // ◇와 data-target와 호환성 유지
+		// $(".objectFit").each(function() {
+		// 	$("#"+$(this).attr('data-target')).css("display", "inline"); // "inline"
+		// });
+	});	
+	$("#svgZoomIn").on('click', function() { 
+		panZoom.zoomIn();
+	});
+	$("#svgZoomOut").on('click', function() { 
+		panZoom.zoomOut();
+	});
+
+
+	// // 그룹수 확인후 선택기능 실행버튼 추가
+	// $("g[id^='"+ims["groupLayer"]["1st"]+"']").each(function() {
+	// 	console.log(this.id);
+	// });	
+
+	// 그룹수 확인후 선택기능 실행버튼 추가
+	var cntGroup = $("[id^='"+ims["groupLayer"]["1st"]+"']").length;
+	// console.log(cntGroup)
+	if (cntGroup > 1) {
+		$("#svgGroup").html('<button class="setGroup" id="setGroup">Set Group</button>');
+	}
+	$( "#setGroup" ).on( 'click', function() {
+		var r = confirm("Add Select Group.");
+		if (r == true) {
+			var svgGroup = '';
+			$("[id^='"+ims["groupLayer"]["1st"]+"']").each(function() {
+				// svgGroup += '<input type="button" class="subBtn objectFit" value="'+this.id+'">';
+				if($(this).attr('data-group_hide')) { // 일반그룹(효과)은 선택버튼을 제외시킴
+					// svgGroup += '<input type="button" class="subBtn objectFit" id="'+this.id+'" value="'+this.id+'">';
+				} else { // 표시되는 제목에서는 구분 문자 ◇(ims["groupLayer"]["1st"])를 제거 한다.
+					// svgGroup += '<input type="button" class="subBtn objectFit" id="'+this.id+'" value="'+this.id.substring(1)+'">';
+					// svgGroup += '<input type="button" class="subBtn objectFit" id="'+this.id+'" value="'+this.id.substring(1)+'">';
+					svgGroup += '<input type="button" class="subBtn objectFit" data-target="'+this.id+'" value="'+this.id.substring(1)+'">';
+				}
+			});
+			// $("#svgGroup").append(svgGroup);
+			$("#svgGroup").html(svgGroup);
+			// console.log(svgGroup);
+
+			$(".objectFit").on("click", function() {
+				// https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement/getBBox
+				// https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement/getBBox
+				// id="svgGroup" 그룹 내에 class="objectFit" 요소의 value="테그 <g>의 ID 명"
+				// 예 : <input type="button" class="subBtn objectFit" value="T2-4F">
+				// 현재의 화면에 선택된 요소를 Fitting(Pan + Zoom)한다.
+
+				// var selectedGrpID = this.id;
+				var selectedGrpID = $(this).attr('data-target');
+
+				// 선택된 그룹(".objectFit")을 제외한 일반그룹(효과)은 감추기에서 제외시킴
+				$(".objectFit").each(function() {
+					if (selectedGrpID == $(this).attr('data-target')) {
+						$("#"+$(this).attr('data-target')).css("display", "inline"); // "inline"
+					} else {
+						$("#"+$(this).attr('data-target')).css("display", "none"); // "inline"
+					}
+				});
+
+				fitToGroup(selectedGrpID,ims["guiScreen"]["fitGroup"]);
+
+			});	
+		}
+	});
+
+	// 요소를 화면에 꽉 채운다.
+	function fitToGroup(groupID, scale=1) { // (요소의 아이디, 스케일 - 1:기본, 1이하:축소, 1이상:확대)
+		var svgElement = document.querySelector("svg");
+		var sE = svgElement.getBoundingClientRect(); 
+		// console.log("svgBox", sE.x, sE.y, sE.width, sE.height)
+
+		var vB=panZoom.getSizes().viewBox;
+		// console.log("viewBox", vB.x, vB.y, vB.width, vB.height)
+
+		var grpElement = document.querySelector("#"+groupID);
+		var gE = grpElement.getBoundingClientRect(); 
+		// console.log("grpElement", gE.x, gE.y, gE.width, gE.height)
+
+		var x=sE.width/2-gE.x-gE.width/2;
+		var y=sE.height/2-gE.y-gE.height/2;
+		panZoom.panBy({x:x,y:y});
+
+		// var cP = panZoom.getPan(); 
+		// // console.log("currentPan", cP.x, cP.y)
+
+		var rZ=panZoom.getSizes().realZoom;
+		// console.log("realZoom", rZ)
+
+		// if(sE.width/sE.height < gE.width/gE.height){
+		// 	var zoomSvg=sE.width/gE.width;
+		// } else {
+		// 	var zoomSvg=sE.height/gE.height;
+		// }
+
+		if(vB.width/vB.height < gE.width/gE.height){
+			var zoomView=vB.width/gE.width;
+		} else {
+			var zoomView=vB.height/gE.height;
+		}
+		panZoom.zoom(zoomView*rZ*scale);
+	}
+
+	/////////////////////////////////
+	// 타임라인 초기화
+	// Create the charts 참고 : http://smoothiecharts.org/builder/ http://jsfiddle.net/h4wcu/14/ 
+	var chart = new SmoothieChart({ // 실시간 차트
+		millisPerPixel:3600, // 하루차트:86400초 1시간:3600
+		maxValueScale:1,
+		// minValueScale:0,
+		scaleSmoothing:1,
+		grid:{ // 눈금 선 특성
+			fillStyle:'#40404060', // 배경색 및 투명도
+			strokeStyle:'#c0c0c080', // 가로세로 눈금 색
+			sharpLines:true,
+			millisPerLine:300000, // 세로줄 간격(세로줄간의 간격으로 1000=1초) 150000 = 150초
+			verticalSections:3 // 가로줄 갯수
+		},
+		labels:{ // 표시문자 특성
+			fillStyle:'rgba(255,255,255,0.6)',
+			fontSize:9,
+			precision:3
+		},
+		// tooltip:true, // 마우스 위치의 시간 표시
+		timestampFormatter:SmoothieChart.timeFormatter
+	});
+	chart.addTimeSeries(series, { // 실시간 표현되는 파형
+		lineWidth:1.3, // 파형 선두꼐
+		strokeStyle:'rgba(255,128,0,0.37)', // 라인 색 rgba(255,128,0,0.37), #FF0000A0
+		fillStyle:'#FF000050' // 라인기준으로 아래영역 색채움 투명(#00000000)
+	});
+	chart.streamTo(document.getElementById('smoothie-chart'), 0); // Delay 0 ~ 2000
+	setInterval(function(){ // 상단 시간 그래프 초기값 0으로 설정
+		series.append(new Date().getTime(),0);
+	}, 1000);
+
+	// 24h시간 차트
+	var chart24h = new SmoothieChart({ // 과거 24h시간 차트
+		millisPerPixel:86400, // 1시간 -> 초
+		scaleSmoothing:1,
+		interpolation:'step',
+		grid:{fillStyle:'#00000080',strokeStyle:'rgba(255,255,255,0.40)',millisPerLine:3600000,verticalSections:0},
+		labels:{fillStyle:'rgba(255,255,255,0.6)',fontSize:9,precision:0},
+		timestampFormatter:SmoothieChart.timeFormatter,
+		});
+	chart24h.addTimeSeries(series24h, {lineWidth:0.1,strokeStyle:'yellow',fillStyle:'#00000000'}); // 그래프 선두께,색,채움
+	chart24h.streamTo(document.getElementById('smoothie-chart24h'), 0); // Delay 0 ~ 2000
+	// 타임라인 초기화
+
+	// 옵텍스 로고 출력
+	var optex_logo_URL = "http://"+ims.imsIP+ims.file.img_currentLogo;
+	$('#optex_logo_frame').css('background-image', 'url(' + optex_logo_URL + ')');
+
+	// 바탕 맵 밝기조정
+	$(function(){
+		$("#bgOpacity").slider({
+			range: "max",
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: 0.3, // 0.6,
+			slide: function( event, ui ) {
+				$('[data-group_map="1"]').css("opacity",$( "#bgOpacity" ).slider( "value" )); // 맵으로 정의된 요소
+			}
+		});
+		$('[data-group_map="1"]').css("opacity",$( "#bgOpacity" ).slider( "value" )); // 맵으로 정의된 요소 최초 실행
+	});
+
+	/////////////////////////////////
+	// 참고 : https://openclassrooms.com/courses/ultra-fast-applications-using-node-js/socket-io-let-s-go-to-real-time
+	$( "circle, path, polygon, rect, ellipse, image, text" ).on('click', function (e) { // 마우스 및 모바일(touchstart) 텝 적용
+
+	// 기능 제한 - 게스트와 뷰어는 본 기능에서 제외함
+		var zoneID = $(this).attr('id');
+
+		if(myLvName == "guest" || myLvName == "viewer") return;
+
+		if($(this).attr('data-group_map')) return; // 맵으로 선언된 요소
+		
+		if(ims.map[zoneID] === undefined) return; // 등록이 된 센서 이벤트만 필터링 한다.
+		
+		// console.log($(this).closest("[id^='◇']")[0].id);
+		// 자신이 소속된 레이어의 아이디를 확인 후 화면에 표시한다.
+		if($("#trackLock").prop('checked')) {
+		// 	if ($(this).closest("[id^='"+ims["groupLayer"]["1st"]+"']").length) {
+		// 		var myLayer = $(this).closest("[id^='"+ims["groupLayer"]["1st"]+"']")[0].id;
+		// 		if(myLayer) {
+		// 			$("g[id^='"+ims["groupLayer"]["1st"]+"']").css("display", "none");
+		// 			$("#"+myLayer).css("display", "inline");
+		// 			fitToGroup(myLayer,ims["guiScreen"]["fitGroup"]); 
+		// 		}
+		// 	}
+		// } else {
+			fitToGroup(zoneID,ims["guiScreen"]["fitObject"]);
+		}
+		
+		// 관련정보 임시 보기기능 및 불럭정보 적용
+		if(myLvName == "admin" || myLvName == 'manager') {
+			$("#blockName").val(''); // 어드민을 위한 블럭 정보
+			$("#blockID").val(''); // 어드민을 위한 블럭 정보
+			$("#waitName").val(''); // 어드민을 위한 블럭 정보
+			$("#waitID").val(''); // 어드민을 위한 블럭 정보
+		}
+		
+		// if(myLvName == "admin") {
+		// 	$("#statusView").html(''); // 클릭시 좌측 최하단 정보보기
+		// 	$("#statusView").html('mapName:'+zoneID); // 클릭시 좌측 최하단 정보보기
+		// }
+		
+		var thisGR = ims.map[zoneID].group;
+
+		removeInfo(); // 표시된 비디오 삭제
+		removeVideo(); // 표시된 비디오 삭제
+		$("#desc, #list, #timeLine24h").css("display", "none"); // 타임라인 아래 이벤트 관련정보
+
+		var subj = '';
+		if(thisGR == 'zone'){ // 선택된 요소가 센서(팬스)이면
+			var thisID = ims.map[zoneID].itsId;
+			var subj = ims.sensor[thisID].subj;
+			var model = ims.sensor[thisID].model;
+			var camera = ims.sensor[thisID].camera;
+			var mapID = ims.sensor[thisID].mapID;
+			var desc = ims.sensor[thisID].desc;
+			if (ims.sensor[thisID].iFrame) {
+				var iFrame = ims.sensor[thisID].iFrame;
+			} else {
+				var iFrame = "";
+			}
+			
+			showInfo(mapID, subj, model, 0, desc, new Date(), iFrame);
+
+			/////////////////////// 릴레이 상태 요청
+			var itsIdTmp = ims.map[mapID].itsId.split('_'); // "g300t100_192_168_0_80_0003" -> 192_168_0_80
+			itsIdTmp.shift();  // Removes the first element
+			itsIdTmp.pop();    // Removes the last element
+			var rIPTmp = itsIdTmp[0] + "." + itsIdTmp[1] + "." + itsIdTmp[2] + "." + itsIdTmp[3]; // 192.168.0.80
+			//// 부모에게 명령문 전송
+			socketio.emit('apiAction', { mapID: mapID, cmd: 'echo \'[{ "gpio": { "status": "9", "id": "", "hold": "", "msg": ""}}]\' | nc '+rIPTmp+' '+ims.itsApi.port+' -q 0' }); 
+			/////////////////////// 릴레이 상태 요청
+
+			// 센서와 관련된 카메라 맵상에 표시
+			for (var i=0; i < camera.length; i++){
+				// console.log(ims.camera[camera[i]].video);
+				// showVideo(camera[i], subj, ims.camera[camera[i]].video, 'camera');
+				showVideo(camera[i], subj, ims.camera[camera[i]].video, 'camera', 0, i);
+			}
+
+			// 로그요청 - 과거 한시간 - 결과는 좌측 상단 리스트(#listDetail)에 표시됨
+			socketio.emit('sensorLog', thisID); // 서브존이 있을 요소를 대비함(없을수도 있음)
+
+			// 센서(팬스)와 연관된 모든 카메라 프리셋 작동
+			if(ims.runProgram.procOnvif){ // 온비프 프로세서가 구동중이면 
+				socketio.emit('ptzOnvifCtlGroup', thisID); 
+			}
+
+			$("#listDetail").html(waiting);
+			
+			// 알람상태(data-event == "A")인 경우 조치요청 매뉴 출력
+			if($(this).attr('data-event') == 'A') { 
+				$("#desc, #list").css("display", "inline-block"); // 타임라인 아래 이벤트 관련정보
+				$("#actType").val('sensor');
+				$("#sensorName").val(subj);
+				$("#sensorID").val(thisID);
+				$("#userName").val('');
+				$("#actionDesc").val('');
+				$("#userName").focus();
+			} else { // 알람해지상태인 경우 매뉴 적용
+				$("#list").show("slow"); // 타임라인 아래 이벤트 관련정보
+			}
+			
+			// var htmlCode = "<input type='button' class='subBtn' onclick=sensorLogRequest('"+thisID+"') value='__log__(24h)'><input type='button' class='subBtn' onclick=popupStatusITS('"+thisID+"') value='Status'><input type='button' class='subBtn' onclick=popupLogITS('"+thisID+"') value='Log'>";
+			var htmlCode = "<input type='button' class='subBtn' onclick=sensorLogRequest('"+thisID+"') value='__log__(24h)'><input type='button' class='subBtn' onclick=popupStatusITS('"+thisID+"') value='Status'>";
+			$("#sensorLogOneDay").html(htmlCode);
+		} else if(thisGR == 'camera'){ // 선택된 요소가 카메라 이면
+			var thisID = ims.map[zoneID].imsId;
+			// var addr = ims.camera[thisID].addr;
+			var desc = ims.camera[thisID].desc;
+			// var hash = ims.camera[thisID].hash;
+			// var image = ims.camera[thisID].image;
+			var mapID = ims.camera[thisID].mapID;
+			var model = ims.camera[thisID].model;
+			// var pass = ims.camera[thisID].pass;
+			// var port = ims.camera[thisID].port;
+			var subj = ims.camera[thisID].subj;
+			var user = ims.camera[thisID].user;
+			var video = ims.camera[thisID].video;
+			
+			// 관련된 카메라 맵상에 표시
+			showVideo(thisID, subj, video, thisGR);
+
+		} else if(thisGR == 'box'){ // 선택된 요소가 함체 이면
+			var thisID = ims.map[zoneID].imsId;
+			var desc = ims.box[thisID].desc;
+			var mapID = ims.box[thisID].mapID;
+			var subj = ims.box[thisID].subj;
+			var camera = ims.box[thisID].camera;
+			if (ims.box[thisID].iFrame) {
+				var iFrame = ims.box[thisID].iFrame;
+			} else {
+				var iFrame = "";
+			}
+
+			showInfo(mapID, subj, 'box', 0, desc, new Date(), iFrame);
+
+			/////////////////////// 릴레이 상태 요청
+			var itsIdTmp = ims.map[mapID].itsId.split('_'); // "g300t100_192_168_0_80_0003" -> 192_168_0_80
+			itsIdTmp.shift();  // Removes the first element
+			itsIdTmp.pop();    // Removes the last element
+			var rIPTmp = itsIdTmp[0] + "." + itsIdTmp[1] + "." + itsIdTmp[2] + "." + itsIdTmp[3]; // 192.168.0.80
+			//// 부모에게 명령문 전송
+			socketio.emit('apiAction', { mapID: mapID, cmd: 'echo \'[{ "gpio": { "status": "9", "id": "", "hold": "", "msg": ""}}]\' | nc '+rIPTmp+' '+ims.itsApi.port+' -q 0' }); 
+			/////////////////////// 릴레이 상태 요청
+
+			// 센서와 관련된 카메라 맵상에 표시
+			for (var i=0; i < camera.length; i++){
+				// console.log(ims.camera[camera[i]].video);
+				// showVideo(camera[i], subj, ims.camera[camera[i]].video, 'camera');
+				showVideo(camera[i], subj, ims.camera[camera[i]].video, 'camera', 0, i);
+			}
+
+			// 로그요청 - 과거 한시간 - 결과는 좌측 상단 리스트(#listDetail)에 표시됨
+			socketio.emit('sensorLog', thisID); // 서브존이 있을 요소를 대비함(없을수도 있음)
+			
+			// 박스와 연관된 모든 카메라 프리셋 작동
+			if(ims.runProgram.procOnvif){ // 온비프 프로세서가 구동중이면 
+				socketio.emit('ptzOnvifCtlGroupBox', thisID); 
+			}
+
+			$("#listDetail").html(waiting);
+
+			// 로그 등록폼 출력
+			// 알람상태(data-event == "A")인 경우 조치요청 매뉴 출력
+			if($(this).attr('data-event') == 'A') { 
+				$("#desc, #list").css("display", "inline-block"); // 타임라인 아래 이벤트 관련정보
+				$("#actType").val('box');
+				$("#sensorName").val(subj);
+				$("#sensorID").val(thisID);
+				$("#userName").val('');
+				$("#actionDesc").val('');
+				$("#userName").focus();
+			} else { // 알람해지상태인 경우 매뉴 적용
+				$("#list").show("slow"); // 타임라인 아래 이벤트 관련정보
+			}
+			
+			var htmlCode = "<input type='button' class='subBtn' onclick=sensorLogRequest('"+thisID+"') value='__log__(24h)'><input type='button' class='subBtn' onclick=popupStatusITS('"+thisID+"') value='Status'><input type='button' class='subBtn' onclick=popupLogITS('"+thisID+"') value='Log'>";
+			// <input type='button' class='subBtn' onclick=popupEventITS('"+thisID+"') value='Event'>
+			$("#sensorLogOneDay").html(htmlCode);
+		} else {
+
+		}
+		
+		// 관련정보 임시 보기기능 및 불럭정보 적용
+		if(myLvName == "admin" || myLvName == 'manager') {
+			if($(this).attr('data-event') == 'W') { 
+				$("#waitName").val(subj); // 어드민을 위한 블럭 정보
+				// 알람 종료를 위한 정보 수집
+				$("#actType").val('close');
+				$("#sensorName").val(subj);
+				$("#sensorID").val(thisID);
+				$("#userName").val('');
+				$("#actionDesc").val('');
+				$("#userName").focus();
+			} else {
+				$("#blockName").val(subj); // 어드민을 위한 블럭 정보
+				$("#blockID").val(thisID); // 어드민을 위한 블럭 정보
+			}
+			
+		}
+		// if(myLvName == "admin") {
+		// 	$("#statusView").html('Group:'+thisGR+', subj:'+subj+', desc:'+desc+', imsID:'+thisID+', mapName:'+zoneID); // 클릭시 좌측 최하단 정보보기
+		// }
+	});
+
+	// $( "image" ).on('click', function (e) { // 바탕화면을 클릭하면
+	$('[data-group_map="1"]').on('click', function (e) { // 맵으로 정의된 요소를 클릭하면
+		$("#desc, #list, #timeLine24h").hide('slow'); // 타임라인 아래 이벤트 관련정보
+	});
+
+	// 시용자 수돌 로그 등록
+	$("#menualAdd").on('click', function() {
+		$("#desc").css("display", "inline-block"); // 타임라인 아래 이벤트 관련정보
+		$("#actType").val('manual');
+		$("#sensorName").val('');
+		$("#sensorID").val('NA');
+		$("#userName").val('');
+		$("#actionDesc").val('');
+		$("#sensorName").focus();
+	});
+
+	// 키보드 컨트롤 
+	// $( document ).keyup(function() {
+	$( document ).keydown(function() {
+		// 기능 제한 - 게스트와 뷰어는 본 기능에서 제외함
+		if(myLvName == "admin") {
+
+			var keyEvent = 'keyEvent';
+			if(event.shiftKey) keyEvent = keyEvent + "<br>" + "shiftKey"
+			if(event.altKey) keyEvent = keyEvent + "<br>" + "altKey"
+			if(event.ctrlKey) keyEvent = keyEvent + "<br>" + "ctrlKey"
+			keyEvent = keyEvent + "<br>" + "keyCode: " + event.keyCode;
+			keyEvent = keyEvent + "<br>" + "key: " + event.key;
+			keyEvent = keyEvent + "<br>" + "which: " + event.which;
+			// console.log(keyEvent);
+
+			// 활성화된 비디오뷰가 있으면 키명령 실행
+			if(focusedID && document.getElementById(focusedID)){ // ID와 포터스된 값이 존재하지만 실제 요소가 있는지 확인
+				id = focusedID;
+			} else {
+				focusedID = ''; // 실체가 존재하지 않는 아이디 값 삭제
+				return;
+			}
+			
+			// 현재의 카메라에 PTZ 기능이 있으면
+			if(icc[ims.camera[id].model].isPTZ){
+				var data = {
+					addr: ims.camera[id].addr,
+					user: ims.camera[id].user,
+					pass: ims.camera[id].pass,
+					port: ims.camera[id].port,
+					model: ims.camera[id].model,
+					camPort: ims.camera[id].camPort,
+					cmd:'',
+					pan: 0,
+					tilt: 0,
+					zoom: 0,
+					preset: 0
+				}
+				if(event.key >='1' && event.key <='9') {
+					data.preset = parseInt(event.key);
+					data.cmd = 'gotoPresetNo'; // 프리셋 번호로 이동
+				}
+				if(event.key == 'h') {
+					data.cmd = 'gotoHomePosition';
+				}
+				if(event.key == 's') {
+					data.cmd = 'setHomePosition';
+				}
+				if(event.which >= 37 && event.which <=40) {
+					if(event.which == 37) data.pan = -1; 
+					if(event.which == 38) data.tilt = 1; 
+					if(event.which == 39) data.pan = 1; 
+					if(event.which == 40) data.tilt = -1; 
+					data.cmd = 'ptzMoveCont';
+				}
+				if(event.key == '+') {
+					data.zoom = 1;
+					data.cmd = 'ptzMoveCont';
+				}
+				if(event.key == '-') {
+					data.zoom = -1; // 
+					data.cmd = 'ptzMoveCont';
+				}
+				if(data.cmd) {
+					if(ims.runProgram.procOnvif){ // 온비프 프로세서가 구동중이면 
+						socketio.emit('ptzOnvifCtl', data);
+					}
+				}
+			}
+		}
+	});	
+
+	// 관리자 설정
+	$("#license_ownerIp").on('click', function() { 
+		if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test($("#myIP").html()))
+			$( "#license_ownerIp" ).val($("#myIP").html()); 
+	});
+
+	// 감지 이벤트 정보를 관리자가 로그와 함께 리셋처리 한다.
+	$("#sendInfo").on('click', function() {
+		// console.log($("#actType").val());
+		if($("#sensorID").val() && $("#sensorName").val() && $("#userName").val() && $("#actionDesc").val()){
+			var content = $("#sensorID").val()+'_||_'+$("#sensorName").val()+'_||_'+$("#userName").val()+'_||_'+$("#actionDesc").val();
+			if($("#actType").val() == 'sensor') {
+				socketio.emit('actionClearS', content);
+			} else if($("#actType").val() == 'box') {
+				socketio.emit('actionClearB', content);
+			} else if($("#actType").val() == 'manual') {
+				socketio.emit('actionClearM', content);
+			}
+			$("#desc").hide();
+		}
+	});	
+
+	// 감지 이벤트 관리 종료
+	$("#actionClose").on('click', function() {
+		if($( "#waitName" ).val()) {
+			if (confirm("알람 로그를 종료합니다.")) {
+				var content = $("#sensorID").val()+'_||_'+$("#sensorName").val()+'_||_'+$("#userName").val()+'_||_'+$("#actionDesc").val();
+				socketio.emit('actionClose', content);
+			}
+		}
+	});	
+
+	// 알람 차단
+	$("#blockZone").on('click', function() {
+		if($( "#blockID" ).val()) {
+			if (confirm("알람을 차단 합니다.(소리및 팝업거부)")) {
+				var data = { 
+					name: $( "#blockName" ).val(),
+					id: $( "#blockID" ).val()
+				}
+				socketio.emit('blockZone', data);
+				// console.log(data.id); // path850
+			} 
+		}
+	});	
+
+	// 차단 해지
+	$("#clearZone").on('click', function() {
+		if($( "#denySelect" ).val()) {
+			if (confirm("차단을 해지 합니다.")) {
+				var data = {
+					name: $( "#denySelect option:selected" ).text(),
+					id: $( "#denySelect" ).val()
+				}
+				socketio.emit('clearZone', data);
+			}
+		}
+	});	
+
+	// 시스템 관련
+	$("#sysAccInfo").on('click', function() { 
+		socketio.emit('sysAccInfo', 'sysAccInfo'); 
+	});
+
+	// 정보 저장 
+	$("#sysAccSave").on('click', function() { 
+		if (confirm("Save System Setup?")) {
+			var data = { 
+				ownerIp: $( "#license_ownerIp" ).val(),
+				ownerPass: $( "#license_ownerPass" ).val(),
+				address: $( "#its_address" ).val(),
+				netmask: $( "#its_netmask" ).val(),
+				gateway: $( "#its_gateway" ).val(),
+				portIn: $( "#interface_portIn" ).val(),
+				portOut: $( "#interface_portOut" ).val(),
+				key: $( "#license_key" ).val()
+			}
+			socketio.emit('sysAccSave', data);
+		} 
+	});
+
+	// 모나터링 데이터베이스 접근
+	$("#viewLogChart").on('click', function() {
+		window.open("http://"+ims.imsIP+ims.file.cmd_listView,'viewLogChart','width=1000,height=600,location=no,status=no,scrollbars=no');
+	});	
+
+	// 접속자 로그 확인
+	$("#viewStatus").on('click', function() {
+		socketio.emit('connectedIP'); 
+	});	
+
+	// 사용자 설정
+	$("#userSetup").on('click', function() { 
+		var info_URL = "http://"+ims.imsIP+"/bbs/member_confirm.php?url=http://"+ims.imsIP+"/bbs/register_form.php";
+		window.location = info_URL;
+	});	
+
+	// 접속자 로그 아웃
+	$("#logout").on('click', function() { 
+		var info_URL = "http://"+ims.imsIP+"/bbs/logout.php";
+		window.location = info_URL;
+	});	
+
+	// 시스템 재시작 - 권한 오류 발생
+	$("#restartSystem").on('click', function() { 
+		if (confirm('__confirmRestart__')) {
+			socketio.emit('systemCmd', 'restart'); 
+		}
+	});	
+
+	// // 시스템 재시작 - 권한 오류 발생
+	// $("#rebootSystem").on('click', function() { 
+	// 	if (confirm('__confirmRebooting__')) {
+	// 		socketio.emit('systemCmd', 'reboot'); 
+	// 	}
+	// });	
+
+
+	//////////////////////////////////////////////////
+	// 최초실행시 
+	//////////////////////////////////////////////////
+
+	// 감지요소인경우 외곽(stroke) 색상을 제거(초기화)한다
+	$( "circle, path, polygon, rect, ellipse, image, text" ).each(function () {
+		if($(this).attr('data-group_map') === undefined) {
+			$(this).css("stroke", "unset");
+		}
+	});
+
+	socketio.emit('findClientIP', myID); // 자신의 아이피 확인
+	socketio.emit('getLastSituation'); // 지역(Zone)의 과거 이력(Active 또는 Clear)을 표시하기 위해
+	socketio.emit('denyZoneList'); // 과거 이력(Active 또는 Clear)을 표시하기 위해
+	// socketio.emit('sysAccInfo', 'sysAccInfo'); // 시스템 환경값 읽기
+	// socketio.emit('camAccInfo', 'camAccInfo'); // 카메라 환경값 읽기
+	// socketio.emit('senAccInfo', 'senAccInfo'); // 센서 환경값 읽기
+
+	// 설정값 초기화 screenLock
+	$("#screenLock").prop('checked', true);
+	$("#trackLock").prop('checked', false);
+	$("#chkTimeline").prop('checked', false);
+	$("#beepToggle").prop('checked', false); // 새로고침후 오디오 출력이 않됨, 마무거나 클릭한후에는 됨 ??????
+	$("#enableIdle").prop('checked', true);
+
+	// 초기값 실행
+	// toggleScreenCtrl(); //화면제어 메뉴
+	// toggleSetupCtrl(); // 관리기능 메뉴
+	// toggleTimeline(); // 상부 타임라인 차트
+	// showTime(); // 내부 시계
+
+
+});
+
+</script>
+
+<style>
+body{padding:0;margin:0;background:black;}
+p{-webkit-margin-before:0em;-webkit-margin-after:0em;}
+svg{display:inline;width:100%;min-width:inherit;max-width:inherit;height:100%;min-height:inherit;max-height:inherit;}
+input,button{font-size:12px;background:#31303387;border:0;color:white;padding:4px;vertical-align:bottom;}
+hr{clear:both;border:none;height:1px;background-color:unset;}
+
+.inputCss{font-size:8pt;text-align:right;color:silver;background-color:#00000000;border-bottom:1px solid #ffffff40;width:80px;} 
+
+.hide{display:none;}
+.center{text-align:center;}
+.relative{position:relative;}
+
+.info_subj{color:#FFEB3B;font-size:8pt;text-align:center;border-bottom:1px solid #8bc34a6b;padding-bottom:2px;}
+.info_model{color:#FFC107;font-size:8pt;text-align:center;border-bottom:1px solid #ffc10761;margin-top:2px;padding-bottom:2px;}
+.info_mapID{display:none;color:#ffffff7a;font-size:6pt;text-align:center;border-bottom:1px solid #8bc34a75;padding-bottom:2px;}
+.info_desc{color:#ffffffa6;font-size:8pt;border-bottom:1px solid #ffc10747;margin-top:2px;}
+
+.liveInfo{position:absolute;font-size:8pt;background-size:contain;background-repeat:no-repeat;}
+.liveInfoHead{color:black;background-color:#ffffff80;text-align:center;height:16px;overflow:hidden;}
+.liveInfoBody{background:#00000080;color:#ffffffa0;font-size:8pt;padding-left:2px;}
+.liveInfoTail{text-align:right;padding:0 4px 2px;border-radius:0 0 4px 4px;font-size:6pt;color:white;cursor:pointer;}
+.liveApiBtn{background:#00000080;font-size:8pt;}
+.liveApiBtn input {width: 25px;font-size: 10pt;text-align: center;}
+
+.liveVideo{position:absolute;font-size:7pt;display:none;min-width:80px;background-color:black;background-position:center;background-size:100% 100%;background-repeat:round;}
+.liveVideoHead{color:black;background-color:#ffffff80;text-align:center;overflow:hidden;height:15px;position:absolute;top:0;width:inherit;}
+.liveVideoBody{background:#00000080;color:#ffffffa0;font-size:8pt;padding-left:2px;}
+.liveVideoTail{text-align:right;padding:0 4px 2px;font-size:6pt;color:white;cursor:pointer;position:absolute;bottom:0;background:#ffffff40;}
+
+.liveImage{width:80px;height:28px;cursor:pointer;margin:0 2px;position:relative;display:inline-block;font-size:7pt;background-size:100% 100%;background-repeat:round;}
+.liveImageHead{color:black;background-color:#ffffff80;text-align:center;overflow:hidden;height:15px;}
+
+.liveTitle{word-break:break-all;}
+.liveTime{position:absolute;top:14px;right:6px;color:silver;}
+
+.closeBtn,.smallBtn,.largeBtn,.popupCAM,.popupFrame{border:0;color:white;cursor:pointer;width:16px;}
+.closeBtn,.smallBtn,.largeBtn{float:right;margin:0 0 0 2px;width:16px;}
+.popupCAM, .popupFrame{float:left;margin:0;}
+/* .closeBtn{background:darkslategray;} */
+.smallBtn{background:#00000080;}
+.largeBtn{background:#00000080;}
+.subBtn{margin:2px 1px 0 0;padding:0px 2px 2px 2px;border:1px solid #3b69698a;color:silver;background-color:#0552528f;cursor:pointer;font-family:auto;font-size:8pt;min-width:24px;border-radius: 2px; box-shadow: 1px 1px 2px 0px #636363;}
+.objectFit{background-color: unset;padding: unset;margin: 1px;font-family: monospace;color: silver;border: 1px solid gray;width:58px;}
+
+#infoUser{position:absolute;left:0;bottom:10px;color:#00000000;font-size:7pt;}
+#statusView{position:absolute;left:0;bottom:0;color:silver;font-size:6pt;background:#ffffff00;font-family:monospace;width:100%;height:14px;}
+
+#groupSet{position:absolute;right:4px;top:16px;z-index:9999;color:gray;padding:4px;text-align:right;font-size:8pt;}
+#setGroup{background: yellowgreen;color: chocolate;margin: unset;padding: unset;width: 100%;}
+#svgGroup{display:block;width:100%;margin: 4px 0;float: right;}
+
+#adminSet{margin-top:4px;}
+#titleSet{margin:10px 0 0 0;}
+#bgOpacity{margin:4px 0;}
+
+#listingSet{position:absolute;right:4px;bottom:70px;color:gray;padding:4px;font-size:8pt;}
+/* #listingSet input{margin:0 4px;} */
+#listingLog{font-size:7pt;max-height:218px;overflow:hidden;padding:6px;background:#ffffff42;}
+
+#healthTable{display:none;position:absolute;left:4px;bottom:70px;color:gray;padding:4px;font-size:8pt;}
+#healthLog{font-size:7pt;max-height:222px;overflow:hidden;padding:6px;background:#ffffff42;}
+
+
+#desc{position:absolute;top:80px;left:10px;z-index:9999;}
+#list{font-size:8pt;position:absolute;top:110px;left:10px;padding:4px;overflow-y:hidden;height:80%;}
+#listDetail{margin:4px 0;}
+#content{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;border:1px solid #ffffff80;padding: 4px;}
+
+#myIP{position:absolute;top:0;right:0;color:#ffffff80;font-size:7pt;padding-right:4px;}
+
+#lastEvent{margin-top: 6px;font-size:8pt;display: flex;position: relative;}
+#lastEvent div{margin-left: 10px;color:#ff008d;border: 1px solid #c0c0c04a;padding:0 4px 2px 4px;padding:0 4px 2px 4px;background:#80808040;cursor: pointer;}
+#lastEventS{margin-top: 12px;font-size:8pt;display: flex;position: relative;}
+
+#copyright{position:fixed;right:0;bottom:0;}
+#customer{position:fixed;left:0;bottom:0;}
+
+#tbl_sensor {margin:0 120px 0 200px;color:#ffffff80;font-size:8pt;text-align:center;position:relative;display:none;}
+#tbl_sensor div {border:1px solid #d0d0d040;}
+#tbl_sensor span {display:inline-block;width:14px;margin:1px;opacity:0.2;}
+#tbl_sensor .group {float:left;width:80px;background:#00000080;}
+#tbl_sensor .title {height:16px;overflow:hidden;background:#80808080;}
+#tbl_sensor .times {font-size:7pt;background:#60606080;height:14px;overflow:hidden;}
+#tbl_sensor .model {font-size:7pt;color:white;height:14px;overflow:hidden;}
+#tbl_sensor .event {font-weight:bold;color:white;overflow:hidden;height:16px;}
+#tbl_sensor .a {background:orangered;}
+#tbl_sensor .b {background:forestgreen;}
+#tbl_sensor .c {background:darkorange;}
+#tbl_sensor .d {background:blueviolet;}
+
+/* #tbl_sensor .level {border: unset;} */
+#tbl_sensor .level_sub {display: inline-flex;padding: unset;margin: unset;}
+#tbl_sensor .level_sub li {width:12px;margin:1px 2px;overflow:hidden;background: black;}
+
+/* #info_continer .level {border: unset;text-align: center;} */
+#info_continer .level_sub {display: inline-flex;padding: unset;margin: unset;text-align: center;}
+#info_continer .level_sub li {width:18px;margin:1px;overflow:hidden;background: black;}
+
+#tbl_camera {margin:0 120px 0 200px;color:#ffffff80;font-size:8pt;text-align:center;position:relative;display:none;}
+#tbl_camera div {border:1px solid #d0d0d040;}
+#tbl_camera span {display:inline-block;width:14px;margin:1px;opacity:0.2;}
+#tbl_camera .group {float:left;width:80px;background:#00000080;}
+#tbl_camera .title {height:16px;overflow:hidden;background:#80808080;}
+#tbl_camera .times {font-size:7pt;background:#60606080;}
+#tbl_camera .model {font-size:7pt;color:white;}
+#tbl_camera .a {background:orangered;}
+#tbl_camera .b {background:forestgreen;}
+#tbl_camera .c {background:darkorange;}
+#tbl_camera .d {background:blueviolet;}
+
+#tbl_health {margin:0 120px 0 200px;color:#ffffff80;font-size:8pt;text-align:center;position:relative;display:none;font-family: monospace;}
+#tbl_health div {border:1px solid #d0d0d040;}
+#tbl_health span {display:inline-block;width:14px;margin:1px;opacity:0.2;}
+#tbl_health .group {float:left;width:80px;background:#00000080;}
+#tbl_health .title {height:16px;overflow:hidden;background:#80808080;}
+#tbl_health .times {font-size:7pt;background:#60606080;overflow:hidden;}
+#tbl_health .model {font-size:7pt;color:white;height:14px;overflow:hidden;}
+#tbl_health .event {font-weight:bold;color:white;}
+
+#tbl_health .wdWrap {border:unset;font-family: monospace;}
+#tbl_health .wdName {width:30%;height:12px;border:unset;float: left;font-size:7pt;color:silver;}
+#tbl_health .wdStatus {width:64%;height:12px;border:unset;float: right;}
+#tbl_health .wdLeftover {width:20%;background-color:#d8d8d8;}
+#tbl_health hr {height:6px;clear:unset;float:left;margin: 4px 0;}
+
+.tbl_health_ims {margin: 4px; font-family: monospace;}
+.tbl_health_ims .times {font-size:7pt;}
+.tbl_health_ims .wdName {width:26%;height:12px;float:left;font-size:7pt;}
+.tbl_health_ims .wdStatus {width:64%;height:12px;float: right;}
+.tbl_health_ims .wdLeftover {width:20%;background-color:#d8d8d8;}
+.tbl_health_ims hr {height:6px;clear:unset;float:left;margin: 4px 0;}
+
+#optex_logo_frame{background-position:bottom;background-repeat:no-repeat;background-size:contain;/* opacity:0.5;*/ overflow:hidden;position:fixed;clear:both;width:150px;height:50px;right:0;bottom:0;margin:4px;}
+
+/* #showTime{ color:#70adad;position:absolute;bottom:0;left:0;font-size:10pt;padding:2px 4px;} */
+
+#image_continer{position:absolute;bottom:0px;height:7vh;overflow-x:auto;margin:0 12vw;text-align:center;display:none;}
+
+/* 스크롤바 크롬 적용 */
+/* width 스크롤바 폭 */
+::-webkit-scrollbar { width:6px;}
+/* Track 스크롤바 바탕 */
+::-webkit-scrollbar-track { background:#f0f0f0a0;}
+/* Handle 스크롤바 막대 */
+::-webkit-scrollbar-thumb { background:#808080;}
+/* Handle on hover 이동막대에 마우스 접근시 색변환 */
+::-webkit-scrollbar-thumb:hover { background:#5A9;}
+
+/* 전체화면 블링킹 */
+div#content {
+	animation:unset;
+}
+/* x y 번짐 두께 */
+/* @keyframes blinker { 30% { box-shadow:inset 0em 0em 6em 1.5em red; } */
+/* @keyframes blinker { 30% { box-shadow:inset 0em 0em 0.4em 0.2em red; } */
+@keyframes blinker { 50% { box-shadow:inset 0em 0em 0.4em 0.4em red; }
+}
+
+/* 개별 요소 깜빡임 6단계 */
+.blink01 { animation: blinker01 3s linear infinite; }
+@keyframes blinker01 { 50% { opacity: 0.2; } }
+.blink02 { animation: blinker02 2s linear infinite; }
+@keyframes blinker02 { 50% { opacity: 0.2; } }
+.blink03 { animation: blinker03 1s linear infinite; }
+@keyframes blinker03 { 50% { opacity: 0.2; } }
+.blink04 { animation: blinker04 0.5s linear infinite; }
+@keyframes blinker04 { 50% { opacity: 0.2; } }
+.blink05 { animation: blinker05 0.3s linear infinite; }
+@keyframes blinker05 { 50% { opacity: 0.2; } }
+.blink06 { animation: blinker06 0.1s linear infinite; }
+@keyframes blinker06 { 50% { opacity: 0.2; } }
+
+/* 시작 사용자 데코레이션 */
+/* https://artificial.design/archives/2018/05/23/svg-animation.html */
+
+/* 기차 움직임 에니메이션 */
+#불빛, #불빛-1, #불빛-6, #불빛-7, #불빛-9 {
+	animation-name: trainMovesBack;
+	animation-duration: 6s;
+	animation-iteration-count: infinite;
+	transform-origin: 50% 50%;
+	animation-direction: alternate-reverse;
+}
+@keyframes trainMovesBack {
+	0%   { transform: translate(0, -160px); }
+	100% { transform: translate(0, 120px); }
+}
+
+#g12989, #g32, #g32-2, #g31, #g13104-1 {
+	animation-name: trainMovesFront;
+	animation-duration: 4s;
+	animation-iteration-count: infinite;
+	transform-origin: 50% 50%;
+	animation-direction: alternate-reverse;
+}
+@keyframes trainMovesFront {
+	0%   { transform: translate(0, 180px); }
+	100% { transform: translate(0, -100px); }
+}
+
+/* 끝 사용자 데코레이션 */
+
+</style>
+</head> 
+
+<body>
+<div id="content">__svg_content__</div>
+<div id='timeLine_wt' style='position:absolute;overflow:hidden;height:12px;text-align:center;width:100%;'></div>
+<div id="timeLine" class="charts center relative hide"><canvas id="smoothie-chart" width="1000" height="30"></canvas></div>
+<div id='timeLine24h_wt' style='position:absolute;overflow:hidden;height:12px;text-align:center;width:100%;'></div>
+<div id="timeLine24h" class="charts center relative hide"><canvas id="smoothie-chart24h" width="1000" height="20"></canvas></div>
+<div id="infoUser"><label>User Info</label></div>
+<div id="statusView"></div>
+<div id="myIP"></div>
+<div id="lastEvent"></div>
+
+<!-- <select id="lastEventS" style="font-size:8pt;color:silver;background-color:maroon;width:90px;clear:both;margin: 0 2px 1px 0;" onfocus="this.size=4;" onblur="this.size=1;" onchange="this.size=1; this.blur();"><option value selected></option></select> -->
+
+
+<div id="groupSet">
+<div id="titleScreen" class="hide" onclick="toggleScreenCtrl()"><b><font color=silver>__screenControl__</font></b></div>
+<div id="mainScreen" class="hide">
+	<div>
+		<span><label>__lockScreen__</label><input type="checkbox" id="screenLock" /></span>
+		<span><label>__lockTrack__</label><input type="checkbox" id="trackLock" /></span>
+	</div>
+	<div>
+		<input type="button" class="subBtn" id="svgZoomIn" value="In">
+		<input type="button" class="subBtn" id="svgZoomOut" value="Out">
+		<input type="button" class="subBtn" id="svgFit" value="Fit">
+		<input type="button" class="subBtn" value="Full" onclick="toggleFullScreen(document.body)">
+	</div>
+	<div id="svgGroup"></div>
+	
+	<div onclick="toggleTimeline()"><label>__timeline__</label><input type="checkbox" id="chkTimeline"/></div>
+	<div><label>__beepToggle__</label><input type="checkbox" id="beepToggle" /></div>
+	<div><label>__enableIdle__</label><input type="checkbox" id="enableIdle" /></div>
+	<div><div id="bgOpacity"></div></div>
+	<div>
+		<input type="button" class="subBtn" id="toggleImage" onclick="toggleImage()" value="__toggleImage__">
+		<input type="button" class="subBtn" id="toggleCameraStat" onclick="toggleCameraStat()" value="__sensorCamera__" disabled><br>
+		<input type="button" class="subBtn" id="toggleSensorStat" onclick="toggleSensorStat()" value="__sensorStatus__">
+		<input type="button" class="subBtn" id="toggleHealthStat" onclick="toggleHealthStat()" value="__sensorHealth__">
+	</div>
+</div>
+<div id="titleSet" class="hide" onclick="toggleSetupCtrl()"><b><font color=silver>__systemSetup__</font></b></div>
+<div id="mainSetup" class="hide">
+	<div>
+		<input type="button" id="menualAdd" class="subBtn" value="__menualAdd__">
+		<input type="button" id="viewLogChart" class="subBtn" value="__log__/__chart__">
+	</div>
+	<div id="managerSet" class="hide">
+		<input type="button" id="viewStatus" class="subBtn" value="__user__">
+		<input type="button" id="userSetup" class="subBtn" value="__userSetup__">
+	</div>
+	<div id="adminSet" class="hide">
+		<input type="button" id="restartSystem" class="subBtn" value="__restart__">
+		<input type="button" id="logout" class="subBtn" value="__logout__">
+		<!-- 권한 오류 발생 input type="button" id="rebootSystem" class="subBtn" value="__reboot__" -->
+	</div>
+	<div id="broadcast" class="hide">
+		<input type="button" onclick="audioOut('5', 'broadcast', '100')" class="subBtn" value="🔊">
+		<input type='button' onclick="apiAction('broadcast','system','stop_audio','')" class='subBtn' value='🔇'>
+	</div>
+	<div>
+		<input type="button" onclick="clear_all()" class="subBtn" value="Clear All">
+	</div>
+	<div id="adminSet" class="hide">
+		<div style="margin-top:10px;display:none;">Filtered</div>
+		<div><input type="text" id="blockName" readonly style="font-size:7px;width:80px;color:silver;background-color:maroon;margin: 0 2px 1px 0;height:8px;" placeholder="Block Zone" /><input type="hidden" id="blockID" readonly /><input type="button" id="blockZone" class="subBtn" value="__block__"></div>
+		<div id="denyZoneList" style="margin-top:4px;float:right;"><input type="button" id="clearZone" class="subBtn" value="__clear__"></div>
+		<div class="hide"><input type="text" id="waitName" readonly style="font-size:7px;width:80px;color:black;background-color:beige;margin: 0 2px 1px 0;height:8px;" placeholder="Alarm Close" /><input type="button" id="actionClose" class="subBtn" value="__close__"></div>
+		<hr>
+	</div>
+	__tbl_health_ims__
+</div>	
+</div>
+<div id="healthTable">
+<div id="healthLog"></div>
+</div>
+
+<div id="listingSet">
+<div id="listingLog"></div>
+</div>
+
+<div id="list" class="hide">
+<div id="sensorLogOneDay"></div>
+<div id="listDetail"></div>
+</div>
+<div id="desc" class="hide center">
+<input type="hidden" id="actType" />
+<!-- input type="text" id="eventDate" readonly / -->
+<input type="text" id="sensorName" placeholder="__device__ __name__" />
+<input type="text" id="sensorID" readonly />
+<input type="text" id="userName" placeholder="__user__ __name__" />
+<input type="text" id="actionDesc" placeholder="__description__ Max:64" />
+<button id="sendInfo" name="sendInfo">__send__</button>
+</div>
+
+<div id="image_continer"></div>
+<div id="video_continer"></div>
+<div id="info_continer"></div>
+
+<div id="tbl_sensor">__tbl_sensor__</div>
+<div id="tbl_camera">__tbl_camera__</div>
+<div id="tbl_health">__tbl_health__</div>
+<div id="optex_logo_frame"></div>
+<div id="dClock"></div>
+<!-- <div id="showTime" onload="showTime()"></div> -->
+<!-- <style>
+	#colorInfo {color: unset;position: absolute;bottom: 0;left: 0;font-size: 1.6vh;text-align: center; margin:0.4vh;}
+	.ci_title {background-color: green; color:white}
+	.ci_color {background-color: greenyellow;}
+	.ci_info {background-color: goldenrod;}
+</style>
+<div id="colorInfo">
+	<table>
+		<tr><td class="ci_title">색</td><td class="ci_title">정보</td></tr>
+		<tr><td class="ci_color">적색</td><td class="ci_info">경보</td></tr>
+		<tr><td class="ci_color">황색</td><td class="ci_info">차단</td></tr>
+		<tr><td class="ci_color">보라</td><td class="ci_info">통신오류</td></tr>
+	</table>
+</div> -->
+
+<!-- 디지탈 시계 시작 -->
+<!-- https://codepen.io/dustindowell/pen/rxjxVp -->
+<script>
+(function() {
+	function display(a, n) {
+		number = [
+			[1, 1, 1, 0, 1, 1, 1], // 0
+			[0, 0, 1, 0, 0, 1, 0], // 1
+			[1, 0, 1, 1, 1, 0, 1], // 2
+			[1, 0, 1, 1, 0, 1, 1], // 3
+			[0, 1, 1, 1, 0, 1, 0], // 4
+			[1, 1, 0, 1, 0, 1, 1], // 5
+			[1, 1, 0, 1, 1, 1, 1], // 6
+			[1, 0, 1, 0, 0, 1, 0], // 7
+			[1, 1, 1, 1, 1, 1, 1], // 8
+			[1, 1, 1, 1, 0, 1, 1]  // 9
+		]
+
+		n = number[n]
+		i = 0
+		while (i < n.length) {
+			crystal = document.getElementById(a + (i + 1))
+			if (n[i] === 0) {
+				crystal.style.opacity = '0.2'
+			}
+			else {
+				crystal.style.opacity = '0.8'
+			}
+			i++
+		}
+	}
+
+	function format(value) {
+		value = value + ''
+
+		if (value.length === 1) {
+			return '0' + value
+		}
+		return value
+	}
+
+	(function update() {
+		date = new Date()
+		hours = format(date.getHours())
+		minutes = format(date.getMinutes())
+		seconds = format(date.getSeconds())
+
+		setTimeout(function() {
+			display('a', hours[0])
+			display('b', hours[1])
+			display('c', minutes[0])
+			display('d', minutes[1])
+			display('e', seconds[0])
+			display('f', seconds[1])
+			update()
+		}, 1000)
+	})()
+})()
+</script>
+
+<style>
+.dClock {
+	position: absolute;
+	right: 4px;
+	bottom: 4px;
+	display: flex;
+	background: rgb(0,0,0,0);
+}
+
+#dClock {width: 60px;}
+#dClock g {fill: white;}
+</style>
+
+<div class='dClock'>
+<!-- viewBox = <min-x> <min-y> <width> <height> -->
+<!-- https://www.sarasoueidan.com/blog/svg-coordinate-systems/ -->
+<svg id='dClock' viewBox='0 36 122 36'> 
+<g id='seconds'>
+	<g>
+	<path id='f7' d='M106,69l3-3h6l3,3c0,0-1,1-3,1h-6C107,70,106,69,106,69z'/>
+	<path id='f6' d='M119,55l-3,2v8l3,3c0,0,1-1,1-3v-7C120,56,119,55,119,55z'/>
+	<path id='f5' d='M105,55l3,2v8l-3,3c0,0-1-1-1-3v-7C104,56,105,55,105,55z'/>
+	<polygon id='f4' points='109,52 115,52 118,54 115,56 109,56 106,54'/>
+	<path id='f3' d='M119,40l-3,3v8l3,2c0,0,1-1,1-3v-7C120,41,119,40,119,40z'/>
+	<path id='f2' d='M105,40l3,3v8l-3,2c0,0-1-1-1-3v-7C104,41,105,40,105,40z'/>
+	<path id='f1' d='M106,39l3,3h6l3-3c0,0-1-1-3-1h-6C107,38,106,39,106,39z'/>
+	</g>
+	<g>
+	<path id='e7' d='M88,69l3-3h6l3,3c0,0-1,1-3,1h-6C89,70,88,69,88,69z'/>
+	<path id='e6' d='M101,55l-3,2v8l3,3c0,0,1-1,1-3v-7C102,56,101,55,101,55z'/>
+	<path id='e5' d='M87,55l3,2v8l-3,3c0,0-1-1-1-3v-7C86,56,87,55,87,55z'/>
+	<polygon id='e4' points='91,52 97,52 100,54 97,56 91,56 88,54'/>
+	<path id='e3' d='M101,40l-3,3v8l3,2c0,0,1-1,1-3v-7C102,41,101,40,101,40z'/>
+	<path id='e2' d='M87,40l3,3v8l-3,2c0,0-1-1-1-3v-7C86,41,87,40,87,40z'/>
+	<path id='e1' d='M88,39l3,3h6l3-3c0,0-1-1-3-1h-6C89,38,88,39,88,39z'/>
+	</g>
+</g>
+<g id='minutes'>
+	<g>
+	<path id='d7' d='M64,69l3-3h6l3,3c0,0-1,1-3,1h-6C65,70,64,69,64,69z'/>
+	<path id='d6' d='M77,55l-3,2v8l3,3c0,0,1-1,1-3v-7C78,56,77,55,77,55z'/>
+	<path id='d5' d='M63,55l3,2v8l-3,3c0,0-1-1-1-3v-7C62,56,63,55,63,55z'/>
+	<polygon id='d4' points='67,52 73,52 76,54 73,56 67,56 64,54'/>
+	<path id='d3' d='M77,40l-3,3v8l3,2c0,0,1-1,1-3v-7C78,41,77,40,77,40z'/>
+	<path id='d2' d='M63,40l3,3v8l-3,2c0,0-1-1-1-3v-7C62,41,63,40,63,40z'/>
+	<path id='d1' d='M64,39l3,3h6l3-3c0,0-1-1-3-1h-6C65,38,64,39,64,39z'/>
+	</g>
+	<g>
+	<path id='c7' d='M46,69l3-3h6l3,3c0,0-1,1-3,1h-6C47,70,46,69,46,69z'/>
+	<path id='c6' d='M59,55l-3,2v8l3,3c0,0,1-1,1-3v-7C60,56,59,55,59,55z'/>
+	<path id='c5' d='M45,55l3,2v8l-3,3c0,0-1-1-1-3v-7C44,56,45,55,45,55z'/>
+	<polygon id='c4' points='49,52 55,52 58,54 55,56 49,56 46,54'/>
+	<path id='c3' d='M59,40l-3,3v8l3,2c0,0,1-1,1-3v-7C60,41,59,40,59,40z'/>
+	<path id='c2' d='M45,40l3,3v8l-3,2c0,0-1-1-1-3v-7C44,41,45,40,45,40z'/>
+	<path id='c1' d='M46,39l3,3h6l3-3c0,0-1-1-3-1h-6C47,38,46,39,46,39z'/>
+	</g>
+</g>
+<g id='hours'>
+	<g>
+	<path id='b7' d='M22,69l3-3h6l3,3c0,0-1,1-3,1h-6C23,70,22,69,22,69z'/>
+	<path id='b6' d='M35,55l-3,2v8l3,3c0,0,1-1,1-3v-7C36,56,35,55,35,55z'/>
+	<path id='b5' d='M21,55l3,2v8l-3,3c0,0-1-1-1-3v-7C20,56,21,55,21,55z'/>
+	<polygon id='b4' points='25,52 31,52 34,54 31,56 25,56 22,54'/>
+	<path id='b3' d='M35,40l-3,3v8l3,2c0,0,1-1,1-3v-7C36,41,35,40,35,40z'/>
+	<path id='b2' d='M21,40l3,3v8l-3,2c0,0-1-1-1-3v-7C20,41,21,40,21,40z'/>
+	<path id='b1' d='M22,39l3,3h6l3-3c0,0-1-1-3-1h-6C23,38,22,39,22,39z'/>
+	</g>
+	<g>
+	<path id='a7' d='M4,69l3-3h6l3,3c0,0-1,1-3,1h-6C5,70,4,69,4,69z'/>
+	<path id='a6' d='M17,55l-3,2v8l3,3c0,0,1-1,1-3v-7C18,56,17,55,17,55z'/>
+	<path id='a5' d='M3,55l3,2v8l-3,3c0,0-1-1-1-3v-7C2,56,3,55,3,55z'/>
+	<polygon id='a4' points='7,52 13,52 16,54 13,56 7,56 4,54'/>
+	<path id='a3' d='M17,40l-3,3v8l3,2c0,0,1-1,1-3v-7C18,41,17,40,17,40z'/>
+	<path id='a2' d='M3,40l3,3v8l-3,2c0,0-1-1-1-3v-7C2,41,3,40,3,40z'/>
+	<path id='a1' d='M4,39l3,3h6l3-3c0,0-1-1-3-1h-6C5,38,4,39,4,39z'/>
+	</g>
+</g>
+<g id='dots'>
+	<g>
+	<circle cx='82' cy='50' r='2'/>
+	<circle cx='82' cy='58' r='2'/>
+	</g>
+	<g>
+	<circle cx='40' cy='50' r='2'/>
+	<circle cx='40' cy='58' r='2'/>
+	</g>
+</g>
+</svg>
+</div>
+<!-- 디지탈 시계 끝 -->
+
+<script>
+
+// guarddog port에 사용자 프로그램 레벨값 전송
+// ims.itsApi.gDog : 가드도그 포트
+// "<input type='button' id='gDog_btn_01' onclick=\"setRunLevel('"+id+"', '1')\" class='gDogBtn' value='🔊'>"+
+// "<input type='button' id='gDog_btn_02' onclick=\"setRunLevel('"+id+"', '2')\" class='gDogBtn' value='🔊'>"+
+// "<input type='button' id='gDog_btn_03' onclick=\"setRunLevel('"+id+"', '3')\" class='gDogBtn' value='🔊'>"+
+// 또는 레벨값을 사용자로 부터 입력받음(?)
+function setRunLevel(id, run) {
+	// console.log(id, run);
+	if(myLvName != "admin") return; // myLvName == "manager"
+	// var itsId = ims.map[id].itsId.split('_'); // "g300t100_192_168_0_80_0003"
+	var itsId = id.split('_'); // "g300t100_192_168_0_80_0003"
+	var name = ims.program[itsId[0]]; // 'gpio' - itsId의 첫요소를 통해 찾을수 있음
+	var table = itsId[0];
+	var id = parseInt(itsId[5]);
+	var rIP = itsId[1] + "." + itsId[2] + "." + itsId[3] + "." + itsId[4]; // 192.168.0.80
+	// 테스트 = echo '{"runLevel":{"name":"gpio","table":"g300t100","id":"1","run":"0"}}' | nc 192.168.0.80 32001 -q 0 &
+	var cmd = 'echo \'{ "runLevel": { "name":"'+name+'", "table": "'+itsId[0]+'", "id": "'+id+'", "run": "'+run+'" } }\' | nc '+rIP+' '+ims.userApi.port+' -q 0 &';
+	if (confirm("센서("+name+")실행 레밸을 "+run+"으(로) 변경합니다.\n변경값 적용은 15초 전후가 소요 됩니다.")) {
+		// console.log(cmd);
+		socketio.emit('userCmd', { cmd: cmd }); 
+	}
+}
+
+// API Action 출력 전송
+function audioOut(src, mapID, vol) {
+	if(myLvName != "admin") return; // myLvName == "manager"
+	if(mapID == "broadcast") { // 전체 방송
+		Object.keys(ims.online.its).forEach(function(rIP, index) {
+			var cmd = 'echo \'[{ "audio": { "source": "'+src+'", "volume": "'+vol+'", "loop": "1" } }]\' | nc '+rIP+' '+ims.itsApi.port+' -q 0';
+			socketio.emit('apiAction', { mapID: mapID, cmd: cmd }); 
+		});		
+	} else { // 개별 방송
+		// ims.map[mapID].itsId
+		var itsId = ims.map[mapID].itsId.split('_'); // "g300t100_192_168_0_80_0003" -> 192_168_0_80
+		itsId.shift();  // Removes the first element
+		itsId.pop();    // Removes the last element
+		var rIP = itsId[0] + "." + itsId[1] + "." + itsId[2] + "." + itsId[3]; // 192.168.0.80
+		var cmd = 'echo \'[{ "audio": { "source": "'+src+'", "volume": "'+vol+'", "loop": "1" } }]\' | nc '+rIP+' '+ims.itsApi.port+' -q 0';
+		socketio.emit('apiAction', { mapID: mapID, cmd: cmd }); 
+	}
+	// if(myLvName == 'admin') $("#statusView").html("audioOut " + src);
+}
+
+// API Action 출력 전송
+// 'mapID','gpio','status','id','hold' 
+// 'mapID','system','stop_audio','value'
+// 'echo \'[{ "gpio": { "status": "2", "id": "io09", "hold": "", "msg": ""}}]\' | nc 192.168.0.60 53001 -q 0';
+// 'echo \'[{ "system": { "command": "stop_audio", "value": "" }}]\' | nc 192.168.0.60 53001 -q 0';
+// echo '[{ "audio": { "source": "1", "target": "localhost", "volume": "80", "command": "0", "loop": "2" } }]' | nc 192.168.0.60 34001 -q 0 &
+// echo '[{ "audio": { "source": "2", "volume": "80", "loop": "1" } }]' | nc 192.168.0.60 34001 -q 0
+function apiAction(mapID,name,v1='',v2='',v3='',v4='',v5='') {
+	if(myLvName != "admin") return; // myLvName == "manager"
+
+	if(mapID == "broadcast") { // 전체 방송
+		Object.keys(ims.online.its).forEach(function(rIP, index) {
+			if (name == 'system') {
+				var cmd = 'echo \'[{ "'+name+'": { "command": "'+v1+'", "value": "'+v2+'" }}]\' | nc '+rIP+' '+ims.itsApi.port+' -q 0';
+			} else {
+				var cmd = '';
+			}
+			socketio.emit('apiAction', { mapID: mapID, cmd: cmd }); 
+		});
+	} else { // 개별 
+		var itsId = ims.map[mapID].itsId.split('_'); // "g300t100_192_168_0_80_0003" -> 192_168_0_80
+		itsId.shift();  // Removes the first element
+		itsId.pop();    // Removes the last element
+		var rIP = itsId[0] + "." + itsId[1] + "." + itsId[2] + "." + itsId[3]; // 192.168.0.80
+
+		if (name == 'gpio') {
+			var cmd = 'echo \'[{ "'+name+'": { "status": "'+v1+'", "id": "'+v2+'", "hold": "'+v3+'", "msg": "'+v4+'"}}]\' | nc '+rIP+' '+ims.itsApi.port+' -q 0';
+
+			// // GPIO 상태 버튼 배경색상 변경
+			// // console.log($( "#api_btn_"+v2 ).css("background-color"));
+			// if($( "#api_btn_"+v2 ).css("background-color") == "rgba(0, 0, 0, 0.5)" ) {
+			// 	$( "#api_btn_"+v2 ).css("background-color","rgba(136, 0, 0, 0.5)" );
+			// } else {
+			// 	$( "#api_btn_"+v2 ).css("background-color","rgba(0, 0, 0, 0.5)" );
+			// }
+
+		} else if (name == 'audio') { // 오디오 출력을 apiAction으로 사용 가능 하나 속도가 느림
+			var cmd = 'echo \'[{ "'+name+'": { "source": "'+v1+'", "volume": "'+v2+'", "loop": "'+v3+'" }}]\' | nc '+rIP+' '+ims.itsApi.port+' -q 0';
+		} else if (name == 'system') {
+			var cmd = 'echo \'[{ "'+name+'": { "command": "'+v1+'", "value": "'+v2+'" }}]\' | nc '+rIP+' '+ims.itsApi.port+' -q 0';
+		} else {
+			var cmd = '';
+		}
+		var data = { mapID: mapID, cmd: cmd };
+		socketio.emit('apiAction', { mapID: mapID, cmd: cmd }); 
+		// console.log(data);
+	}
+}
+
+function clear_all() { // 
+	$('#lastEvent div').each(function() {
+		var tmpMapID = $(this).attr('id').split(/_(.+)/)[1];
+		var thisType = ims.map[tmpMapID].group; // activeType
+		var thisID = ims.map[tmpMapID].itsId;
+
+		if(thisType == 'zone') {
+			var subj = ims.sensor[thisID].subj;
+			// var model = ims.sensor[thisID].model;
+			// var camera = ims.sensor[thisID].camera;
+			// var mapID = ims.sensor[thisID].mapID;
+		} else if(thisType == 'box') {
+			var subj = ims.box[thisID].subj;
+		} else {
+			var subj = '';
+		}
+		// console.log(thisID, subj, model, mapID); // g400t200_192_168_0_80_0001 relay_03 RELAY rect1439
+
+		var content = thisID+'_||_'+subj+'_||_ClearAll_||_'+myIpAddr;
+		if(thisType == 'zone') {
+			socketio.emit('actionClearS', content);
+		} else if(thisType == 'box') {
+			socketio.emit('actionClearB', content);
+		} else {
+			socketio.emit('actionClearM', content);
+		}
+		console.log(content, thisType); // g400t200_192_168_0_80_0001 relay_03 RELAY rect1439
+
+		$('#'+tmpMapID).css('fill', objFill[tmpMapID]);
+		$('#'+tmpMapID).attr('data-event', 'C');
+		$(this).remove();
+		$('#info_'+tmpMapID).remove();
+	});
+}
+
+function toggleFullScreen(elem) { // 토글 스크린 전체 보기
+	if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+		if (elem.requestFullScreen) {
+			elem.requestFullScreen();
+		} else if (elem.webkitRequestFullScreen) {
+			elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+		} else if (elem.msRequestFullscreen) {
+			elem.msRequestFullscreen();
+		}
+	} else {
+		if (document.cancelFullScreen) {
+			document.cancelFullScreen();
+		} else if (document.mozCancelFullScreen) {
+			document.mozCancelFullScreen();
+		} else if (document.webkitCancelFullScreen) {
+			document.webkitCancelFullScreen();
+		} else if (document.msExitFullscreen) {
+			document.msExitFullscreen();
+		}
+	}
+}
+// toggleFullScreen(document.body)	// 토글 스크린 전체 보기
+
+var track_A = '';
+for(k = l = 11025; k--;) { track_A += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33)* Math.min((l-k)/83,k/l)*127 + 128); }
+var track_B = '';
+for(k = 11025; k--;) { track_B += String.fromCharCode(Math.sin(k/44100*2*Math.PI*659.26)*127+128); }
+var track_C = '';
+for(i=0;i<3;) { // i: 펄스 횟수
+	i++;
+	for(k = l = 11025; k--;) {
+		track_C += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33) * Math.min((l-k)/83,k/l) * (i%2&&i%8-3?99:33) + 128);
+	}
+}
+function beep_A() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\0'+track_A));
+	snd.play();
+}
+function beep_B() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_B));
+	snd.play();
+}
+function beep_C() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_C));
+	snd.play();
+}
+
+var denySound = 0;
+function sound(name, time){
+	// console.log(name, time);
+	// console.log("http://"+ims.imsIP+"/data/audio/"+name);
+	if(denySound) {
+		return;
+	} else {
+		denySound = 1;
+		var audio = new Audio("http://"+ims.imsIP+"/data/audio/"+name);
+		setTimeout(function(){
+			denySound = 0;
+		}, parseInt(time * 1000));
+		audio.play();
+	}
+}
+
+var denyBlink = 0;
+function alarmBlink(){
+	if(denyBlink) {
+		return;
+	} else {
+		denyBlink = 1;
+		setTimeout(function(){
+			denyBlink = 0;
+			$("div#content").css("animation", "unset");
+		}, 4000); // n 초이내에 들어오는 이벤트는 최초 이멘트에만 화면 반을 적용함 : 1000 - 1초
+		$("div#content").css("animation", "blinker 0.5s linear infinite");
+		// $("div#content").effect("pulsate", {times: 5}, 1000); // 화면 효과 
+		// $("#bodyWrap").effect("highlight", {color: '#ff000050'}, 50); // 화면 효과 
+		// $("div#content").effect("highlight", {color: 'maroon'}, 1000); // 화면 효과 
+		// $("div#content").effect("highlight", {color: 'crimson'}, 500); // 화면 효과 
+		// $("div#content").effect("highlight", {color: 'red'}, 600); // 화면 효과 
+		// $("div#content").effect("highlight", {color: 'green'}, 200); // 화면 효과 
+		// $("div#content").effect("highlight", {color: 'navy'}, 200); // 화면 효과 
+	}
+}
+
+function formatDate(date) {
+	var d = new Date(date),
+		month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear(),
+		time = d.toTimeString().split(' ')[0];
+
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+	return [year, month, day, time].join(' ');
+}
+
+
+function triggerID(id){
+	$( "#" + id ).trigger( "click" );
+}
+
+// function showTime(){
+// 	var date = new Date();
+// 	var h = date.getHours(); // 0 - 23
+// 	var m = date.getMinutes(); // 0 - 59
+// 	var s = date.getSeconds(); // 0 - 59
+
+// 	h = (h < 10) ? "0" + h : h;
+// 	m = (m < 10) ? "0" + m : m;
+// 	s = (s < 10) ? "0" + s : s;
+
+// 	var time = h + ":" + m + ":" + s + " ";
+// 	document.getElementById('showTime').innerText = time;
+// 	document.getElementById('showTime').textContent = time;
+// 	setTimeout(showTime, 1000);
+// }
+
+function toggleScreenCtrl() { 
+	$("#mainScreen").toggle('slow');
+	// $("#zoomSet").toggle('slow');
+};
+function toggleSetupCtrl() { $("#mainSetup").toggle('slow') };
+function toggleSensorStat() { $("#tbl_sensor").toggle('slow') };
+function toggleHealthStat() { 
+	$("#tbl_health").toggle('slow');
+	$("#healthTable").toggle('slow');
+};
+function toggleTimeline() { // 한시간 전체로그
+	if ($('#chkTimeline').prop('checked')) {
+		$("#timeLine_wt").html(waiting);
+		socketio.emit('sensorLogRequest');
+	} else {
+		$("#timeLine").hide('slow');
+	}
+}; // 타임라인 보기
+
+function toggleImage() { 
+	if($('#image_continer').is(':visible')) {
+		$("#image_continer").hide('slow');
+		$("#toggleImage").attr('style', 'color:orange')
+	} else {
+		$("#image_continer").show('slow');
+		$("#toggleImage").attr('style', 'color:yellow');	
+	}
+} // Image Window 감추기
+function removeImage() { 
+	// $("#image_continer").empty() 
+} // Image Window 내용을 삭제
+
+function removeInfo() { 
+	$("#info_continer").empty() 
+} // Image Window 내용을 삭제
+function removeVideo() { 
+	$("#video_continer").empty() 
+} // Image Window 내용을 삭제
+		
+function sensorLogRequest(id='') { // 24시간 펜스로그
+	$("#timeLine24h").hide("slow");
+	$("#timeLine24h_wt").html(waiting);
+	socketio.emit('sensorLogRequest',id);
+}
+
+// 관련 ITS Home로 이동(팝업)
+function popupLogITS(id) {
+	// http://192.168.0.202/bbs/board.php?bo_table=g300t100&wr_id=31 http://g300t100_192_168_0_202_0027/ "g300t100_192_168_0_202_0027".substr(9, "g300t100_192_168_0_202_0027".length-5).replace(/_/g, '.')
+	// 관련센서 세부항목 링크추출 후 [log] 버튼 출력
+	var itsTmpTB = id.substr(0,8); 
+	var itsTmpIP = id.substr(9, id.length-5-9).replace(/_*$/, '').replace(/_/g, '.'); // .replace(/_*$/, '');
+	// var itsTmpID = parseInt(id.substr(-4));
+	// var url = "http://"+itsTmpIP+"/bbs/board.php?bo_table="+itsTmpTB+"&wr_id="+itsTmpID;
+	// window.open(url,'Sensor Detail','width=1000,height=600,location=no,status=no,scrollbars=no');
+	var itsTmpID = id.split('_').pop(); //.substr(-5);
+	if(itsTmpID.slice(-2, -1) == "Z") { // REDSCAN PRO
+		var url = "http://"+itsTmpIP+":51198"; // http://192.168.0.70:51198/
+	} else {
+		var url = "http://"+itsTmpIP+"/bbs/board.php?bo_table="+itsTmpTB+"&wr_id="+parseInt(itsTmpID);
+	}
+	window.open(url,'Sensor Detail','width=1000,height=600,location=no,status=no,scrollbars=no');
+}
+
+// function popupEventITS(id) {
+// 	// /utility/systemExec/realtime_tail.php
+// 	// 관련센서 세부항목 링크추출 후 [log] 버튼 출력
+// 	var itsTmpTB = id.substr(0,8); 
+// 	var itsTmpIP = id.substr(9, id.length-5-9).replace(/_/g, '.');
+// 	var itsTmpID = parseInt(id.substr(-4));
+// 	var url = "http://"+itsTmpIP+"/utility/systemExec/realtime_tail.php";
+// 	window.open(url,'Sensor Detail','width=500,height=500,location=no,status=no,scrollbars=no');
+// }
+
+function popupStatusITS(id) {
+	// http://192.168.0.202/theme/ecos-its_optex/utility/status/status_union.php
+	var itsTmpTB = id.substr(0,8); 
+	var itsTmpIP = id.substr(9, id.length-5-9).replace(/_*$/, '').replace(/_/g, '.');
+	// var itsTmpID = parseInt(id.substr(-4));
+	// var url = "http://"+itsTmpIP+"/theme/ecos-its_optex/utility/status/status_union.php";
+	// window.open(url,'Sensor Status','width=800,height=600,location=no,status=no,scrollbars=no');
+	var itsTmpID = id.split('_').pop(); //.substr(-5);
+	if(itsTmpID.slice(-2, -1) == "Z") { // REDSCAN PRO
+		var url = "http://"+itsTmpIP+":51198"; // http://192.168.0.70:51198/
+	} else {
+		var url = "http://"+itsTmpIP+"/theme/ecos-its_optex/utility/status/status_union.php";
+	}
+	window.open(url,'Sensor Status','width=800,height=600,location=no,status=no,scrollbars=no');
+}
+
+function emptyThis(id) { 
+	$(id).html('') ;
+} 
+
+function popupFrame(url) {
+	var strWindowFeatures = "directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=800,height=600";
+	window.open(url,"popupFrame",strWindowFeatures);
+}
+
+// URL Video View
+function showInfo(mapID, subj, model, status, desc, t, iFrame="") {
+
+	if($("#trackLock").prop('checked')) { // 추적모드일때는 정보 팝업을 금지한다.
+		return;
+	}
+
+	// console.log(mapID, subj, model, status, desc);
+	var objectIS = $( "#" + mapID );
+	if (objectIS.length) {
+		var offset = objectIS.offset(); // offset.top, offset.left
+		var top = offset.top;
+		var left = offset.left;
+		var width = imageIX; 	
+		var height = imageIY;
+		var centerX = offset.left + ( objectIS.outerWidth() / 2 );
+		var centerY = offset.top + ( objectIS.outerHeight() / 2 );
+		var time = t.toLocaleTimeString("en-US",options);
+
+		if(iFrame)
+			// var frmInfo = "<iframe class='iframe_RLS' style='width:"+width+"px; height:"+height+"px;' src='"+iFrame+"' scrolling='no' frameborder='0' marginwidth='0' marginheight='0'></iframe>";
+			// var frmInfo = "<iframe class='iframe_RLS' style='width:"+width+"px; height:"+height+"px;' src='http://192.168.0.202:51198/' scrolling='no' frameborder='0' marginwidth='0' marginheight='0'></iframe>";
+			// var frmInfo = "<div onclick=popupFrame('" + iFrame + "'); >Live View</div>";
+			var frmInfo = "<span class='popupFrame' onclick=popupFrame('" + iFrame + "')>🟦</span>";
+		else
+			var frmInfo = "";
+		
+		var id = 'info_'+mapID;
+		$('#info_continer #'+id).remove(); // 관련 정보창
+		var div = document.createElement('div');
+		div.onclick = function () { 
+			// moveToTopVideo(id);
+			$(".liveImage").css("z-index", "unset");
+			$(".liveVideo").css("z-index", "unset");
+			$("#info_continer #"+id).css("z-index", 8888);
+			focusedID = id;
+		};
+		div.id = id;
+		div.className = 'liveInfo';
+		div.tabindex = 0;
+		// div.style.top = top + 'px';
+		// div.style.left = left + 'px'; 
+		div.style.top = centerY + 'px';
+		div.style.left = centerX + 'px'; 
+		div.style.width = width + 'px'; 
+		div.style.height = height + 'px'; // 16:9 비율
+		div.style.borderRadius = '4px';
+		div.innerHTML = 
+			"<div class='liveInfoHead'>"+
+				frmInfo+
+				"<span class='closeBtn' onclick=rmInfo('"+id+"')>❌</span>"+
+				"<span class='liveTitle'>"+subj+"</span>"+
+				"</div>"+
+			"<div class='liveInfoBody hide' id='live_info_"+ims.map[mapID].itsId+"'>"+
+				"<div class='info_subj'>"+subj+"</div>"+
+				"<div class='info_model'>"+model+"</div>"+
+				"<div class='info_mapID'>"+mapID+"</div>"+
+				"<div class='info_desc'>"+desc+"</div>"+
+				"<div class='info_level'></div>"+
+				"</div>"+
+				"<div class='liveInfoTail' onclick=toggleInfoDetail('"+id+"')>"+
+				"<span>"+time+"</span>"+
+				"</div>"+
+			"<div class='liveApiBtn' id='api_btn_"+mapID+"' style='display:none;'>"+
+				// 오디오 출력을 apiAction으로 사용 가능 하나 속도가 느림
+				// "<input type='button' id='api_btn_01' onclick=\"apiAction('"+mapID+"','audio','1','100','1')\" class='apiBtn' value='🔊'>"+
+				// "<input type='button' id='api_btn_02' onclick=\"apiAction('"+mapID+"','audio','2','100','1')\" class='apiBtn' value='🔊'>"+
+				"<input type='button' id='api_btn_01' onclick=\"audioOut('1', '"+mapID+"', '100')\" class='apiBtn' value='🔊'>"+
+				"<input type='button' id='api_btn_02' onclick=\"audioOut('2', '"+mapID+"', '100')\" class='apiBtn' value='🔊'>"+
+				"<input type='button' id='api_btn_03' onclick=\"audioOut('3', '"+mapID+"', '100')\" class='apiBtn' value='🔊'>"+
+				"<input type='button' id='api_btn_04' onclick=\"apiAction('"+mapID+"','system','stop_audio','')\" class='apiBtn' value='🔇'>"+
+				"<input type='button' id='api_btn_R01' onclick=\"apiAction('"+mapID+"','gpio','2','io09','')\" class='apiBtn' value='⚡'>"+
+				"<input type='button' id='api_btn_R02' onclick=\"apiAction('"+mapID+"','gpio','2','io10','')\" class='apiBtn' value='⚡'>"+
+				"<input type='button' id='api_btn_R03' onclick=\"apiAction('"+mapID+"','gpio','2','io11','')\" class='apiBtn' value='🔒'>"+
+				"<input type='button' id='api_btn_P01' onclick=\"apiAction('"+mapID+"','gpio','2','pw01','')\" class='apiBtn' value='🔋'>"+
+				// 'mapID','gpio','status','id','hold' 🔔💡📢🚨🔋🔒🔓⚡🔊🔇 'mapID','system','stop_audio','value'
+				"</div>";
+			
+		document.getElementById("info_continer").appendChild(div);
+
+		$("#info_continer #"+id).css("z-index", 8888); 
+		$("#info_continer #"+id).show();
+		$("#info_continer #"+id).draggable(); // 이동
+	}
+}
+function rmInfo(id) {
+	$('#info_continer #'+id).remove();
+}
+function toggleInfoDetail(id) {
+	$('#info_continer #'+id+' .liveInfoBody').toggle('slow');
+}
+
+// URL Video View
+function showVideo(id, subj, videoUrl, target='sensor', status=0, position=null) {
+	// console.log(id, subj, videoUrl, target, status, position);
+
+	if($("#trackLock").prop('checked')) { // 추적모드일때는 비데오 팝업을 금지한다.
+		return;
+	}
+
+	var innerW = window.innerWidth;
+	var innerH = window.innerHeight;
+	var offset = $( "#" + ims[target][id].mapID ).offset(); // offset.top, offset.left
+	if(typeof offset === "undefined") { // 지도상 요소터갯아 없으면 2022-04-20 05:12:27
+		console.log("showVideo undefined mapID");
+		return;
+	}
+	var left = offset.left;
+	var top = offset.top;
+
+	var width = imageSX; // 초기 이미지 크기 설정
+	var height = imageSY;
+	// 팝업 프래임이 윈도우 프레임 밖으로 나가면
+	if((left + (innerW * width / 100)) > innerW) {
+		var left = innerW - (innerW * width / 100); // 2px 여유
+	}
+	if (left < 1) {
+		var left = 1;
+	}
+
+	// 팝업 프래임이 윈도우 프레임 밖으로 나가면
+	if((top + (innerH * height / 100)) > innerH) {
+		var top = innerH - (innerH * height / 100) - 20; // 20px 여유
+	}
+	if (top < 1) {
+		var top = 1;
+	}
+
+	// if(position == null) {
+	// 	var width = imageSX; // 초기 이미지 크기 설정
+	// 	var height = imageSY;
+	// 	// 팝업 프래임이 윈도우 프레임 밖으로 나가면
+	// 	if((left + (innerW * width / 100)) > innerW) {
+	// 		var left = innerW - (innerW * width / 100); // 2px 여유
+	// 	}
+	// 	if (left < 1) {
+	// 		var left = 1;
+	// 	}
+
+	// 	// 팝업 프래임이 윈도우 프레임 밖으로 나가면
+	// 	if((top + (innerH * height / 100)) > innerH) {
+	// 		var top = innerH - (innerH * height / 100) - 20; // 20px 여유
+	// 	}
+	// 	if (top < 1) {
+	// 		var top = 1;
+	// 	}
+	// } else {
+		// var width = imageMX; // 초기 이미지 크기 설정
+		// var height = imageMY;
+		// var top = (((innerH * height / 100) + 4) * position) + 4;
+		// var left = 4;
+	// }
+
+	// https://stackoverflow.com/questions/14094697/how-to-create-new-div-dynamically-change-it-move-it-modify-it-in-every-way-po
+	// 기존의 관련 요소를 삭제 하고 다시 생성 한다.
+	$('#video_continer #'+id).remove(); // 관련 카메라삭제
+
+	var div = document.createElement('div');
+	div.onclick = function () { 
+		// moveToTopVideo(id);
+		$(".liveImage").css("z-index", "unset");
+		$(".liveVideo").css("z-index", "unset");
+		$(".liveVideo").css("border-style", "unset");
+		$(".liveVideo").css("border-color", "unset");
+		$(".liveVideo").css("border-width", "unset");
+
+		$(this).css("border-style", "solid");
+		$(this).css("border-color", "orange");
+		$(this).css("border-width", "1px");
+
+		$("#video_continer #"+id).css("z-index", 8888);
+
+		focusedID = id;
+	};
+
+	// if(myLvName == "admin") {
+	// 	// 마우스 스크롤 인 아웃 - 줌
+	// 	// 속도때문인지 오류발생함
+	// 	// $(this).on( 'mousewheel', function( e ) {});
+	// 	div.onmousewheel = function (e) { 
+	// 		// 현재의 카메라에 PTZ 기능이 있으면
+	// 		if(icc[ims.camera[id].model].isPTZ){
+	// 			var data = { 
+	// 				addr: ims.camera[id].addr,
+	// 				user: ims.camera[id].user,
+	// 				pass: ims.camera[id].pass,
+	// 				port: ims.camera[id].port,
+	// 				model: ims.camera[id].model,
+	// 				camPort: ims.camera[id].camPort,
+	// 				cmd:'relativeMove',
+	// 				pan: 0,
+	// 				tilt: 0,
+	// 				zoom: 0,
+	// 				preset: 0
+	// 			}
+	// 			// if ( e.originalEvent.wheelDelta >= 0 ) {
+	// 			if ((e.deltaY || -e.wheelDelta || e.detail) >= 0) {
+	// 				data.zoom = -0.05; // 줌 스텝 최소/최대  -1 ~ +1
+	// 			} else {
+	// 				data.zoom = 0.05; // 줌 스텝 최소/최대  -1 ~ +1
+	// 			}
+	// 			if(ims.runProgram.procOnvif){ // 온비프 프로세서가 구동중이면 
+	// 				socketio.emit('ptzOnvifCtl', data);
+	// 			}
+	// 		}
+	// 	};
+
+	// 	// 더블클릭시 중심이동
+	// 	div.ondblclick = function (e) { 
+	// 		// 현재의 카메라에 PTZ 기능이 있으면
+	// 		if(icc[ims.camera[id].model].isPTZ){
+	// 			var data = { 
+	// 				addr: ims.camera[id].addr,
+	// 				user: ims.camera[id].user,
+	// 				pass: ims.camera[id].pass,
+	// 				port: ims.camera[id].port,
+	// 				model: ims.camera[id].model,
+	// 				camPort: ims.camera[id].camPort,
+	// 				cmd:'relativeMove',
+	// 				pan: 0,
+	// 				tilt: 0,
+	// 				zoom: 0,
+	// 				preset: 0
+	// 			}
+	// 			var offset = $(this).offset();
+	// 			var x = e.pageX - offset.left; // 커서위치 X
+	// 			var y = e.pageY - offset.top; // 커서위치 Y
+	// 			var camX = ims.camera[id].resolution.x; // 카메라 해상도 X
+	// 			var camY = ims.camera[id].resolution.y; // 카메라 해상도 Y
+	// 			// 요소의 가로세로크기와 카메라 해상도값으로 이동위치 계산
+	// 			x = parseInt(camX/$(this).width()*x); // 카메라 해상도 / 현재 화면 크기
+	// 			y = parseInt(camY/$(this).height()*y); // 카메라 해상도 / 현재 화면 크기
+	// 			// console.log(x,y,camX,camY,$(this).width(),$(this).height());
+				
+	// 			x = (x - (camX/2)) / (camX/2);
+	// 			y = ((camY - y) - (camY/2)) / (camY/2);
+	// 			if(Math.abs(x) > Math.abs(y)) { // 화면상에 치우친 방향으로 이동한다
+	// 				data.pan = x;
+	// 			} else {
+	// 				data.tilt = y;
+	// 			}
+	// 			if(ims.runProgram.procOnvif){ // 온비프 프로세서가 구동중이면 
+	// 				socketio.emit('ptzOnvifCtl', data);
+	// 			}
+	// 		}
+	// 	};
+	// }
+
+	div.id = id;
+	div.className = 'liveVideo';
+	div.tabindex = 0;
+	div.style.top = parseInt(top) + 'px'; //위치값으로 초기위치를 확인하기위해 정수로 치환한다.
+	div.style.left = parseInt(left) + 'px'; 
+	div.style.width = width + 'vw';  
+	div.style.height = height + 'vh'; 
+	div.style.borderRadius = '1px';
+	div.style.backgroundSize = '100% 100%';
+	div.style.backgroundImage = 'url(' + videoUrl + ')'; 
+	// div.style.cssText = 'box-shadow:2px 2px 6px #ffffff80';
+	if(myLvName == "admin") {
+		// viewBox = <min-x> <min-y> <width> <height>
+		div.innerHTML = "<svg id='centerCircle' viewBox='-1 -1 2 2'><circle cx='0' cy='0' r='0.1' style='fill: #c0c0c01f;'/></svg>";
+	} else {
+		div.innerHTML = "";
+	}
+
+	// var offset = $( "#" + ims[target][id].mapID ).offset(); // offset.top, offset.left
+	// var left = offset.left;
+	// var top = offset.top;
+	div.onclick = function () { popVideo(id,target); };
+
+	div.innerHTML += "<div class='liveVideoHead'>"+
+		"<span class='popupCAM' onclick=window.open('" + videoUrl + "','"+id+"','width=600,height=400,location=no,status=no,scrollbars=no')>🟪</span>"+
+		"<span class='closeBtn' onclick=rmVideo('"+id+"')>❌</span>"+
+		// "<span class='largeBtn' onclick=largeVideo('"+id+"')>=</span>"+
+		// "<span class='smallBtn' onclick=smallVideo('"+id+"')>-</span>"+
+		"<span class='liveTitle'>"+subj+"</span>"+"</div>"+
+		"<div class='liveVideoBody hide'><div class='info_subj'>"+subj+"</div><div class='info_model'>"+ims.camera[id].model+"</div><div class='info_mapID'>"+ims[target][id].mapID+"</div><div class='info_desc'>"+ims[target][id].desc+"</div></div>"+
+		"<div class='liveVideoTail' onclick=toggleVideoDetail('"+id+"')>Detail</div>";
+	document.getElementById("video_continer").appendChild(div);
+
+	$("#video_continer #"+id).css("z-index", 8888); 
+	$("#video_continer #"+id).show();
+	$("#video_continer #"+id).draggable(); // 이동
+	// $( "#video_continer #"+id ).resizable({ handles: "ne, se, sw, nw" }); //크기 조정
+}
+function rmVideo(id) {
+	$('#video_continer #'+id).remove();
+	focusedID = '';
+}
+
+function popVideo(id,target) {
+	var offset = $( "#" + ims[target][id].mapID ).offset(); // offset.top, offset.left
+	var leftOrg = parseInt(offset.left);
+	var topOrg = parseInt(offset.top);
+	// console.log(leftOrg, topOrg+'px', $('#video_continer #'+id).css('top'))
+
+	var innerW = window.innerWidth;
+	var innerH = window.innerHeight;
+	if ($('#video_continer #'+id).css('top') == topOrg + 'px') {
+		var width = innerW * imageLX / 100;
+		var height = innerH * imageLX / 100;
+
+		$('#video_continer #'+id ).animate({
+			top: ((innerH / 2) - (height / 2)) + "px",
+			left: ((innerW / 2) - (width / 2)) + "px",
+			width: imageLX + "vw",
+			height: imageLY + 'vh'
+		}, 500, function() {
+			// Animation complete.
+		});
+
+		// $('#video_continer #'+id).css('top', ((innerH / 2) - (height / 2)) + "px");
+		// $('#video_continer #'+id).css('left', ((innerW / 2) - (width / 2)) + "px");
+		// $('#video_continer #'+id).css('width', imageLX + 'vw');
+		// $('#video_continer #'+id).css('height', imageLY + 'vh');
+		$("#video_continer #"+id).css("z-index", 18888);
+	} else {
+
+		var width = innerW * imageSX / 100;
+		var height = innerH * imageSY / 100;
+
+		$('#video_continer #'+id ).animate({
+			top: topOrg + "px",
+			left: leftOrg + "px",
+			width: imageSX + "vw",
+			height: imageSY + 'vh'
+		}, 500, function() {
+			// Animation complete.
+		});
+
+		// $('#video_continer #'+id).css('top', topOrg + "px");
+		// $('#video_continer #'+id).css('left', leftOrg + "px");
+		// $('#video_continer #'+id).css('width', imageSX + 'vw');
+		// $('#video_continer #'+id).css('height', imageSY + 'vh');
+		$("#video_continer #"+id).css("z-index", 8888); 
+	}
+}
+
+function toggleVideoDetail(id) {
+	$('#video_continer #'+id+' .liveVideoBody').toggle('slow');
+}
+// function smallVideo(id) {
+// 	var innerW = window.innerWidth;
+// 	var innerH = window.innerHeight;
+// 	var width = innerW * imageSX / 100;
+// 	var height = innerH * imageSY / 100;
+
+// 	$('#video_continer #'+id).css('top', ((innerH / 2) - (height / 2)) + "px");
+// 	$('#video_continer #'+id).css('left', ((innerW / 2) - (width / 2)) + "px");
+// 	$('#video_continer #'+id).css('width', imageSX + 'vw');
+// 	$('#video_continer #'+id).css('height', imageSY + 'vh');
+// }
+// function largeVideo(id) {
+// 	var innerW = window.innerWidth;
+// 	var innerH = window.innerHeight;
+// 	var width = innerW * imageLX / 100;
+// 	var height = innerH * imageLX / 100;
+
+// 	$('#video_continer #'+id).css('top', ((innerH / 2) - (height / 2)) + "px");
+// 	$('#video_continer #'+id).css('left', ((innerW / 2) - (width / 2)) + "px");
+// 	$('#video_continer #'+id).css('width', imageLX + 'vw');
+// 	$('#video_continer #'+id).css('height', imageLY + 'vh');
+// }
+
+// URL 관련 이미지 표출 기능
+// URL Image View
+function showSnapshot(url, info, time) { 
+	var id = url.replace(/[\W_]+/g,"_");
+	$('#image_continer #'+id).remove(); // 관련 프레임 삭제
+	var div = document.createElement('div');
+	div.id = id;
+	div.className = 'liveImage'; // width * 0.5625(16:9), * 0.75(4:3)
+	div.style.width = "6vw"; // imageSX/4 + 'vw'; // 기본의 반 크기
+	div.style.height = "6vh"; // imageSY/4 + 'vh';  // 16:9 비율
+	div.style.borderRadius = '0px';
+	div.style.backgroundImage = "url(http://"+url+")";
+	div.style.backgroundSize = "100% 100%"; // background-size: cover
+	div.onclick = function () { popImage(id); };
+	div.innerHTML ="<div class='liveImageHead'><span class='closeBtn' onclick=rmImage('"+id+"')>❌</span><span class='liveTitle'>"+info+"</span><span class='liveTime'>"+time+"</span></div>";
+
+	// 이미지 창이 일정 갯수가 넘으면 과거를 우선으로 삭제 한다.
+	if($("#image_continer").children().length >= 128){
+		$("#image_continer div").last().remove();
+	}
+	$("#image_continer").prepend(div); // 맨 앞단에 이미지 표시
+}
+function rmImage(id) {
+	$('#image_continer #'+id).remove();
+}
+
+function popImage(id) {
+	if($('#image_continer #'+id).css('position') == 'relative') {
+		$("#image_continer #"+id).css({position:'fixed'});
+		$('#image_continer #'+id ).animate({
+			top:'6vh', 
+			left:'41vw', // 중간 위치 50vw - width/2 
+			width:'18vw', 
+			height:'18vh'
+		}, 500, function() {
+			// Animation complete.
+		});
+
+		// $('#image_continer #'+id).css({position:'fixed', top:'4px', left:'4px', width:'18vw', height:'18vh'});
+		// $("#image_continer #"+id).draggable(); // 이동
+	} else {
+		$("#image_continer #"+id).css({position:'relative'});
+		$('#image_continer #'+id ).css({
+			top:'unset', 
+			left:'unset', 
+			width:'6vw', 
+			height:'6vh'
+		});
+
+		// $('#image_continer #'+id).css({position:'relative', top:'unset', left:'unset', width:'6vw', height:'6vh'});
+		// $("#image_continer #"+id).draggable({ disabled: true }); // 이동
+	}
+}
+
+</script>
+<!-- 로컬스토리지를 이용한 HTML5 + JS ZOOM 기능 -->
+<input type="range" id="zoomSet" name="zoomSet" style="position:absolute;bottom:0;right:0;opacity:0.01;width:100px;margin-right:6px;" min="0" max="2" step="0.01">
+<script>
+	// 화면 줌 브라우저별 설정 <<
+	var zoom = localStorage.getItem("zoomSetIMS"); // 데이터 가져오기
+	if(typeof zoom !== "undefined") {
+		$("#zoomSet").val(zoom);
+		$("#lastEvent,#listDetail,#sensorLogOneDay,#listingLog,#groupSet").css('zoom', zoom);
+	} else {
+		$("#zoomSet").val(1);
+		$("#lastEvent,#listDetail,#sensorLogOneDay,#listingLog,#groupSet").css('zoom', 1);
+	}
+	$("#zoomSet").on("input change", function() { 
+		localStorage.setItem("zoomSetIMS", this.value); // 데이터 쓰기
+		$("#lastEvent,#listDetail,#sensorLogOneDay,#listingLog,#groupSet").css('zoom', this.value);
+	});	
+
+	// $("#groupSet").hover(function() {
+	// 	$(this).animate({opacity: 1.0}, 500);
+	// }, function() {
+	// 	$(this).animate({opacity: 0.01}, 500);
+	// });
+
+	$("#zoomSet").hover(function() {
+		$(this).animate({opacity: 1.0}, 500);
+	}, function() {
+		$(this).animate({opacity: 0.01}, 500);
+	});
+
+// >> 화면 줌 브라우저별 설정 
+</script>
+
+<div id="bodyWrap" style="display:none; position: absolute;width: 100%;height: 100%; top: 0;"></div>
+</body>
+</html>

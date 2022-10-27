@@ -1,0 +1,82 @@
+{
+	"AXIS_VAPIX_V3":{
+		"isPTZ":true,
+		"camImage":"/axis-cgi/jpg/image.cgi",
+		"camVideo":"/axis-cgi/mjpg/video.cgi",
+		"ptzHome":"/axis-cgi/com/ptz.cgi?pan=0&tilt=0&zoom=1",
+		"ptzControl":"/axis-cgi/com/ptz.cgi?",
+		"ptzConfig":"/axis-cgi/com/ptzconfig.cgi?"
+	},
+	"Hanwha_V2_5_3":{
+		"isPTZ":true,
+		"camImage":"/stw-cgi/video.cgi?msubmenu=snapshot&Profile=1&action=view",
+		"camVideo":"/stw-cgi/video.cgi?msubmenu=stream&action=view",
+		"ptzHome":"/stw-cgi/ptzcontrol.cgi?action=control&msubmenu=absolute&Pan=0&Tilt=0",
+		"ptzControl":"/stw-cgi/ptzcontrol.cgi?action=control&",
+		"ptzConfig":"/stw-cgi/ptzconfig.cgi?"
+	},
+	"Honeywell_PTZ":{
+		"isPTZ":true,
+		"camImage":"/img/snapshot.cgi",
+		"camVideo":"/img/video.mjpeg",
+		"ptzHome":"",
+		"ptzControl":"",
+		"ptzConfig":""
+	},
+	"Dahua_PTZ_API":{
+		"isPTZ":true,
+		"camImage":"/cgi-bin/snapshot.cgi",
+		"camVideo":"/cgi-bin/mjpg/video.cgi?channel=0&subtype=1",
+		"ptzHome":"/cgi-bin/ptz.cgi?action=start&code=PositionABS&arg1=0&arg2=0&arg3=0",
+		"ptzControl":"/cgi-bin/ptz.cgi?action=start&",
+		"ptzConfig":"/cgi-bin/ptz.cgi?"
+	},
+	"Dahua_API":{
+		"isPTZ":false,
+		"camImage":"/cgi-bin/snapshot.cgi",
+		"camVideo":"/cgi-bin/mjpg/video.cgi?channel=0&subtype=1",
+		"ptzHome":"/cgi-bin/ptz.cgi?action=start&code=PositionABS&arg1=0&arg2=0&arg3=0",
+		"ptzControl":"",
+		"ptzConfig":""
+	},
+	"Vision_V2_4":{
+		"isPTZ":true,
+		"camImage":"/cgi-bin/image.cgi",
+		"camVideo":"/cgi-bin/video.cgi",
+		"ptzHome":"/cgi-bin/ptz.cgi?action=write&cmd=gotoptxposition&mode=0&pan=0&tilt=0&zoom=0&speed=255",
+		"ptzControl":"/cgi-bin/ptz.cgi?action=write&",
+		"ptzConfig":"/cgi-bin/ptz.cgi?action=write&"
+	},
+	"TIANDY-NVT":{
+		"isPTZ":true,
+		"camImage":"/jpeg/pic_type00_01.jpg",
+		"camVideo":"",
+		"ptzHome":"",
+		"ptzControl":"",
+		"ptzConfig":""
+	},
+	"HIK_V1": {
+	  "isPTZ": true,
+	  "camImage": "/ISAPI/Streaming/channels/1/picture",
+	  "camVideo": "/ISAPI/Streaming/channels/102/httppreview",
+	  "ptzHome": "",
+	  "ptzControl": "",
+	  "ptzConfig": ""
+	},
+	"UNV_PTZ":{
+		"isPTZ":true,
+		"camImage":"/LAPI/V1.0/Channels/0/Media/Video/Streams/0/Snapshot",
+		"camVideo":"/video/mjpeg/stream2 ",
+		"ptzHome":"",
+		"ptzControl":"",
+		"ptzConfig":""
+	},
+	"Others":{
+		"isPTZ":false,
+		"camImage":"",
+		"camVideo":"",
+		"ptzHome":"",
+		"ptzControl":"",
+		"ptzConfig":""
+	}
+}

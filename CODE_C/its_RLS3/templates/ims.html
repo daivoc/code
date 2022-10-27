@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<title></title>
+<script src="/static/jquery-3.5.1.min.js"></script>
+<script src="/static/socket.io-3.0.4.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+    var config = {};
+
+    $(document).ready(function() {
+        var socket = io();
+
+        // 최초 접속시 서버로부터 환경설정(config.json)값을 가지고 온다.
+        socket.on('connect', function(data) {
+            // console.log(cfg);
+            if(data) {
+                config = data;
+                var type_RLS = config.gInfoDevice.model;
+                var size = config.model[type_RLS].size;
+                var html_viewBox = '-'+size+' 0 '+size*2+' '+size; // SVG 바탕 크기 선언 - StartX, StartY, EndX, EndY
+                svg_id = document.getElementsByTagName("svg")[0];
+                svg_id.setAttribute("viewBox", html_viewBox);
+                
+                document.getElementById("rls_area").innerHTML = config.wsDetectArea.svg.area;
+            }
+        });
+
+        $('body').on('click', '#system_time', function () { // 수정모드 내의 기능
+            // socket.emit('clockToggle');
+        });
+
+ });
+</script>
+<style>
+html,body{background:black;margin:unset;padding:unset;}
+svg{position:absolute;top:100px;left:100px;width:200px;background:#ffffff10}
+.html_scan{stroke-width:20px;stroke:white;fill:#ff00ea4d;}
+.hide{display:none;}
+</style>
+</head>
+<body>
+    <svg id="svg_id">
+        <g id="rls_zone"></g>
+        <g id="rls_frame"></g>
+        <g id="rls_over"></g>
+        <g id="rls_grid"></g>
+        <g id="rls_area"></g>
+        <g id="rls_background"></g>
+        <g id="rls_allocate"></g>
+        <g id="rls_mask"></g>
+        <g id="rls_event"></g>
+    </svg>
+</body>
+</html>

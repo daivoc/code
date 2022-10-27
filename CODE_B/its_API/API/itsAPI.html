@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes'>
+
+__script_jquery_js__
+__style_bootstrap_js__
+__style_bootstrap_css__
+__script_jquery_ui_js__
+__script_jquery_ui_css__
+
+<script src='/socket.io/socket.io.js'></script>
+
+<script>
+var myKey = window.performance.now(); // 클라이언트 브라우져 유니크 아이디
+var myIP = ""; // 등록된 자신의 아이피
+var myID = ""; // 등록된 자신의 사용자
+var myLV = ""; // 등록된 자신의 등급
+
+var cfg = {};
+
+//////////////////////////////////////////////
+function activeAdd(id){
+	$('#'+id).addClass('active');
+};
+function activeDel(id){
+	$('#'+id).removeClass('active');
+};
+function getTime() {
+	var today = new Date();
+	return today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();	
+}
+function push_gLog(data){
+	var gLogElement = document.getElementById('gLog');
+	var gLogText = gLogElement.innerHTML;
+	if (gLogText.split('<br>').length > cfg.screen.logMaxLines) {
+		gLogElement.innerHTML = gLogText.substring(gLogText.indexOf('<br>')+4);// 첫번째 
+	}
+	gLogElement.innerHTML +=  getTime() + ' ' + data + '<br>';
+	gLogElement.scrollTop = gLogElement.scrollHeight; // 스크롤 하단으로
+};
+
+function getCurrentDate() {
+	var date = new Date();
+	var year = date.getFullYear().toString();
+	var month = date.getMonth() + 1;
+	month = month < 10 ? '0' + month.toString() : month.toString();
+	var day = date.getDate();
+	day = day < 10 ? '0' + day.toString() : day.toString();
+	var hour = date.getHours();
+	hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+	var minites = date.getMinutes();
+	minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+	var seconds = date.getSeconds();
+	seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+	return year + '-' + month + '-' + day + ' ' + hour + ':' + minites + ':' + seconds;
+};
+
+function btn_enable_set(status) {
+	if(status) { // true
+		$('.desc,.trgr,.exec,.gpio,.time').attr('readonly',true);
+		$('.desc,.cmds,.trgr,.exec,.gpio,.time').attr('disabled',true);
+		$('.desc,.cmds,.trgr,.gpio,.time').hide();
+	} else { // false
+		$('.desc,.trgr,.exec,.gpio,.time').attr('readonly',false);
+		$('.desc,.cmds,.trgr,.exec,.gpio,.time').attr('disabled',false);
+		$('.desc,.cmds,.trgr,.gpio,.time').show();
+	}
+}
+
+$( document ).ready(function() {
+	var socketio = io.connect();
+	socketio.on('camera_var', function(data) {
+		cfgCam = data;
+	});
+
+	socketio.on('global_var', function(data) {
+		cfg = data;
+		// console.log(cfg);
+		$('#title').html(cfg.title);
+		$('#subTitle').html(cfg.location);
+		if(cfg.audio.enable) {
+			activeAdd('audio_exec');
+			$('#audio_exec').html("On");
+		} else {
+			activeDel('audio_exec');
+			$('#audio_exec').html("Off");
+		}
+		if(cfg.mDVR.enable) {
+			activeAdd('mDVR_exec');
+			$('#mDVR_exec').html("On");
+		} else {
+			activeDel('mDVR_exec');
+			$('#mDVR_exec').html("Off");
+		}
+
+		$("input[id^='cmd_']").each(function() { // command();
+			$(this).val(cfg.command[this.id.replace('cmd_', '')]);
+		});
+		$("input[id^='des_']").each(function() { // description();
+			$(this).val(cfg.description[this.id.replace('des_', '')]);
+		});
+
+		// 버튼 상태 표시
+		$("button[id^='exe_']").each(function() { // execution();
+			if(cfg.execution[this.id.replace('exe_', '')]) {
+				activeAdd(this.id);
+				$(this).html("Enabled");
+			} else {
+				activeDel(this.id);
+				$(this).html("Disabled");
+			}
+		});
+		$("button[id^='trg_']").each(function() { // trigger();
+			if(cfg.trigger[this.id.replace('trg_', '')]) {
+				activeAdd(this.id);
+				$(this).html("Up");
+			} else {
+				activeDel(this.id);
+				$(this).html("Down");
+			}
+		});
+
+		// 라이브 업데이트
+		$("input[id^='cmds_A_']").each(function() { // alarmCmds();
+			$(this).val(cfg.alarmCmds[this.id.replace('cmds_A_', '')].cmd);
+		});
+		$("input[id^='desc_A_']").each(function() { // description();
+			$(this).val(cfg.alarmCmds[this.id.replace('desc_A_', '')].desc);
+		});
+		$("input[id^='time_A_']").each(function() { // description();
+			$(this).val(cfg.alarmCmds[this.id.replace('time_A_', '')].time);
+		});
+
+		// 라이브 업데이트
+		$("input[id^='cmds_T_']").each(function() { // command();
+			$(this).val(cfg.timerCmds[this.id.replace('cmds_T_', '')].cmd);
+		});
+		$("input[id^='desc_T_']").each(function() { // description();
+			$(this).val(cfg.timerCmds[this.id.replace('desc_T_', '')].desc);
+		});
+		$("input[id^='time_T_']").each(function() { // description();
+			$(this).val(cfg.timerCmds[this.id.replace('time_T_', '')].time);
+		});
+	});
+
+	// 클라이언트 아이피 정보 요청
+	socketio.on('findClientIP', function(data) { // { myKey: data['myKey'], myIP: clientIP, myID: userID });
+		// console.log(data, myKey);
+		if(myKey == data['myKey']) {
+			// 자신의 레벨을 저장 한다.
+			myIP = data['myIP']; // 클라이언트 아이피
+			myID = data['myID']; // 레벨의 종류는 admin, manager, viewer, guest
+			$('#myIP').html(myID+'('+myIP+')'); // 화면 좌측 상단에 자신의 아이피와 레벨 표시
+
+			if(myID == 'admin') { // admin 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLV = 9;
+				$('#loginGuest').hide();
+				$('.gSensor, .gAlarm, .gTimer, .gControl').show('slow');
+				$('.gControl').css('display', 'inline-flex');
+			} else if(myID == 'manager') { // manager 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLV = 7;
+				$('#loginGuest').hide();
+				$('.gSensor, .gControl').show('slow');
+				$('.gControl').css('display', 'inline-flex');
+			} else if(myID == 'viewer') { // viewer 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLV = 5;
+				$('#loginGuest').hide();
+				$('.gpio, .exec, .trgr').hide();
+				$('.gControl, .gLog').hide();
+				$('.gSensor').show('slow');
+			} else if(myID == 'guest') { // guest 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+				myLV = 1;
+				$('#loginGuest').show(); // 화면 우측 상간에 자신의 아이피와 레벨 표시
+				$('.gSensor, .gAlarm, .gTimer, .gControl, .gLog').hide();
+				$("#dialog_MSG").html('Call Administrator: ' + myID+' ('+myIP+')')
+				$("#dialog_MSG").dialog("open");
+			} 
+		}
+	});	
+	
+	socketio.on('btn_status_gpio', function(data) {
+		var id = data['id'];
+		var status = data['status'];
+		// var msg = data['msg'];
+		if(status == 0) { 
+			activeDel(id);
+		} else {
+			activeAdd(id);
+		};
+	});
+	
+	socketio.on('btn_status_audio', function(data) {
+		// console.log(data);
+		var length = data['length'] * 1000;
+		var path = data['path'];
+		var volume = data['volume'];
+		var loop = data['loop'];
+		activeAdd('audio_stop');
+		$('#audio_name').val(getTime() + ', length:' + data['length']+'(s), volume:'+volume+'(%), name:' + data['path']);
+		setTimeout(activeDel, length, 'audio_stop') // 오디오 시간(length)이 지난후 activeDel(id);
+	});
+	
+	socketio.on('btn_status_mDVR', function(data) {
+		console.log(data); // {'ip':sender_API[0], 'time':eventAt, 'activation':1}
+		var ip = data['ip'];
+		var time = data['time'];
+		var activation = data['activation'];
+		if (activation) {
+			activeAdd('mDVR_stop');
+			info = "<div>From: "+ip+"</div>"+"<div>"+time+"</div>";
+		} else {
+			activeDel('mDVR_stop');
+			info = "<div>From: "+ip+"</div>"+"<div onclick=\"window.open('http://"+cfg['tcpIpPort']['staticAddress']+"/mDVR/"+time+"','popup','width=600,height=400'); return false;\">"+time+"</div>";
+
+			// info = "<div>From: "+ip+"</div>"+"<div><a href=./mDVR/"+time+"target=blank>"+time+"</a></div>";
+		}
+		$('#mDVR_name').html(info);
+	});
+	
+	socketio.on('btn_status_set_time', function(data) {
+		// console.log(data);
+		$('#set_time').html('Sync Clock Updated - ' + data['now']);
+	});
+
+	socketio.on('btn_enable', function(data) { // { code: btn_group, status: status }
+		// console.log(data);
+		if(myKey != data['myKey']) return;
+		// if(myID == 'viewer' || myID == 'guest') return; // 어드민사용자만 허용
+		var code = data['code'];
+		var status = data['status'];
+		$('#save, #restart, #reboot, #gLogBtn, #cfgSet, #setup').remove();
+		btn_enable_set(status);
+		if(status) { // true
+			$('#gLog').fadeOut('slow');
+			// $('.desc,.trgr,.exec,.gpio,.time').attr('readonly',true);
+			// $('.desc,.cmds,.trgr,.exec,.gpio,.time').attr('disabled',true);
+			// $('.cmds,.trgr,.gpio,.time').hide();
+		} else { // false
+			$('.gTail').append(code);
+			// $('.desc,.trgr,.exec,.gpio,.time').attr('readonly',false);
+			// $('.desc,.cmds,.trgr,.exec,.gpio,.time').attr('disabled',false);
+			// $('.cmds,.trgr,.gpio,.time').show();
+		}
+	});
+
+	socketio.on('push_gLog', function(data) {
+		// console.log(data);
+		if(myID == 'admin' || myID == 'manager') push_gLog(data); // 어드민사용자만 허용
+	});
+
+	socketio.on('heartbeat', function(data) {
+		// console.log(data);
+		$("#heartbeat").hide();
+		// $("#heartbeat").fadeIn(data*1000);
+		$("#heartbeat").fadeIn(data*600); // 표시후 잠시 대기
+	});
+
+	socketio.on('password_unmatch', function(data) { // { myKey: myKey, clientIP: clientIP }
+		if(myKey == data['myKey']) {
+			$("#dialog_MSG").html('Password Unmatch - Rquester: ' + data['clientIP'])
+			$("#dialog_MSG").dialog("open");
+		}
+	});
+	
+	$('.cmds').on('change', function() { // 명령어 줄에 JSON 형식오류 발생시 팝업됨
+		try {
+			if($(this).val()) JSON.parse($(this).val()); // 값(내용)이 있으면 JSON Test 실행
+		} catch (e) {
+			// console.log("error: "+e);
+			$("#dialog_MSG").html(e)
+			$("#dialog_MSG").dialog("open");
+			// $("#"+$(this).attr('id')).val(''); // 삭제
+			return
+		};
+	});	
+
+	$('#ipCamera').on('change', function() { 
+		var camInfo = cfgCam[$(this).val()];
+		try {
+			if(camInfo) {
+				$('#mDVR').val(JSON.stringify(camInfo, null, 4)); 
+			} else {
+				$('#mDVR').val(''); 
+			}
+		} catch (e) {
+			console.log("error: "+e);
+			return
+		};
+	});	
+	
+	$('#dialog_GPIO .dialogInput').on('change', function() { // 다이얼로그 폼내 요소값 변경시 이벤트 발생
+		// {"host":"192.168.0.80","port":"34001","data":[{"gpio":{"status":"2","id":"R09","hold":"1"}},{"gpio":{"status":"2","id":"R10","hold":"2"}},{"gpio":{"status":"2","id":"R11","hold":"3"}},{"gpio":{"status":"2","id":"R12","hold":"4"}}]}
+		// {"host":"192.168.0.80","port":"34001","data":[{"gpio":{"status":"2","id":"R11","hold":"3.16"}}]}
+		// status, target, duration, itsIP, itsPort
+		// var userCmd = document.getElementById('userCmd').value;
+
+		obj = JSON.parse(document.getElementById('userCmd').value);// JSON 문자열을 JSON Object로 변환
+		console.log(obj)
+		if(this.id == 'status') {
+			obj.data[0].gpio.status = document.getElementById('status').value;
+		} else if (this.id == 'target') {
+			obj.data[0].gpio.id = document.getElementById('target').value;
+		} else if (this.id == 'duration') {
+			obj.data[0].gpio.hold = document.getElementById('duration').value;
+
+		// } else if (this.id == 'source') {
+		// 	obj.data[0].gpio.hold = document.getElementById('source').value;
+		// } else if (this.id == 'volume') {
+		// 	obj.data[0].gpio.hold = document.getElementById('volume').value;
+		// } else if (this.id == 'loop') {
+		// 	obj.data[0].gpio.hold = document.getElementById('loop').value;
+
+		} else if (this.id == 'itsIP') {
+			obj.host = document.getElementById('itsIP').value;
+		} else if (this.id == 'itsPort') {
+			obj.port = document.getElementById('itsPort').value;
+		} else {
+			return;
+		}
+		console.log(obj)
+
+		document.getElementById('userCmd').value = JSON.stringify(obj);// JSON Object를 JSON 문자열로 변환
+		
+		console.log(this.id);
+	});	
+		
+	$('.relay, .power').on('click', function(event) { // 사용자 릴레이 테스트
+		if(myID == 'admin' || myID == 'manager') {
+			socketio.emit('btnRelayClick', { myKey:myKey, myID:myID, password:$('#password').val(), id:$(this).attr('id') });
+			$("#sCmd").html('{ myKey:'+myKey+', myID:'+myID+', password:'+$("#password").val()+', id:'+$(this).attr('id')+' }');
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});	
+
+	$('.sensor').on('click', function() { // 사용자 센서 테스트
+		if(myID == 'admin' || myID == 'manager') {
+			if($('#cmd_'+$(this).attr('id')).val()) {
+				socketio.emit('btnSensorClick', { myKey:myKey, myID:myID, password:$('#password').val(), id:$(this).attr('id'), command:$('#cmd_'+$(this).attr('id')).val() });
+				// $("#dialog_MSG").html('Sensor Test '+$('#cmd_'+$(this).attr('id')).val())
+				// $("#dialog_MSG").html('<p><label class="dialog">Sensor Test:<textarea type="text" disabled readonly style="overflow: hidden;height: 8vh;" class="form-control">'+$('#cmd_'+$(this).attr('id')).val()+'</textarea></label></p>')
+				// $("#dialog_MSG").dialog("open");
+				$("#sCmd").html($('#cmd_'+$(this).attr('id')).val());
+			}
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});	
+
+	$('.cmds').on('dblclick', function() {
+		var cmd_ioID = this.id; // cmd_io01
+		var jsonData = $('#'+cmd_ioID).val(); // cmd_io01
+
+		try { // 예쁘게 출력 가능.
+			var str = JSON.stringify(JSON.parse(jsonData), null, 4); 
+		} catch (e) { // 오류 발생시 일반 택스트 사용
+			var str = jsonData;
+		}
+
+		$('#dialog_CMD_edit #userCmdEdit').val(str); 
+		$('#dialog_CMD_edit #userCmdEditID').val(cmd_ioID); // 사용자 명령을 적용할 대상 ID를 저정 한다.
+		$('#dialog_CMD_edit').dialog('open');
+	});	
+
+	$('.trgr').on('click', function() {
+		if($(this).hasClass('active')) {
+			$(this).html("Down");
+		} else {
+			$(this).html("Up");
+		}
+	});	
+	
+	$('.exec').on('click', function() {
+		if($(this).hasClass('active')) {
+			$(this).html("Disabled");
+		} else {
+			$(this).html("Enabled");
+		}
+	});	
+
+	$('.gpio').on('click', function() {
+		var cmd_ioID = this.id.replace('add_', 'cmd_'); // add_io01 -> cmd_io01
+		var jsonData = $('#'+cmd_ioID).val(); // add_io01 -> cmd_io01
+		if(jsonData.length == 0) {
+			var obj = {"host":cfg.tcpIpPort.staticAddress,"port":cfg.portAPI.toString(),"data":[{"gpio":{"status":"","id":"","hold":"1"}}]};
+		} else {
+			try {
+				var obj = JSON.parse(jsonData);
+			} catch (e) {
+				// console.log("error: "+e);
+				$("#dialog_MSG").html(e)
+				$("#dialog_MSG").dialog("open");
+				return
+			};
+		};
+
+		if ('gpio' in obj.data[0]) { // "status":"2","id":"R09","hold":"1"
+			$('#dialog_GPIO #status').val(obj.data[0].gpio.status);
+			$('#dialog_GPIO #target').val(obj.data[0].gpio.id);
+			$('#dialog_GPIO #duration').val(obj.data[0].gpio.hold);
+			$('#dialog_GPIO #itsIP').val(obj.host);
+			$('#dialog_GPIO #itsPort').val(obj.port);
+			$('#dialog_GPIO #userCmd').val(JSON.stringify(obj));
+			$('#dialog_GPIO #userCmdID').val(cmd_ioID); // 사용자 명령을 적용할 대상 ID를 저정 한다.
+			$('#dialog_GPIO').dialog('open');
+		} else {
+			$("#dialog_MSG").html("Remove Command Line and Try Again.")
+			$("#dialog_MSG").dialog("open");
+			return;
+		} 
+	});	
+
+	$('.alarm').on('click', function() { // 사용자 센서 테스트
+		if(myID == 'admin' || myID == 'manager') {
+			if($('#cmds_A_'+$(this).attr('id')).val()) {
+				socketio.emit('btnAlarmClick', { myKey:myKey, myID:myID, password:$('#password').val(), id:$(this).attr('id'), command:$('#cmds_A_'+$(this).attr('id')).val() });
+				// $("#dialog_MSG").html('<p><label class="dialog">Alarm Test:<textarea type="text" disabled readonly style="overflow: hidden;height: 8vh;" class="form-control">'+$('#cmds_A_'+$(this).attr('id')).val()+'</textarea></label></p>')
+				// $("#dialog_MSG").dialog("open");
+				$("#sCmd").html($('#cmds_A_'+$(this).attr('id')).val());
+			}
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});	
+
+	$('.timer').on('click', function() { // 사용자 센서 테스트
+		if(myID == 'admin' || myID == 'manager') {
+			if($('#cmds_T_'+$(this).attr('id')).val()) {
+				socketio.emit('btnTimerClick', { myKey:myKey, myID:myID, password:$('#password').val(), id:$(this).attr('id'), command:$('#cmds_T_'+$(this).attr('id')).val() });
+				// $("#dialog_MSG").html('<p><label class="dialog">Alarm Test:<textarea type="text" disabled readonly style="overflow: hidden;height: 8vh;" class="form-control">'+$('#cmds_T_'+$(this).attr('id')).val()+'</textarea></label></p>')
+				// $("#dialog_MSG").dialog("open");
+				$("#sCmd").html($('#cmds_T_'+$(this).attr('id')).val());
+			}
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});	
+
+	$('body').on('click', '#restart', function () { // 수정모드 내의 기능
+		socketio.emit('restart_self');
+	});
+
+	$('body').on('click', '#reboot', function () { // 수정모드 내의 기능
+		socketio.emit('reboot_self');
+	});
+
+	$('body').on('click', '#save', function () { // 수정모드 내의 기능
+		// 입력항의 내용을 딕셔너리 형식으로 취합후 서버에 전송
+		var config = { password: $('#password').val() }
+		config['alarmCmds'] = cfg['alarmCmds']; // 프레임을 복사한다.
+		$("input[id^='cmds_A_']").each(function() {
+			cmds_A = this.id.replace('cmds_A_', '');
+			config['alarmCmds'][cmds_A]['cmd'] = $(this).val();
+		});
+		$("input[id^='desc_A_']").each(function() {
+			desc_A = this.id.replace('desc_A_', '');
+			config['alarmCmds'][desc_A]['desc'] = $(this).val();
+		});
+		$("input[id^='time_A_']").each(function() {
+			time_A = this.id.replace('time_A_', '');
+			config['alarmCmds'][time_A]['time'] = $(this).val();
+		});
+		// console.log(config['alarmCmds']);
+
+		config['timerCmds'] = cfg['timerCmds']; // 프레임을 복사한다.
+		$("input[id^='cmds_T_']").each(function() {
+			cmds_T = this.id.replace('cmds_T_', '');
+			config['timerCmds'][cmds_T]['cmd'] = $(this).val();
+		});
+		$("input[id^='desc_T_']").each(function() {
+			desc_T = this.id.replace('desc_T_', '');
+			config['timerCmds'][desc_T]['desc'] = $(this).val();
+		});
+		$("input[id^='time_T_']").each(function() {
+			time_T = this.id.replace('time_T_', '');
+			config['timerCmds'][time_T]['time'] = $(this).val();
+		});
+		// console.log(config['timerCmds']);
+
+		config['description'] = cfg['description'] // 프레임을 복사
+		$("input[id^='des_']").each(function() {
+			config['description'][this.id.replace('des_', '')] = $(this).val();
+		});
+
+		config['command'] = cfg['command'] // 프레임을 복사
+		$("input[id^='cmd_']").each(function() {
+			config['command'][this.id.replace('cmd_', '')] = $(this).val();
+		});
+
+		config['trigger'] = cfg['trigger'] // 프레임을 복사
+		$("button[id^='trg_']").each(function() {
+			// console.log(this.checked, $(this).is(':checked'))
+			if($(this).hasClass('active')) {
+				config['trigger'][this.id.replace('trg_', '')] = 1;
+			} else {
+				config['trigger'][this.id.replace('trg_', '')] = 0;
+			}
+		});
+
+		config['execution'] = cfg['execution'] // 프레임을 복사
+		$("button[id^='exe_']").each(function() {
+			// console.log(this.checked, $(this).is(':checked'))
+			if($(this).hasClass('active')) {
+				config['execution'][this.id.replace('exe_', '')] = 1;
+			} else {
+				config['execution'][this.id.replace('exe_', '')] = 0;
+			}
+		});
+		config['location'] = cfg.location; 
+
+		config['audioPlayer_set'] = cfg.audio.player; 
+		if(document.getElementById('audio_exec').classList.contains('active')) {
+			config['audioEnable'] = 1;
+		} else {
+			config['audioEnable'] = 0;
+		}
+		// console.log(config['audioEnable']);
+
+		if (document.getElementById('mDVR_exec')) { // mDVR이 실행될때만 존재하기 떄문에
+			if(document.getElementById('mDVR_exec').classList.contains('active')) {
+				config['mDVREnable'] = 1;
+			} else {
+				config['mDVREnable'] = 0;
+			}
+		}
+
+		config['ioBoard_set'] = cfg.ioBoard.set; 
+
+		config['camera_setName'] = cfg.camera.name; 
+		config['camera_setConfig'] = cfg.camera.config; 
+
+		config['staticAddress'] = cfg.tcpIpPort.staticAddress;
+		config['staticNetMask'] = cfg.tcpIpPort.staticNetMask;
+		config['staticGateway'] = cfg.tcpIpPort.staticGateway;
+
+		config['telegramBot01_token'] = cfg.telegram.bot01.token;
+		config['telegramBot01_chatID'] = cfg.telegram.bot01.chatID;
+
+		config['filterIP'] = cfg.permission.filterIP;
+		config['keySource'] = cfg.permission.accessKey.keySource;
+		config['reportMail'] = cfg.reportMail;
+
+		config['myID'] = myID; 
+
+		socketio.emit('save_self', { config:config });
+	});
+
+	$('body').on('click', '#audio_stop', function () {
+		if(myID == 'admin' || myID == 'manager') {
+			socketio.emit('btnStopAudioClick', { myKey:myKey, myID:myID, password:$('#password').val(), command:[{"system":{"command":"stop_audio","value":"0"}}]});
+			$("#sCmd").html('{ myKey:'+myKey+', myID:'+myID+', password:'+$("#password").val()+', command:[{"system":{"command":"stop_audio","value":"0"}}]}');
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	}); 
+
+	$('body').on('click', '#audio_file', function () {
+		if(myID == 'admin' || myID == 'manager') {
+			// socketio.emit('btnStopAudioClick', { myKey:myKey, myID:myID, password:$('#password').val(), command:[{"system":{"command":"stop_audio","value":"0"}}]});
+			var audioFileURL = 'http://__url_server_home__/theme/ecos-its_optex/utility/filemanager/api_audio_common.php';
+			window.open(audioFileURL,'targetWindow',`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400`);
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});
+
+	$('body').on('click', '#mDVR_stop', function () {
+		if(myID == 'admin' || myID == 'manager') {
+			var mDVRFileURL = 'http://__url_server_home__/mDVR';
+			window.open(mDVRFileURL,'targetWindow',`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400`);
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});
+	
+	$('body').on('click', '#image_file', function () {
+		if(myID == 'admin' || myID == 'manager') {
+			// socketio.emit('btnStopAudioClick', { myKey:myKey, myID:myID, password:$('#password').val(), command:[{"system":{"command":"stop_audio","value":"0"}}]});
+			var audioFileURL = 'http://__url_server_home__/theme/ecos-its_optex/utility/filemanager/api_camera_common.php';
+			window.open(audioFileURL,'targetWindow',`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400`);
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});
+	
+	$('body').on('click', '#example_file', function () {
+		if(myID == 'admin' || myID == 'manager') {
+			// socketio.emit('btnStopAudioClick', { myKey:myKey, myID:myID, password:$('#password').val(), command:[{"system":{"command":"stop_audio","value":"0"}}]});
+			var exampleFileURL = 'http://__url_server_home__/api_example.html';
+			window.open(exampleFileURL,'targetWindow',`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600`);
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});	
+
+	$('body').on('click', '#set_time', function () {
+		if(myID == 'admin' || myID == 'manager') {
+			// console.log(getCurrentDate());
+			socketio.emit('btnSetTimeClick', { myKey:myKey, myID:myID, password:$('#password').val(), command:[{"system":{"command":"set_time","value":getCurrentDate()}}]});
+		} else {
+			event.stopPropagation();
+			return; // 어드민사용자만 허용
+		}
+	});
+
+	$('body').on('click', '#gLogBtn', function () {
+		$("#gLog").fadeToggle();
+	});
+
+	$('body').on('click', '#cfgSet', function () {
+		$('#location').val(cfg.location);
+
+		$('#ipAddr').val(cfg.tcpIpPort.staticAddress);
+		$('#netmask').val(cfg.tcpIpPort.staticNetMask);
+		$('#gateway').val(cfg.tcpIpPort.staticGateway);
+		$('#set_time').html('Sync Clock');
+		
+		$('#activation').attr("checked",cfg.reportMail.activation);
+		$('#sender').val(cfg.reportMail.sender);
+		$('#receiver').val(cfg.reportMail.receiver);
+		$('#subject').val(cfg.reportMail.subject);
+		$('#signature').val(cfg.reportMail.signature);
+		$('#frequency').val(cfg.reportMail.frequency);
+		
+		$('#dialog_Config').dialog('open');
+	});	
+
+	$('body').on('click', '#setup', function () { // 수정모드 내의 기능
+		var sel = document.getElementById("ioBoard");
+		sel.innerHTML = ''; // 초기화
+		var opt = document.createElement("option");
+		opt.value = "";
+		opt.text = "--Please choose an option--";
+		sel.add(opt, null);
+		Object.keys(cfg.ioBoard.type).forEach(function(key) {
+			var opt = document.createElement("option");
+			opt.value = key;
+			opt.text = cfg.ioBoard.type[key];
+			if(cfg.ioBoard.set == key) {
+				opt.selected = 'selected';
+			}
+			sel.add(opt, null);
+		});
+
+		var sel = document.getElementById("audioPlayer");
+		sel.innerHTML = ''; // 초기화
+		var opt = document.createElement("option");
+		opt.value = "";
+		opt.text = "--Please choose an option--";
+		sel.add(opt, null);
+		Object.keys(cfg.audio.select).forEach(function(key) {
+			var opt = document.createElement("option");
+			opt.value = key;
+			opt.text = cfg.audio.select[key];
+			if(cfg.audio.player == key) {
+				opt.selected = 'selected';
+			}
+			sel.add(opt, null);
+		});
+
+		var sel = document.getElementById("ipCamera");
+		sel.innerHTML = ''; // 초기화
+		var opt = document.createElement("option");
+		opt.value = "";
+		opt.text = "-- Next Version - Please choose an option--";
+		sel.add(opt, null);
+		Object.keys(cfgCam).forEach(function(key) {
+			// console.log(key);
+			var opt = document.createElement("option");
+			opt.value = key;
+			opt.text = key;
+			if(cfg.camera.name == key) {
+				opt.selected = 'selected';
+			}
+			sel.add(opt, null);
+		});
+		// $('#mDVR').val(JSON.stringify(cfg.camera.config)); // cfgCam[$(this).val()]
+		$('#mDVR').val(JSON.stringify(cfgCam[cfg.camera.name], null, 4)); // cfgCam[$(this).val()]
+		$('#ipClient').html(myIP);
+		$('#ipAdmin').val(cfg.permission.filterIP.admin);
+		$('#ipManager').val(cfg.permission.filterIP.manager);
+		$('#ipViewer').val(cfg.permission.filterIP.viewer);
+		$('#ipAllow').val(cfg.permission.filterIP.allow);
+		$('#ipDeny').val(cfg.permission.filterIP.deny);
+
+		$('#telegramBot01_token').val(cfg.telegram.bot01.token);
+		$('#telegramBot01_chatID').val(cfg.telegram.bot01.chatID);
+
+		$('#keySource').val(cfg.permission.accessKey.keySource);
+		$('#keyCode').val(cfg.permission.accessKey.keyCode);
+
+		$('#dialog_setup').dialog('open');
+	});
+
+	$('body').on('click', '#loginGuest', function () {
+		$("#dialog_Login").dialog("open");
+	});
+	
+	$('#edit').on('click', function() { 
+		socketio.emit('edit_self', { myKey:myKey, myID:myID, password:$('#password').val(), status:$(this).hasClass('active') });
+	});
+
+	socketio.emit('findClientIP', { myKey:myKey }); // 자신의 아이피 확인
+	btn_enable_set(true);
+
+	// // 주기적으로 연관된 ITS의 시간을 Desktop 시간과 동기한다.
+	// // 여러개의 브라우저가 열린상태에서 중복 요청 발생함
+	// function sync_clock() {
+	// 	socketio.emit('btnSetTimeClick', { myKey:myKey, myID:myID, password:$('#password').val(), command:[{"system":{"command":"set_time","value":getCurrentDate()}}]});
+	// 	// console.log(getCurrentDate());
+	// 	setInterval(sync_clock, 300*1000);	
+	// }
+	// sync_clock();
+
+});
+
+$(function() {
+	$("#dialog_MSG").dialog({
+		autoOpen: false,
+		closeOnEscape: false, 
+		open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+		show: {
+			effect: "fade",
+			duration: 1000
+		},
+		hide: {
+			effect: "fade",
+			duration: 1000
+		},
+		height: 'auto',
+		width: '30vw',
+		modal: true, // 다이얼러그 박스 이외의 모든 요소를 비활성화 시킴
+		buttons: {
+			'Close': function() {
+				$(this).dialog('close').focus();
+			}
+		}
+	});
+	$("#dialog_Login").dialog({
+		autoOpen: false,
+		closeOnEscape: false, 
+		open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+		show: {
+			effect: "fade",
+			duration: 1000
+		},
+		hide: {
+			effect: "fade",
+			duration: 1000
+		},
+		height: 'auto',
+		width: '30vw',
+		modal: true, // 다이얼러그 박스 이외의 모든 요소를 비활성화 시킴
+		buttons: {
+			'Login': function() {
+				$(this).dialog('close').focus();
+				var socketio = io.connect();
+				socketio.emit('findClientIP', { myKey:myKey, myPWD:document.getElementById('myPWD').value });
+			},
+			'Cancel': function() {
+				$(this).dialog('close');
+			}
+		}
+	});
+	$("#dialog_setup").dialog({
+		autoOpen: false,
+		closeOnEscape: false, 
+		open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+		show: {
+			effect: "fade",
+			duration: 1000
+		},
+		hide: {
+			effect: "fade",
+			duration: 1000
+		},
+		height: 'auto',
+		width: '30vw',
+		modal: true, // 다이얼러그 박스 이외의 모든 요소를 비활성화 시킴
+		buttons: {
+			'Update': function() {
+				$(this).dialog('close');
+				cfg.audio.player = document.getElementById('audioPlayer').value; // audioPlayer
+				cfg.ioBoard.set = document.getElementById('ioBoard').value; 
+				cfg.camera.name = document.getElementById('ipCamera').value; 
+				cfg.camera.config = cfgCam[cfg.camera.name];
+				cfg.telegram.bot01.token = document.getElementById('telegramBot01_token').value.replace(/\s/g, '');
+				cfg.telegram.bot01.chatID = document.getElementById('telegramBot01_chatID').value.replace(/\s/g, '');
+				cfg.permission.filterIP.admin = document.getElementById('ipAdmin').value.replace(/\s/g, '');
+				cfg.permission.filterIP.manager = document.getElementById('ipManager').value.replace(/\s/g, '');
+				cfg.permission.filterIP.viewer = document.getElementById('ipViewer').value.replace(/\s/g, '');
+				cfg.permission.filterIP.allow = document.getElementById('ipAllow').value.replace(/\s/g, '');
+				cfg.permission.filterIP.deny = document.getElementById('ipDeny').value.replace(/\s/g, '');
+				cfg.permission.accessKey.keySource = document.getElementById('keySource').value.replace(/\s/g, '');
+			},
+			'Cancel': function() {
+				$(this).dialog('close');
+			}
+		}
+	});	
+	$("#dialog_CMD_edit").dialog({
+		autoOpen: false,
+		closeOnEscape: false, 
+		open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+		show: {
+			effect: "fade",
+			duration: 1000
+		},
+		hide: {
+			effect: "fade",
+			duration: 1000
+		},
+		height: 'auto',
+		width: '60vw',
+		modal: true, // 다이얼러그 박스 이외의 모든 요소를 비활성화 시킴
+		buttons: {
+			'Update': function() {
+				var userCmdEdit = document.getElementById('userCmdEdit').value;
+				var userCmdEditID = document.getElementById('userCmdEditID').value; // 선택된 cmd_ioID
+				// console.log(userCmdEdit, userCmdEditID);
+				// try {
+				// 	var obj = JSON.parse(userCmdEdit);
+				// } catch (e) {
+				// 	// console.log("error: "+e);
+				// 	$("#dialog_MSG").html(e)
+				// 	$("#dialog_MSG").dialog("open");
+				// 	return
+				// };
+				try {
+					var str = JSON.stringify(JSON.parse(userCmdEdit), null, 0);
+				} catch (e) { // 오류 발생시 일반 택스트 사용
+					var str = userCmdEdit;
+				}
+				document.getElementById(userCmdEditID).value = str;
+				$(this).dialog('close');
+			},
+			'Cancel': function() {
+				$(this).dialog('close');
+			}
+		}
+	});	
+	$("#dialog_GPIO").dialog({
+		autoOpen: false,
+		closeOnEscape: false, 
+		open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+		show: {
+			effect: "fade",
+			duration: 1000
+		},
+		hide: {
+			effect: "fade",
+			duration: 1000
+		},
+		height: 'auto',
+		width: '30vw',
+		modal: true, // 다이얼러그 박스 이외의 모든 요소를 비활성화 시킴
+		buttons: {
+			'Update': function() {
+				// 사용자 명령을 센서 이밴트 명령값에 선언
+				var userCmd = document.getElementById('userCmd').value;
+				var userCmdID = document.getElementById('userCmdID').value; // 선택된 cmd_ioID
+				// console.log(userCmd, userCmdID);
+				try {
+					var obj = JSON.parse(userCmd);
+				} catch (e) {
+					// console.log("error: "+e);
+					$("#dialog_MSG").html(e)
+					$("#dialog_MSG").dialog("open");
+					return
+				};
+
+				document.getElementById(userCmdID).value = userCmd;
+				$(this).dialog('close');
+			},
+			'Cancel': function() {
+				$(this).dialog('close');
+			}
+		}
+	});
+	$("#dialog_Config").dialog({
+		autoOpen: false,
+		closeOnEscape: false, 
+		open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+		show: {
+			effect: "fade",
+			duration: 1000
+		},
+		hide: {
+			effect: "fade",
+			duration: 1000
+		},
+		height: 'auto',
+		width: '30vw',
+		modal: true, // 다이얼러그 박스 이외의 모든 요소를 비활성화 시킴
+		buttons: {
+			'Update': function() {
+				$(this).dialog('close');
+				cfg.location = document.getElementById('location').value;
+				cfg.tcpIpPort.staticAddress = document.getElementById('ipAddr').value;
+				cfg.tcpIpPort.staticNetMask = document.getElementById('netmask').value;
+				cfg.tcpIpPort.staticGateway = document.getElementById('gateway').value;
+
+				cfg.reportMail.activation = document.getElementById('activation').checked;
+				cfg.reportMail.sender = document.getElementById('sender').value.replace(/\s/g, '');
+				cfg.reportMail.receiver = document.getElementById('receiver').value.replace(/\s/g, '');
+				cfg.reportMail.subject = document.getElementById('subject').value;
+				cfg.reportMail.signature = document.getElementById('signature').value; // 서명
+				cfg.reportMail.frequency = document.getElementById('frequency').value;
+			},
+			'Cancel': function() {
+				$(this).dialog('close');
+			}
+		}
+	});
+
+	// tooltip - https://jqueryui.com/tooltip/
+	$("button[id^='io'],button[id^='pw'],button[id^='am'],button[id^='tm']").each(function() { // execution();
+		$( "#"+this.id ).tooltip({
+			track: true
+		});
+	});
+});
+
+</script>
+
+<style>
+.ecos_logo_main {margin:1vh 1vh 0 0;width:6vh; height:6vh;-webkit-animation:spin 4s linear infinite;-moz-animation:spin 4s linear infinite;animation:spin 2s linear infinite;float:left;}
+@-moz-keyframes spin { 100% { -moz-transform:rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform:rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform:rotate(360deg); transform:rotate(360deg); } }
+
+/* Tooltip Deco. */
+.ui-tooltip, .arrow:after {background:black;border:1px solid white;}
+.ui-tooltip {padding:10px 20px;color:white;border-radius:6px;font:bold 14px "Helvetica Neue", Sans-Serif;text-transform:uppercase;box-shadow:0 0 7px black;}
+
+.clock {position:absolute;top:2vh;right:2vh;color:gray;font-size:1vh;}
+
+#myIP {position:absolute;top:0;left:0;color:gray;font-size:1vh;margin-left:1vw;}
+#sCmd {position:fixed;bottom:0;left:0;color:silver;background:#000000a0;font-size:1vh;margin:1vw;border-radius:2px;padding:2px 4px;}
+
+#loginGuest {position:absolute;top:0;right:0;color:gray;font-size:1vh;margin-right:1vw;}
+#signature {font-size:1vh;overflow:overlay;}
+/* 초기화 */
+/* .desc,.cmds,.trgr,.exec,.gpio,.time {display:none;}
+.cmds,.trgr,.exec,.gpio,.time {display:none;} */
+.desc,.cmds,.trgr,.gpio,.time {display:none;}
+
+body {background-color:white;}
+button {margin:1vh;}
+p, label {margin:unset;}
+.group {display:inline-flex;margin:0 1vh 1vh 0;}
+.group_R {display:inline-flex;margin:0 1vh 1vh 0;}
+.group_A {display:inline-flex;margin:0 1vh 1vh 0;}
+.gHead {margin:4vh;}
+.gBody {margin:4vh;border:1px solid silver;padding:1vh 2vh 1vh 2vh;border-radius:1vh}
+.gBodyTitle {display:block;font-size:1vh;color:silver;}
+.gTail {margin:4vh;display:inline-flex;}
+.title {font-size:5vh;color:gray;background-color:unset;text-shadow:-1px 0 silver, 0 1px silver, 1px 0 silver, 0 -1px silver}
+.subTitle {font-size:4vh;color:silver;background-color:unset;margin-left:2vw;}
+.heartbeat {font-size:4vh;color:silver;background-color:unset;float:right;}
+.relay {font-size:2vh;min-width:14vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.sensor {font-size:2vh;min-width:14vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.alarm {font-size:2vh;min-width:14vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.timer {font-size:2vh;min-width:14vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.power {font-size:2vh;min-width:14vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.desc {font-size:2vh;margin:0 0.4vh;padding:1vh;max-width:10vw;min-width:4vh;height:4vh;color:silver;border:1px solid silver;color:gray;border-radius:0.4vh;}
+.cmds {font-size:1.4vh;margin:0 0.4vh;padding:1vh;width:100%;height:4vh;color:silver;border:1px solid silver;color:gray;border-radius:0.4vh;}
+.trgr {font-size:1.6vh;margin:0 0.4vh;padding:1vh;min-width:60px;height:4vh;line-height:0;}
+.exec {font-size:1.6vh;margin:0 0.4vh;padding:1vh;min-width:8vh;height:4vh;line-height:0;}
+.gpio {font-size:1.6vh;margin:0 0.4vh;padding:1vh;min-width:30px;height:4vh;line-height:0;}
+.time {font-size:2vh;margin:0 0.4vh;padding:1vh;max-width:10vw;min-width:4vh;height:4vh;color:silver;border:1px solid silver;color:gray;border-radius:0.4vh;}
+.audio_stop, .mDVR_stop {font-size:2vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.audioName {font-size:1.4vh;margin:0 0.4vh;padding:1vh;height:4vh;color:silver;border:1px solid silver;color:gray;border-radius:0.4vh;}
+.audio_file, image_file {font-size:2vh;margin:0 0.4vh;padding:1vh;height:4vh;line-height:0;}
+.mDVRName {font-size:1.2vh;width:auto;height:4vh;color:silver;overflow:hidden;border:1px solid silver;color:gray;border-radius:0.4vh;line-height:1;}
+
+.dialog {display:grid;color:gray;font-size:1.4vh;}
+.dialogInput {color:gray;height:auto;padding:0 0.4vh;margin-left:1vh;}
+.dialogInput::placeholder {color:silver;font-size:1vh;}
+/* .userCmd {font-size:2vh;word-break:break-all;height:auto;padding:1px;}
+.userCmdEdit {font-size:4vh;word-break:break-all;height:auto;padding:1px;} */
+.ctrlBtn, .ctrlEdit {font-size:2vh;padding:1vh;margin:0 0.4vh;width:auto;height:4vh;line-height:0;}
+.password {font-size:2vh;padding:1vh;max-width:10vw;height:4vh;color:gray;border:1px solid silver;color:gray;border-radius:0.4vh;}
+.topBtn { position:fixed;top:0;right:0; }
+.gLogBtn {height:4vh;font-size:1vh;padding:0;margin-right:1vw;color:gray;}
+.cfgSet {height:4vh;font-size:1vh;padding:0;margin-right:1vw;color:gray;}
+.setup {height:4vh;font-size:1vh;padding:0;margin-right:1vw;color:gray;}
+
+.ipClient {position:absolute;top:0;right:0;font-size:1vw;color:silver;}
+
+.hide {display:none;}
+
+/* https://codingbroker.tistory.com/66 */
+.gLog {display:none;color:silver;background:#000000d0;font-size:1vh;width:50vw;height:90vh;margin:5vh 0;padding:1vh;border:1px solid #202020;position:fixed;top:0;right:0;resize:unset;overflow:auto;}
+
+.gLog::-webkit-scrollbar {
+	width: 1vw;
+}
+.gLog::-webkit-scrollbar-thumb {
+	background-color: #2f3542;
+	border-radius: 1vw;
+	background-clip: padding-box;
+	border: 0.1vw solid transparent;
+}
+.gLog::-webkit-scrollbar-track {
+	background-color: grey;
+	border-radius: 1vw;
+	box-shadow: inset 0 0 0.1vw white;
+}
+
+</style>
+</head> 
+
+<body>
+<div id="dialog_MSG" title="Message" class="dialog"></div>
+<div id="dialog_Login" title="Login">
+	<p><label class="dialog">Password:
+		<input type="password" class="form-control dialogInput" name="myPWD" id="myPWD" value="">
+	</label></p>
+</div>
+
+<div id="dialog_setup" title="Setup(Admin)">
+	<span class='ipClient' id='ipClient'></span>
+	<p><label class="dialog">Permission IP(CSV):
+		<input type="text" class="form-control dialogInput" name="ipAdmin" id="ipAdmin" value="" placeholder="Admin IP">
+		<input type="text" class="form-control dialogInput" name="ipManager" id="ipManager" value="" placeholder="Manager IP">
+		<input type="text" class="form-control dialogInput" name="ipViewer" id="ipViewer" value="" placeholder="Viewer IP">
+	</label></p>
+	<p><label class="dialog">Allow/Deny IP(CSV):
+		<input type="text" class="form-control dialogInput" name="ipAllow" id="ipAllow" value="" placeholder="Allow IP">
+		<input type="text" class="form-control dialogInput" name="ipDeny" id="ipDeny" value="" placeholder="Deny IP">
+	</label></p>
+	<p><label class="dialog">I/O Board:
+		<select class="form-control dialogInput" name="ioBoard" id="ioBoard">
+		</select>
+	</label></p>
+	<p><label class="dialog">Audio Player:
+		<select class="form-control dialogInput" name="audioPlayer" id="audioPlayer">
+		</select>
+	</label></p>
+	<p><label class="dialog">Camera:
+		<select class="form-control dialogInput" name="ipCamera" id="ipCamera">
+		</select>
+	</label></p>
+	<p><label class="dialog">mDVR:
+		<textarea type="text" class="form-control dialogInput" name="mDVR" id="mDVR" style="font-size:1vh;word-break: break-all;" disabled></textarea>
+	</label></p>
+
+	<p><label class="dialog">Telegram:
+		<input type="text" class="form-control dialogInput" name="telegramBot01_token" id="telegramBot01_token" value="" placeholder="telegramBot01_token">
+		<input type="text" class="form-control dialogInput" name="telegramBot01_chatID" id="telegramBot01_chatID" value="" placeholder="telegramBot01_chatID">
+	</label></p>
+
+	<p><label class="dialog">API Key:
+		<input type="text" class="form-control dialogInput" name="keySource" id="keySource" value="" placeholder="keySource">
+		<input type="text" class="form-control dialogInput" name="keyCode" id="keyCode" value="" readonly disabled placeholder="Hash Code">
+	</label></p>
+</div>
+
+<div id="dialog_GPIO" title="Relay Control dialog">
+	<p><label class="dialog">Status:
+		<select class="form-control dialogInput" name="Status" id="status">
+			<option value="">Please choose an option</option>
+			<option value="0">Off</option>
+			<option value="1">On</option>
+			<option value="2">Toggle</option>
+			<option value="3">Status</option>
+			<option value="6">Power</option>
+			<option value="7">Relay</option>
+			<option value="8">Sensor</option>
+			<option value="9">All</option>
+		</select>
+	</label></p>
+	<p><label class="dialog">Target:
+		<select class="form-control dialogInput" name="Target" id="target">
+			<option value="">Please choose an option</option>
+			<option value="io01">Relay01</option>
+			<option value="io02">Relay02</option>
+			<option value="io03">Relay03</option>
+			<option value="io04">Relay04</option>
+			<option value="io05">Relay05</option>
+			<option value="io06">Relay06</option>
+			<option value="io07">Relay07</option>
+			<option value="io08">Relay08</option>
+			<option value="io09">Relay09</option>
+			<option value="io10">Relay10</option>
+			<option value="io11">Relay11</option>
+			<option value="io12">Relay12</option>
+			<option value="io13">Relay13</option>
+			<option value="io14">Relay14</option>
+			<option value="io15">Relay15</option>
+			<option value="io16">Relay16</option>
+		</select>
+	</label></p>
+	<p><label class="dialog">Duration:
+		<input type="text" class="form-control dialogInput" name="Duration" id="duration" value="0">
+	</label></p>
+	<p><label class="dialog">ITS IP:
+		<input type="text" class="form-control dialogInput" name="ITS IP" id="itsIP" value="">
+	</label></p>
+	<p><label class="dialog">ITS Port:
+		<input type="text" class="form-control dialogInput" name="ITS Port" id="itsPort" value="">
+	</label></p>
+	<p><label class="dialog">User Command:
+		<textarea type="text" class="form-control userCmd" name="User Command" id="userCmd" style="font-size:1vh;word-break: break-all;"></textarea>
+		<input type="hidden" id="userCmdID" value="">
+	</label></p>
+</div>
+
+<div id="dialog_CMD_edit" title="Command Script Editor">
+	<p><label class="dialog">User Command:
+		<textarea type="text" class="form-control userCmdEdit" name="User Command" id="userCmdEdit" style="font-size:2vh;word-break: break-all;height:30vh;"></textarea>
+		<input type="hidden" id="userCmdEditID" value="">
+	</label></p>
+</div>
+
+<div id="dialog_Config" title="Config ITS API">
+	<p><label class="dialog">Location:
+		<input type="text" class="form-control dialogInput" name="Location" id="location" value="">
+	</label></p>
+	<p><label class="dialog">Static IP Address:
+		<input type="text" class="form-control dialogInput" name="Address" id="ipAddr" value="" placeholder="IP Address">
+		<input type="text" class="form-control dialogInput" name="Netmask" id="netmask" value="" placeholder="Sub Netmask">
+		<input type="text" class="form-control dialogInput" name="Gateway" id="gateway" value="" placeholder="Gateway">
+	</label></p>
+	<p><label class="dialog">NTP Server:
+		<input type="text" class="form-control dialogInput" name="Address" id="ipAddrNTP" value="" placeholder="NTP Server IP">
+	</label></p>
+	<p><label class="dialog">Watchdog Server:
+		<input type="text" class="form-control dialogInput" name="Address" id="ipAddrWD" value="" placeholder="Watchdog Server IP">
+	</label></p>
+	<p><label class="dialog hide">Email Report Activation:
+		<input type="checkbox" class="dialogInput" name="activation" id="activation" value="" >
+		<input type="text" class="form-control dialogInput" name="sender" id="sender" value="" placeholder="Sender Email">
+		<input type="text" class="form-control dialogInput" name="receiver" id="receiver" value="" placeholder="Receiver Email(CSV)">
+		<input type="text" class="form-control dialogInput" name="subject" id="subject" value="" placeholder="Subject">
+		<textarea type="text" class="form-control dialogInput font01" name="signature" id="signature"></textarea>
+		<input type="text" class="form-control dialogInput" name="frequency" id="frequency" value="" placeholder="Frequency (minutes)">
+	</label></p>
+	<p><label class="dialog">Sync Time:
+		<button type="button" class="form-control dialogInput" style="margin-block: auto;" name="Set Time" id="set_time">Sync Clock</button>
+	</label></p>
+	<p><label class="dialog">File Manager:
+		<button type="button" class="form-control dialogInput" style="margin-block: auto;" name="Audio File" id="audio_file">Audio Manager</button>
+		<button type="button" class="form-control dialogInput" style="margin-block: auto;" name="Image File" id="image_file">Image Manager</button>
+	</label></p>
+	<p><label class="dialog">Example:
+		<button type="button" class="form-control dialogInput" style="margin-block: auto;" name="API Example" id="example_file">Open API Example</button>
+	</label></p>
+	<p><label class="dialog">Zoom Set:<span id="zoomValue"></span>
+		<input type="range" class="form-control dialogInput" id="zoomSet" name="zoomSet" min="0" max="2" step="0.01">
+	</label></p>
+	<p><label class="dialog">Background
+		<input type="color" class="form-control dialogInput" style="width:100%;height:20px;" id="bgColor" name="bgColor" value="#FFFFFF00">
+	</label></p>
+</div>
+
+<div id="myIP"></div>
+<div id="loginGuest">Login</div>
+<div id='sCmd' class='sCmd'></div>
+
+<div class='gHead'>
+	<img class="ecos_logo_main" src="http://__url_server_home__/theme/ecos-its_optex/img/profile.png" alt="" title="">
+	<span class='title' id='title'></span>
+	<span class='subTitle' id='subTitle'></span>
+	<span class='heartbeat hide' id='heartbeat' name='heartbeat'><img src="http://__url_server_home__/theme/ecos-its_optex/img/loading.gif" style="width:40px;"></span>
+</div>
+<div class='gBody gRelay'><div class="gBodyTitle">Relay Control and Status - 1/2/3/4</div>__html_relay_button__</div>
+<div class='gBody gPwd Audio mDVR'><div class="gBodyTitle">Ext. Power - 12v / Audio and mDVR Status</div>__html_power_button____html_audio_button____html_mDVR_button__</div>
+<div class='gBody gSensor hide'><div class="gBodyTitle">GPIO Input - 1/2/3/4/5/6/7/8</div>__html_sensor_button__</div>
+<div class='gBody gAlarm hide'><div class="gBodyTitle">Crontab Control - 1/2/3/4</div>__html_alarm_button__</div>
+<div class='gBody gTimer hide'><div class="gBodyTitle">Heartbeat</div>__html_timer_button__</div>
+
+<div class='gTail gControl hide'>
+	<button id='edit' type='button' class='btn btn-outline-danger ctrlEdit' data-toggle='button'>Edit</button>
+	<input id='password' type='password' class='password' placeholder='Password' value=''>
+</div>
+<div id='gLog' class='gLog' readonly='readonly'></div>
+
+__html_QnA__
+
+<script>
+	// 로컬스토리지를 이용한 HTML5 + JS ZOOM Set 기능
+	// <input type="range" id="zoomSet" name="zoomSet" class="hide" style="position:absolute;bottom:0;right:0;" min="0" max="2" step="0.01">
+	// 화면 줌 브라우저별 설정 <<
+	var zoom = localStorage.getItem("zoomSetAPI"); // 데이터 가져오기
+	if(typeof zoom !== "undefined") {
+		$("#zoomSet").val(zoom);
+	} else {
+		$("#zoomSet").val(1);
+	}
+	$("#zoomValue").html($("#zoomSet").val());
+
+	var all = document.getElementsByClassName('gBody');
+	for (var i = 0; i < all.length; i++) { all[i].style.zoom = zoom; }
+	$("#zoomSet").on("input change", function() { 
+		localStorage.setItem("zoomSetAPI", this.value); // 데이터 쓰기
+		for (var i = 0; i < all.length; i++) { all[i].style.zoom = this.value; }
+		$("#zoomValue").html(this.value);
+	});	
+	// >> 화면 줌 브라우저별 설정 
+	
+	// 로컬스토리지를 이용한 HTML5 + Background Color 기능
+	var bgColor = localStorage.getItem("bgColorAPI"); // 데이터 가져오기
+	if(typeof bgColor !== "undefined") {
+		$("body").css("backgroundColor", bgColor);
+		$("#bgColor").val(bgColor);
+	} else {
+		$("body").css("backgroundColor", "#FFFFFF00");
+		$("#bgColor").val("#FFFFFF00");
+	}
+	$("#bgColor").on("input change", function() { 
+		localStorage.setItem("bgColorAPI", this.value); // 데이터 쓰기
+		$("body").css("backgroundColor", this.value);
+	});	
+
+</script>
+
+<canvas id="aClock" width="150" height="150"></canvas>
+<style>#aClock {position: fixed;bottom:0;right:0;z-index: -1;}</style>
+<script>
+//////////////////////////////////
+// An animated clock
+//////////////////////////////////
+function clock() {
+	var now = new Date();
+	var ctx = document.getElementById('aClock').getContext('2d');
+	ctx.save();
+	ctx.clearRect(0, 0, 150, 150);
+	ctx.translate(75, 75);
+	ctx.scale(0.4, 0.4);
+	ctx.rotate(-Math.PI / 2);
+	ctx.strokeStyle = 'silver'; // 전체색, 부분은 아래에서 설정
+	ctx.fillStyle = 'white';
+	ctx.lineWidth = 8;
+	ctx.lineCap = 'round';
+
+	// Hour marks
+	ctx.save();
+	for (var i = 0; i < 12; i++) {
+	ctx.beginPath();
+	ctx.rotate(Math.PI / 6);
+	ctx.moveTo(100, 0);
+	ctx.lineTo(120, 0);
+	ctx.stroke();
+	}
+	ctx.restore();
+
+	// Minute marks
+	ctx.save();
+	ctx.lineWidth = 5;
+	for (i = 0; i < 60; i++) {
+	if (i % 5!= 0) {
+		ctx.beginPath();
+		ctx.moveTo(117, 0);
+		ctx.lineTo(120, 0);
+		ctx.stroke();
+	}
+	ctx.rotate(Math.PI / 30);
+	}
+	ctx.restore();
+
+	var sec = now.getSeconds();
+	var min = now.getMinutes();
+	var hr  = now.getHours();
+	hr = hr >= 12 ? hr - 12 : hr;
+
+	ctx.fillStyle = 'black';
+
+	// write Hours
+	ctx.save();
+	ctx.rotate(hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) *sec);
+	ctx.strokeStyle = 'gray';
+	ctx.fillStyle = 'gray';
+	ctx.lineWidth = 14;
+	ctx.beginPath();
+	ctx.moveTo(-20, 0);
+	ctx.lineTo(80, 0);
+	ctx.stroke();
+	ctx.restore();
+
+	// write Minutes
+	ctx.save();
+	ctx.rotate((Math.PI / 30) * min + (Math.PI / 1800) * sec);
+	ctx.strokeStyle = 'gray';
+	ctx.fillStyle = 'gray';
+	ctx.lineWidth = 10;
+	ctx.beginPath();
+	ctx.moveTo(-28, 0);
+	ctx.lineTo(112, 0);
+	ctx.stroke();
+	ctx.restore();
+
+	// Write seconds
+	ctx.save();
+	ctx.rotate(sec * Math.PI / 30);
+	ctx.strokeStyle = '#D40000A0'; // 초침
+	ctx.fillStyle = '#F00000'; // 초침 중심 원
+	ctx.lineWidth = 6;
+	ctx.beginPath();
+	ctx.moveTo(-30, 0);
+	ctx.lineTo(83, 0);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.arc(0, 0, 10, 0, Math.PI * 2, true);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.arc(95, 0, 10, 0, Math.PI * 2, true);
+	ctx.stroke();
+	ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+	ctx.arc(0, 0, 3, 0, Math.PI * 2, true);
+	ctx.fill();
+	ctx.restore();
+
+	// Write outline
+	ctx.beginPath();
+	ctx.lineWidth = 10;
+	ctx.strokeStyle = '#540f6cb3'; // 외곽 원
+	ctx.arc(0, 0, 142, 0, Math.PI * 2, true);
+	ctx.stroke();
+
+	ctx.restore();
+
+	window.requestAnimationFrame(clock);
+}
+window.requestAnimationFrame(clock);
+
+	</script>
+</body>
+</html>

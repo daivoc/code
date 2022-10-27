@@ -1,0 +1,11 @@
+{
+	"license":{
+		"op_code": "optex5971",
+		"manager_key": "1db043eecaf90a2548230c7fd7deaed64730ff103437a9a9dc9d45f2fdf47f90"
+	},
+	"interface":{
+		"portIn": 24000,
+		"portIO": 14000,
+		"portOut": 34000
+	}
+}

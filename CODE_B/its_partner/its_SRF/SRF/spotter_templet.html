@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__svg_pan_zoom__
+__smoothiecharts__
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var seriesRCS = new TimeSeries();
+var seriesSPD = new TimeSeries();
+var socketio = io.connect();
+
+var myID = window.performance.now(); // 클라이언트 브라우져 유니크 아이디
+
+// var cfg = []; // 환경변수 JSON
+// var lan = []; // 환경변수 JSON
+
+var cfg = __var_data_config__; // 환경변수 JSON
+var lan = __var_data_language__; // 환경변수 JSON
+
+var owner = 0; // 관리자 태그
+
+var rangeMaxX = cfg.sensor.coverage.x;
+var rangeMaxY = cfg.sensor.coverage.y;
+// var rangeMaxX = 20; 
+// var rangeMaxY = 130; 
+var aMeter = 1000; // 1미터
+var tenMeter = 10000; // 10미터
+
+var logList = [];
+var logCont = 20;
+
+var eventList = [];
+var ecentMax = 30; // SVG 화면에 이벤트(Circle) 표시 갯수 제한(클라이언트 메모리 때문)
+
+// 아크 그리는 기능
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+	var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+	return {
+		x: centerX + (radius * Math.cos(angleInRadians)),
+		y: centerY + (radius * Math.sin(angleInRadians))
+	};
+}
+// 아크 그리는 기능
+function describeArc(x, y, radius, startAngle, endAngle){
+	var start = polarToCartesian(x, y, radius, endAngle);
+	var end = polarToCartesian(x, y, radius, startAngle);
+	var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+	var d = [
+		"M", start.x, start.y, 
+		"A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+	].join(" ");
+	return d;       
+}
+
+// 이벤트 SVG 화면 표시
+function draw_circle(id,speed,aAngle,range,rcs,alarm) {
+	/////////////////////////////////////////////////////////////////////////////
+	// 각도(aAngle)와 거리(range) 값에서 X, Y 거리 계산
+	// 알람 유/무에 따라 색과 직경의 크기를 달리 한다.
+	var angle = (aAngle) / 180 * Math.PI; // compensate angle -90°, conv. to radian
+	var x = parseInt(range * Math.sin(angle) * 1000); // Math.floor(testnum)
+	var y =parseInt(range * Math.cos(angle) * 1000);
+
+	if (alarm) {
+		var r =rcs * 100; // 이벤트 감도에 기준값 곱함 
+		var tmpId = parseInt((id%0.12345).toString().split(".")[1]); // 아이디별 색구분을 위한
+		cR = tmpId % 256;
+		cG = tmpId % 255;
+		cB = tmpId % 254;
+		cK = 0.6;
+	} else {
+		var r =rcs * 10; // 이벤트 감도에 기준값 곱함 
+		var tmpId = parseInt((id%0.12345).toString().split(".")[1]); // 아이디별 색구분을 위한
+		cR = cG = cB = 256;
+		cK = 0.2;
+	}
+
+	var i = $('#event circle').length - ecentMax;
+	if (i > 0) { // 최고값 이상의 로그는 과거 값기즌으로 삭제
+		while (i--) {
+			$('#event circle')[i].remove();
+		}
+	}
+	var curContent = $('#svg_id #event').html();
+	var toInsert = '<circle id="'+id+'" cx="'+x+'" cy="'+y+'" r="'+r / 2+'" fill="rgba('+cR+', '+cG+', '+cB+', '+cK+')" stroke="#c0c0c080" stroke-width=1 class="theEvent" />';
+	$('#svg_id #event').html(curContent + toInsert);
+	
+	return [(x/1000).toFixed(2), (y/1000).toFixed(2)];
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// 최초 환경 설정
+socketio.on("startSetEnv", function(data) {
+	cfg = data.config; // 매우 중요함 - 환경설정값을 상속
+	lan = data.language; // 매우 중요함 - 언어설정값을 상속
+});
+
+// socketio.on실시간 이벤트 대응
+socketio.on("sendEventLog", function(data) {
+	var id = data['id'];
+	var speed = parseFloat(data['speed']).toFixed(2); // 이동속도 반올림:parseFloat(speed).toFixed(2)
+	var hAngle = parseFloat(data['hAngle']).toFixed(2); // 
+	var aAngle = parseFloat(data['aAngle']).toFixed(2); // 방위각(azimuth, meridian angle)
+	var range = parseFloat(data['range']).toFixed(2); // 감지거리
+	var rcs = parseFloat(data['rcs']).toFixed(2); // 감도 RCS
+	var alarmRcs = data['alarmRcs'];
+	var alarmSpd = data['alarmSpd'];
+	var alarmIs = data['alarmIs'];
+	var t = new Date();
+	
+	// var coodXY = draw_circle(id,speed,aAngle,range,rcs,alarmIs); // SVG 화면 출력
+	if(alarmRcs && alarmSpd && alarmIs) { //  두조건이 만족한다면 로그 출력
+		var coodXY = draw_circle(id,speed,aAngle,range,rcs,alarmIs); // SVG 화면 출력
+		dformat = [t.getFullYear(),(t.getMonth()+1),t.getDate()].join('/')+' '+[t.getHours(),t.getMinutes(),t.getSeconds()].join(':');
+		var curEvent = "<div><span>Last: "+dformat+"</span><br><span>SPD:"+speed+"</span> <span>RCS:"+rcs+"</span><br><span>x:"+coodXY[0]+"m</span> <span>y:"+coodXY[1]+"m</span><br><span>d:"+range+"m</span> <span>∠:"+parseFloat(aAngle)+"</span></div>";
+		$("#lastEvent").html(curEvent);
+	}
+	// console.log(data);
+	
+	if(alarmRcs) { // 알람레벨 변수 선언
+		var rcsColor = "orange";
+	} else { 
+		var rcsColor = "gray";
+	}
+	if(alarmSpd) { // 알람레벨 변수 선언
+		var spdColor = "orange";
+	} else { 
+		var spdColor = "gray";
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	// 로그 출력 // 로그이벤트 표시 갯수제한(클라이언트 메모리 때문)
+	logList.splice(logCont, logCont, "<div>"+id+"</span> <span>"+parseInt(range)+"m</span> <span style='color:"+spdColor+";'>"+speed+"m/s </span><span style='color:"+rcsColor+";'>rcs:"+rcs+"</span></div>")
+	if(logList.length > logCont) logList.shift(); // 
+	$("#logList").html(logList); //  감도나 속도가 기준값을 넘으면 목록 출력
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// 타임라인 차트에 이벤트 표시
+	seriesRCS.append(t.getTime(), rcs);
+	seriesSPD.append(t.getTime(), speed);
+	t.setSeconds(t.getSeconds() + 1); // 1초를 더한후 리셋 0, 너무 짧으면 화면에서 보이지 않을수 있음
+	seriesRCS.append(t.getTime(), 0); // 막대그래프를 위해서 값을 초기화 함
+	seriesSPD.append(t.getTime(), 0); // 막대그래프를 위해서 값을 초기화 함
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// 방위 게이지 각도 및 거리 표시
+	$('#compassPan[data-type="radial-gauge"]').attr('data-value', aAngle); // 컴파스 출력
+	$('#compassPan[data-type="radial-gauge"]').attr('data-title', parseInt(range) + 'm'); // 컴파스 출력
+
+	/////////////////////////////////////////////////////////////////////////////
+	// 비프 사운드 출력
+	if ($("#beepAlarm").prop('checked')) if(alarmRcs && alarmSpd) beep_B();
+	if ($("#beepDetect").prop('checked')) if(alarmRcs || alarmSpd) beep_A();
+
+});
+
+// 언어설정
+socketio.on("sendLanValue", function(data) {
+	lan = data.language; // 매우 중요함 - 언어설정값을 상속
+	// data-lan 언어 변환
+	$('[data-lan]').each(function(){
+		if(typeof lan[$(this).data('lan')] !== 'undefined') {
+			$(this).html(lan[$(this).data('lan')][data.selected]);
+		}
+	});
+	// placeholder 언어 변환
+	$('input[placeholder]').each(function(index, el) {
+		var ph = $(this).attr("placeholder");
+		if(typeof lan[ph] !== 'undefined') {
+			$(this).attr("placeholder",(lan[ph][data.selected]));
+		}
+	});
+});
+
+// 서버로 부터 환경변수를 받아 클라이언트에 적용한다
+socketio.on("sendSetValue", function(data) {
+	cfg = data; // 매우 중요함 - 환경설정값을 상속
+
+	// Pre preRCS Range 슬라이더
+	$( "#slider-preRCS" ).slider({
+		range: true,
+		min: 0, // cfg.sensor.rcsValue.min,
+		max: 999, // cfg.sensor.rcsValue.max,
+		step: 1,
+		values: [ cfg.sensor.rcsValue.min, cfg.sensor.rcsValue.max ],
+		slide: function( event, ui ) {
+			$( "#preRCS" ).html( "Pre RCS: " + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			socketio.emit('rcsRangePre', ui.values);
+		}
+	});
+	$( "#preRCS" ).html( "Pre RCS: " + $( "#slider-preRCS" ).slider( "values", 0 ) + " - " + $( "#slider-preRCS" ).slider( "values", 1 ) );
+
+	// Pre preSpeed Range 슬라이더
+	$( "#slider-preSpeed" ).slider({
+		range: true,
+		min: 0, // cfg.sensor.rcsValue.min,
+		max: 999, // cfg.sensor.rcsValue.max,
+		step: 1,
+		values: [ cfg.sensor.spdValue.min, cfg.sensor.spdValue.max ],
+		slide: function( event, ui ) {
+			$( "#preSpeed" ).html( "Pre Speed: " + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			socketio.emit('spdRangePre', ui.values);
+		}
+	});
+	$( "#preSpeed" ).html( "Pre Speed: " + $( "#slider-preSpeed" ).slider( "values", 0 ) + " - " + $( "#slider-preSpeed" ).slider( "values", 1 ) );
+	
+	// RCS Range 슬라이더
+	$( "#slider-rangeRCS" ).slider({
+		range: true,
+		min: cfg.sensor.rcsValue.min,
+		max: cfg.sensor.rcsValue.max,
+		step: 0.01,
+		values: [ cfg.sensor.rcsValue.cMin, cfg.sensor.rcsValue.cMax ],
+		slide: function( event, ui ) {
+			$( "#rcsLevelD" ).html( lan.limitRCS[cfg.language.selected]+": " + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			socketio.emit('rcsRange', ui.values);
+		}
+	});
+	$( "#rcsLevelD" ).html( lan.limitRCS[cfg.language.selected]+": " + $( "#slider-rangeRCS" ).slider( "values", 0 ) + " - " + $( "#slider-rangeRCS" ).slider( "values", 1 ) );
+
+	// Speed Range 슬라이더
+	$( "#slider-rangeSPD" ).slider({
+		range: true,
+		min: cfg.sensor.spdValue.min,
+		max: cfg.sensor.spdValue.max,
+		step: 0.01,
+		values: [ cfg.sensor.spdValue.cMin, cfg.sensor.spdValue.cMax ],
+		slide: function( event, ui ) {
+			$( "#spdLevelD" ).html( lan.limitSpeed[cfg.language.selected]+": " + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			socketio.emit('spdRange', ui.values);
+		}
+	});
+	$( "#spdLevelD" ).html( lan.limitSpeed[cfg.language.selected]+": " + $( "#slider-rangeSPD" ).slider( "values", 0 ) + " - " + $( "#slider-rangeSPD" ).slider( "values", 1 ) );
+	
+	// // Zoom Range 슬라이더
+	// $( "#slider-rangeZoom" ).slider({
+	// 	range: true,
+	// 	min: cfg.camera.calibration.zoomValue.min,
+	// 	max: cfg.camera.calibration.zoomValue.max,
+	// 	values: [ cfg.camera.calibration.zoomValue.cMin, cfg.camera.calibration.zoomValue.cMax ],
+	// 	slide: function( event, ui ) {
+	// 		$( "#zoomLevelD" ).html(  lan.limitZoom[cfg.language.selected]+": " + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+	// 		socketio.emit('zoomRange', ui.values);
+	// 	}
+	// });
+	// $( "#zoomLevelD" ).html(  lan.limitZoom[cfg.language.selected]+": " + $( "#slider-rangeZoom" ).slider( "values", 0 ) + " - " + $( "#slider-rangeZoom" ).slider( "values", 1 ) );
+
+	// Background Range 슬라이더, 바탕 화면 명암 조정
+	$( "#slider-bgOpacity" ).slider({
+		range: "max",
+		min: 0,
+		max: 1,
+		step: 0.01,
+		value: cfg.screen.bgOpacityTag, // 0.8,
+		slide: function( event, ui ) {
+			var bgColor = 'rgba(0,0,0,' + ui.value + ')';
+			$("body").css("background-color",bgColor);
+			$("#bgOpacityTag").html( lan.background[cfg.language.selected]+": " + ui.value );
+			socketio.emit('bgOpacityTag', ui.value);
+		}
+	});
+	$("body").css("background-color",'rgba(0,0,0,' + cfg.screen.bgOpacityTag + ')');
+	$("#bgOpacityTag").html( lan.background[cfg.language.selected]+": " + cfg.screen.bgOpacityTag );
+
+	// SVG 화면에 이벤트(Circle) 표시 갯수 제한(클라이언트 메모리 때문)
+	$( "#slider-objects" ).slider({
+		range: "max",
+		min: 1,
+		max: 999,
+		step: 1,
+		value: cfg.screen.objectsTag, // ecentMax,
+		slide: function( event, ui ) {
+			$("#objectsTag").html( lan.limitObjects[cfg.language.selected]+": " + ui.value );
+			ecentMax = ui.value;
+			socketio.emit('objectsTag', ui.value);
+		}
+	});
+	ecentMax = cfg.screen.objectsTag;
+	$( "#objectsTag" ).html( lan.limitObjects[cfg.language.selected]+": " + cfg.screen.objectsTag );
+
+	// 현재 화면 Up/Down Left/Right 적용
+	var svgLocation = 'matrix('+cfg.screen.svg.matrix[0]+','+cfg.screen.svg.matrix[1]+','+cfg.screen.svg.matrix[2]+','+cfg.screen.svg.matrix[3]+','+cfg.screen.svg.matrix[4]+','+cfg.screen.svg.matrix[5]+')';
+	$('#svg_id').css({'transform': svgLocation}); // transform="matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)"		
+
+	// Mask Select -> None, Allow, Deny
+	$("#maskSelect").val(cfg.maskSelect);
+	
+	// // 카메라 트레킹 온/오프
+	// $('#camTrac').prop('checked', cfg.camera.tracking);
+	
+	// 언어설정
+	var options = '';
+	var selected = '';
+	for (i = 0; i < cfg.language.country.length; i++) {
+		if(cfg.language.selected == i) selected = "selected"; else selected = '';
+		options += "<option value='"+i+"' "+selected+">"+cfg.language.country[i]+"</option>";
+	}
+	$("#languageSelect").html(options);
+	
+	// 라이센스 메세지
+	if(!cfg.license.passed) {
+		$("#myIP").html("Need License..");
+	}
+});
+
+// 클라이언트 아이피 정보 요청
+socketio.on("findClientIP", function(data) {
+	if(myID == data['id']) {
+		$("#myIP").html(data['ip']);
+		// console.log(data);
+		if (data['ip'] == data['oIp'] || !data['oIp']) // 설정된 오너 IP와 자신의 IP가 같으면
+			owner = 1; 
+		else 
+			owner = 0;
+	}
+});
+
+// 마스킹 정보 화면 적용
+socketio.on("readMasking", function(data) {
+	// console.log(data)
+	svgCover = "<rect x='"+(rangeMaxX * aMeter) / 2 * -1+"' y='0' width='"+(rangeMaxX * aMeter)+"' height='"+(rangeMaxY * aMeter)+"' style='fill:#00000000; stroke:gray; stroke-width:1cm;' />";
+	svgCover += data;
+	$('#svg_id #maskArea').html(svgCover);
+});
+
+// 최초실행시 최근실행환경을 적용하기 위해 설정값을 요청한다.
+
+socketio.emit('startSetEnv', 'startSetEnv'); // 서버에 실행요청
+socketio.emit('sendSetValue', 'sendSetValue'); // 서버에 실행요청
+socketio.emit('sendLanValue', 'sendLanValue'); // 서버에 실행요청
+socketio.emit('findClientIP', myID); // 최초실행시 
+socketio.emit('readMasking', 'readMasking'); // 최초실행시 
+socketio.emit('sysAccInfo', 'sysAccInfo'); // 시스템 환경값 읽기
+socketio.emit('camAccInfo', 'camAccInfo'); // 카메라 환경값 읽기
+socketio.emit('userEnvInfo', 'userEnvInfo'); // 카메라 환경값 읽기
+socketio.emit('senAccInfo', 'senAccInfo'); // 센서 환경값 읽기
+
+$(document).ready(function() {
+	//// setup Config Setup ///////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////
+	// SVG 페이지 초기화
+	// RangeMax 값을 JSON 환경변수를 읽어올수가 없음 ㅠㅠㅠㅠ
+	// 1pt -> 1.25px
+	// 1pc -> 15px
+	// 1mm -> 3.543307px
+	// 1cm -> 35.43307px
+	// 1in -> 90px
+	// https://stackoverflow.com/questions/30540221/svg-rotate-with-centimeters-as-the-unit
+	
+	var coverageX = rangeMaxX * aMeter; // 1 meter == 1000
+	var coverageY = rangeMaxY * aMeter; // meter, 중심선 길이로도 사용한다.
+	var coverUnit = 50 * aMeter; // meter, 중심으로 부터 거리를 표시하는 간격
+	var svgGrid = "<rect x='"+coverageX / 2 * -1+"' y='0' width='"+coverageX+"' height='"+coverageY+"' style='fill:#00000000; stroke:gray; stroke-width:1cm;' />"
+		+"<ellipse cx='0' cy='"+coverageY / 2+"' rx='"+coverageX / 2+"' ry='"+coverageY / 2+"' style='fill:#00000010; stroke:gray; stroke-width:10cm;' />"
+		+"<line x1='0' y1='0' x2='0' y2='"+coverageY+"' style='stroke:gray;stroke-width:5cm' />";
+	// 아크 그리기
+	for (i = 0; i < coverageY; i = i + coverUnit) { 
+		svgGrid += "<path d='"+describeArc(0, 0, i, 90, -90)+"' style='fill:#00000010; stroke:gray; stroke-width:5cm;' />";
+		svgGrid += "<text x='0' y='"+(i+(60*35.43307))+"' text-anchor='right' style='fill:gray; font-size:60cm;' >"+i/aMeter+"</text>";
+	}
+	// 비감지 구역 그리기
+	svgGrid += "<path d='"+describeArc(0, 0, aMeter * 5, 90, -90)+"' style='fill:#00000040; stroke:gray; stroke-width:3cm;' />";
+	// 10미터 1미터 격자 그리기
+	for (i = 0; i <= coverageY; i = i + aMeter) { 
+		if(i%tenMeter == 0) 
+			style = 'stroke:#ffffff40;stroke-width:1cm'; // 10미터
+		else
+			style = 'stroke:#ffffff80;stroke-width:1mm'; // 1미터
+		
+		if(coverageX > i){
+			// 가로
+			svgGrid += "<line x1='"+((coverageX / 2 * -1)+i)+"' y1='0' x2='"+((coverageX / 2 * -1)+i)+"' y2='"+coverageY+"' style='"+style+"' />";
+		}
+		if(coverageY > i){
+			// 세로
+			svgGrid += "<line x1='"+(coverageX / 2 * -1)+"' y1='"+i+"' x2='"+(coverageX / 2)+"' y2='"+i+"' style='"+style+"' />";
+		}
+	}
+	$('#svg_id #grid').html(svgGrid);
+
+	svgCover = "<rect x='"+coverageX / 2 * -1+"' y='0' width='"+coverageX+"' height='"+coverageY+"' style='fill:#00000000; stroke:gray; stroke-width:1cm;' />";
+	$('#svg_id #cover').html(svgCover);
+	// $('#svg_id #maskArea').html(svgCover);
+	
+	// /////////////////////////////////////////////////////////////////////////////
+	// // 키보드 PTZ 컨트롤
+	// /////////////////////////////////////////////////////////////////////////////
+	// $("#gotoHome").on('click', function() { // 홈 위치로 이동
+	// 	socketio.emit('gotoHome', 'gotoHome'); 
+	// });
+	// $("#setInit").on('click', function() { // 서버에 줌최대값 재설정 요청
+	// 	if (confirm(lan.confirmSetCamera[cfg.language.selected])) {
+	// 		socketio.emit('setCamera', 'setCamera'); 
+	// 	} 
+	// });
+
+	// 키보드 컨트롤 
+	$( document ).keyup(function() {
+		// if(owner && $("#keyCtrl").prop('checked')==true) { // 관리자이면서 카메라뷰에 포커싱이 되어 있으면
+		// 	var keyEvent = '';
+		// 	if(event.shiftKey) keyEvent = keyEvent + "<br>" + "shiftKey"
+		// 	if(event.altKey) keyEvent = keyEvent + "<br>" + "altKey"
+		// 	if(event.ctrlKey) keyEvent = keyEvent + "<br>" + "ctrlKey"
+		// 	keyEvent = keyEvent + "<br>" + "keyCode: " + event.keyCode;
+		// 	keyEvent = keyEvent + "<br>" + "key: " + event.key;
+		// 	keyEvent = keyEvent + "<br>" + "which: " + event.which;
+		// 	$( "#keyStatus" ).html(keyEvent);
+			
+		// 	// 카메라 이동
+		// 	var move = '';
+		// 	if(event.which == 35) move = 'downleft'; // 
+		// 	if(event.which == 40) move = 'down'; // 
+		// 	if(event.which == 34) move = 'downright'; // 
+		// 	if(event.which == 37) move = 'left'; // 
+		// 	if(event.which == 12) move = 'home'; // 
+		// 	if(event.which == 39) move = 'right'; // 
+		// 	if(event.which == 36) move = 'upleft'; // 
+		// 	if(event.which == 38) move = 'up'; // 
+		// 	if(event.which == 33) move = 'upright'; // 
+		// 	if(move) socketio.emit('ptzSetPos', 'move='+move);
+			
+		// 	// 카메라 줌 인 아웃
+		// 	var rzoom = '';
+		// 	if(event.key == 'Z') rzoom = '1000'; // 
+		// 	if(event.key == 'z') rzoom = '-1000'; // 
+		// 	if(event.ctrlKey && event.key == 'Z') rzoom = '100'; // 
+		// 	if(event.ctrlKey && event.key == 'z') rzoom = '-100'; // 
+		// 	if(rzoom) socketio.emit('ptzSetPos', 'rzoom='+rzoom);
+			
+		// 	// 카메라 포커스
+		// 	var rfocus = '';
+		// 	if(event.key == 'F') rfocus = '1000'; // 
+		// 	if(event.key == 'f') rfocus = '-1000'; // 
+		// 	if(event.ctrlKey && event.key == 'F') rfocus = '100'; // 
+		// 	if(event.ctrlKey && event.key == 'f') rfocus = '-100'; // 
+		// 	if(rfocus) socketio.emit('ptzSetPos', 'rfocus='+rfocus);
+			
+		// 	// 카메라 조리개
+		// 	var riris = '';
+		// 	if(event.key == 'I') riris = '1000'; // 
+		// 	if(event.key == 'i') riris = '-1000'; // 
+		// 	if(event.ctrlKey && event.key == 'I') riris = '100'; // 
+		// 	if(event.ctrlKey && event.key == 'i') riris = '-100'; // 
+		// 	if(riris) socketio.emit('ptzSetPos', 'riris='+riris);
+			
+		// 	// 카메라 명암
+		// 	var rbrightness = '';
+		// 	if(event.key == 'B') rbrightness = '1000'; // 
+		// 	if(event.key == 'b') rbrightness = '-1000'; // 
+		// 	if(event.ctrlKey && event.key == 'B') rbrightness = '100'; // 
+		// 	if(event.ctrlKey && event.key == 'b') rbrightness = '-100'; // 
+		// 	if(rbrightness) socketio.emit('ptzSetPos', 'rbrightness='+rbrightness);
+		// }
+	});	
+	////////////////////////////////////////////////////////////////////////////////////////////
+	// Create the charts 참고 : http://smoothiecharts.org/builder/ http://jsfiddle.net/h4wcu/14/ 
+	// 타임 라인 차트
+	// seriesRCS, timeLineRCS
+	var lineChartRCS = new SmoothieChart({
+		millisPerPixel:180, // 1시간 -> 초
+		maxValueScale:1,
+		// minValueScale:0,
+		scaleSmoothing:1,
+		grid:{
+			fillStyle:'rgba(0,0,0,0.5)',
+			strokeStyle:'rgba(119,119,119,0.77)',
+			sharpLines:true,
+			millisPerLine:5000, // 세로줄 간격
+			verticalSections:2 // 가로줄 갯수
+		},
+		labels:{
+			fillStyle:'rgba(255,255,255,0.5)',
+			fontSize:9,
+			precision:3
+		},
+		// tooltip:true, // 마우스 위치의 시간 표시
+		timestampFormatter:SmoothieChart.timeFormatter
+	});
+	lineChartRCS.addTimeSeries(seriesRCS, {
+		lineWidth:0.2, // 라인 두께
+		strokeStyle:'rgba(255,255,255,0.5)', // 라인 색
+		// fillStyle:'#004B9850' // 라인 채움 색
+	});
+	lineChartRCS.streamTo(document.getElementById('timeLineRCS'), 0); // Delay 0 ~ 2000
+	
+	// seriesSPD, timeLineSPD
+	var lineChartSPD = new SmoothieChart({
+		millisPerPixel:180, // 1시간 -> 초
+		maxValueScale:1,
+		// minValueScale:0,
+		scaleSmoothing:1,
+		grid:{
+			fillStyle:'rgba(0,0,0,0.5)',
+			strokeStyle:'rgba(119,119,119,0.77)',
+			sharpLines:true,
+			millisPerLine:5000, // 세로줄 간격
+			verticalSections:2 // 가로줄 갯수
+		},
+		labels:{
+			fillStyle:'rgba(255,255,255,0.5)',
+			fontSize:9,
+			precision:3
+		},
+		// tooltip:true, // 마우스 위치의 시간 표시
+		timestampFormatter:SmoothieChart.timeFormatter
+	});
+	lineChartSPD.addTimeSeries(seriesSPD, {
+		lineWidth:0.2, // 라인 두께
+		strokeStyle:'rgba(255,255,255,0.5)', // 라인 색
+		// fillStyle:'#004B9850' // 라인 채움 색
+	});
+	lineChartSPD.streamTo(document.getElementById('timeLineSPD'), 0); // Delay 0 ~ 2000
+
+	/////////////////////////////////////////////////////////////////////////////
+	// 로고 출력
+	var itsIP = window.location.hostname;
+	var optex_logo_URL = "http://"+itsIP+"__company_logo_path__";
+	$('#optex_logo_frame').css('background-image', 'url(' + optex_logo_URL + ')');
+
+	
+	////////////////////////////////////////////////////////////////////
+	// 사용자 요청에 따른 대응 기능 모음
+	////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////////
+	// // 컨트롤 메뉴 화면 감추기
+
+	$("#showControl").click(function() {
+		if(owner) {
+			$("#control").toggle("slow");
+		} else {
+			$(".owner").hide();
+			$("#control").toggle("slow");
+		}
+		$(".setup").toggle("slow");
+
+		// 초기화
+		$( "#slider-bgOpacity" ).slider(); // 바탕 화면 명암 조정
+		$( "#slider-objects" ).slider(); // SVG 화면에 이벤트(Circle) 표시 갯수 제한(클라이언트 메모리 때문)
+	});
+
+	// $("#showCamera").click(function() {
+	// 	$("#camera").toggle("slow");
+	// });
+	// // $("#showSetup").click(function() {
+	// // 	$(".setup").toggle("slow");
+	// // });
+
+	// //  카메라앵글 이동 및 크기조정
+	// $( "#camera" ).draggable();
+	// $( "#camera" ).resizable({ handles: "ne, se, sw, nw" });
+	// // $( "#camera" ).click(function() {
+	// // 	if(owner) {
+	// // 		$("#gotoHome, #setInit").toggle("slow");
+	// // 	} else {
+	// // 		$("#gotoHome, #setInit").hide();
+	// // 	}
+	// // });
+	// // $("#camera").click();
+
+	
+	// Background Range 슬라이더
+	// 바탕 화면 명암 조정
+	// $(function() {
+		// $( "#slider-bgOpacity" ).slider({
+		// 	range: "max",
+		// 	min: 0,
+		// 	max: 1,
+		// 	step: 0.01,
+		// 	value: 0.8,
+		// 	slide: function( event, ui ) {
+		// 		var bgColor = 'rgba(0,0,0,' + ui.value + ')';
+		// 		$("body").css("background-color",bgColor);
+		// 		$("#bgOpacityTag").html( lan.background[cfg.language.selected]+": " + ui.value );
+		// 	}
+		// });
+		// $("body").css("background-color",'rgba(0,0,0,' + $( "#slider-bgOpacity" ).slider( "value" ) + ')');
+		// $("#bgOpacityTag").html( lan.background[cfg.language.selected]+": " +$( "#slider-bgOpacity" ).slider( "value" ) );
+	// });
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// SVG PAN & ZOOM - https://www.npmjs.com/package/svg-pan-zoom
+	// PAN & ZOOM 고정 및 해지
+	var panZoom = svgPanZoom('#svg_id', {
+	  panEnabled: false
+	});
+
+	// Timeline Chart 화면 감추기
+	$("#showGAG").click(function() {
+		if ($(this).prop('checked')==true){
+			$("#charts_RCS, #charts_SPD").show("slow");
+		} else {
+			$("#charts_RCS, #charts_SPD").hide("slow");
+		}
+	});
+	// $("#showGAG").click();
+	
+	// // SVG 화면 감추기
+	// $("#showBGM").click(function() {
+	// 	if ($(this).prop('checked')==true){
+	// 		$("#svg_id g#grid").show("slow");
+	// 	} else {
+	// 		$("#svg_id g#grid").hide("slow");
+	// 	}
+	// });
+	// // $("#showBGM").click();
+
+	$("#lockBGM").click(function() { 
+		if ($(this).prop('checked')) {
+			panZoom.enablePan();
+			panZoom.enableZoom();
+			panZoom.enableDblClickZoom();
+			panZoom.enableMouseWheelZoom();
+			$("#slider-rangeRCS").slider({ disabled: false });
+			$("#slider-rangeSPD").slider({ disabled: false });
+			$("#slider-rangeZoom").slider({ disabled: false });
+			$("#slider-preRCS").slider({ disabled: false });
+			$("#slider-preSpeed").slider({ disabled: false });
+			$('[data-name="toggleBt"]').prop('disabled', false);
+			$('#setMask').prop('checked', false);
+		} else {
+			panZoom.disablePan();
+			panZoom.disableZoom();
+			panZoom.disableDblClickZoom();
+			panZoom.disableMouseWheelZoom();
+			$("#slider-rangeRCS").slider({ disabled: true });
+			$("#slider-rangeSPD").slider({ disabled: true });
+			$("#slider-rangeZoom").slider({ disabled: true });
+			$("#slider-preRCS").slider({ disabled: true });
+			$("#slider-preSpeed").slider({ disabled: true });
+			$('[data-name="toggleBt"]').prop('disabled', true);
+			$('input[name=masking]').prop('disabled', true);
+			$('#setMask').prop('checked', true);
+		}
+    });	
+	panZoom.disablePan();
+	panZoom.disableZoom();
+	panZoom.disableDblClickZoom();
+	panZoom.disableMouseWheelZoom();
+	$("#slider-rangeRCS").slider({ disabled: true });
+	$("#slider-rangeSPD").slider({ disabled: true });
+	$("#slider-rangeZoom").slider({ disabled: true });
+	$("#slider-preRCS").slider({ disabled: true });
+	$("#slider-preSpeed").slider({ disabled: true });
+	$('[data-name="toggleBt"]').prop('disabled', true);
+	$('input[name=masking]').prop('disabled', true);
+	$('#setMask').prop('checked', true);
+	 
+	$("#setMask").click(function() {
+		if ($(this).prop('checked')==true){
+			$("#svg_id g#cover").hide();
+			panZoom.disablePan();
+			panZoom.disableZoom();
+			panZoom.disableDblClickZoom();
+			panZoom.disableMouseWheelZoom();
+			socketio.emit('svgView', ["1", "0", "0", "1", "0", "0"]); // SVG View Status를 초기상태로 변경
+			$('input[name=masking]').prop('disabled', false);
+		} else {
+			$("#svg_id g#cover").show();
+			panZoom.enablePan();
+			panZoom.enableZoom();
+			panZoom.enableDblClickZoom();
+			panZoom.enableMouseWheelZoom();
+			$('input[name=masking]').prop('disabled', true);
+		}
+	});
+	
+	$("#camTrac").on('click', function() { // 홈 위치로 이동
+		if ($(this).prop('checked')==true){
+			socketio.emit('camTrac', true); // SVG View Status를 환경변수 저장
+		} else {
+			socketio.emit('camTrac', false); // SVG View Status를 환경변수 저장
+		}
+	});
+	$("#UD").on('click', function() { // 홈 위치로 이동
+		var values = $('#svg_id').css('transform').match(/-?[\d\.]+/g);
+		values[3] = values[3] * -1;
+		socketio.emit('svgView', values); // SVG View Status를 환경변수 저장
+	});
+	$("#LR").on('click', function() { // 홈 위치로 이동
+		var values = $('#svg_id').css('transform').match(/-?[\d\.]+/g);
+		values[0] = values[0] * -1;
+		socketio.emit('svgView', values); // SVG View Status를 환경변수 저장
+	});
+	
+	// 시스템 정보 요청
+	// $("#sysAccInfo").on('click', function() { socketio.emit('sysAccInfo', 'sysAccInfo'); });
+	
+	// 시스템 관리자 설정
+	$("#license_ownerIp").on('click', function() { 
+		if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test($("#myIP").html()))
+			$( "#license_ownerIp" ).val($("#myIP").html()); 
+	});
+	
+	// 시스템 정보 표시
+	socketio.on("sysAccInfo", function(data) {
+		$( "#license_ownerIp" ).val(data['ownerIp']);
+		$( "#license_ownerPass" ).val(data['ownerPass']);
+		$( "#interface_portIn" ).val(data['portIn']);
+		$( "#interface_portOut" ).val(data['portOut']);
+		$( "#its_address" ).val(data['address']);
+		$( "#its_netmask" ).val(data['netmask']);
+		$( "#its_gateway" ).val(data['gateway']);
+		$( "#license_key" ).val(data['key']);
+	});
+	// 시스템 정보 저장 
+	$("#sysAccSave").on('click', function() { 
+		if (confirm(lan.confirmSaveSetting[cfg.language.selected])) {
+			var data = { 
+				ownerIp: $( "#license_ownerIp" ).val(),
+				ownerPass: $( "#license_ownerPass" ).val(),
+				portIn: $( "#interface_portIn" ).val(),
+				portOut: $( "#interface_portOut" ).val(),
+				itsAddress: $( "#its_address" ).val(),
+				itsNetmask: $( "#its_netmask" ).val(),
+				itsGateway: $( "#its_gateway" ).val(),
+				key: $( "#license_key" ).val(),
+				language: $( "#languageSelect" ).val()
+			}
+			socketio.emit('sysAccSave', data);
+		} 
+    });
+	
+	// // 카메라 정보 요청
+	// $("#camAccInfo").on('click', function() { socketio.emit('camAccInfo', 'camAccInfo'); });	
+	// // 카메라 정보 표시
+	// socketio.on("camAccInfo", function(data) {
+	// 	$( "#camera_addr" ).val(data['addr']);
+	// 	$( "#camera_user" ).val(data['user']);
+	// 	$( "#camera_pass" ).val(data['pass']);
+	// });
+	// // 카메라 정보 저장 
+	// $("#camAccSave").on('click', function() { 
+	// 	if (confirm(lan.confirmSaveSetting[cfg.language.selected])) {
+	// 		var data = { 
+	// 			addr: $( "#camera_addr" ).val(),
+	// 			user: $( "#camera_user" ).val(),
+	// 			pass: $( "#camera_pass" ).val()
+	// 		}
+	// 		socketio.emit('camAccSave', data);
+	// 	} 
+    // });
+	
+	// 사용자 정보 요청
+	$("#userEnvInfo").on('click', function() { socketio.emit('userEnvInfo', 'userEnvInfo'); });	
+	// 사용자 정보 표시
+	socketio.on("userEnvInfo", function(data) {
+		$( "#enUsr_0" ).prop('checked', data['enUsr_0']);
+		$( "#enUsr_1" ).prop('checked', data['enUsr_1']);
+		$( "#typeReq_0" ).prop('checked', data['typeReq_0']);
+		$( "#typeReq_1" ).prop('checked', data['typeReq_1']);
+		$( "#dataReq_0" ).val(data['dataReq_0']);
+		$( "#dataReq_1" ).val(data['dataReq_1']);
+		$( "#userSrvRequest_0" ).val(data['url_0']);
+		$( "#userSrvRequest_1" ).val(data['url_1']);
+		$( "#enableAPI" ).prop('checked', data['enableAPI']);
+		$( "#io01" ).prop('checked', data['io01']); // $('#io01').prop('checked', true);
+		$( "#io02" ).prop('checked', data['io02']);
+		$( "#io03" ).prop('checked', data['io03']);
+		$( "#io04" ).prop('checked', data['io04']);
+		$( "#io05" ).prop('checked', data['io05']);
+		$( "#io06" ).prop('checked', data['io06']);
+		$( "#io07" ).prop('checked', data['io07']);
+		$( "#io08" ).prop('checked', data['io08']);
+		console.log(data);
+	});
+	// 사용자 정보 저장 
+	$("#userEnvSave").on('click', function() { 
+		if (confirm(lan.confirmSaveSetting[cfg.language.selected])) {
+			var data = { 
+				enUsr_0: $( "#enUsr_0" ).prop('checked'),
+				enUsr_1: $( "#enUsr_1" ).prop('checked'),
+				typeReq_0: $( "#typeReq_0" ).prop('checked'),
+				typeReq_1: $( "#typeReq_1" ).prop('checked'),
+				dataReq_0: $( "#dataReq_0" ).val(),
+				dataReq_1: $( "#dataReq_1" ).val(),
+				url_0: $( "#userSrvRequest_0" ).val(),
+				url_1: $( "#userSrvRequest_1" ).val(),
+				enableAPI: $( "#enableAPI" ).prop('checked'),
+				io01: $( "#io01" ).prop('checked'),
+				io02: $( "#io02" ).prop('checked'),
+				io03: $( "#io03" ).prop('checked'),
+				io04: $( "#io04" ).prop('checked'),
+				io05: $( "#io05" ).prop('checked'),
+				io06: $( "#io06" ).prop('checked'),
+				io07: $( "#io07" ).prop('checked'),
+				io08: $( "#io08" ).prop('checked')
+			}
+			console.log(data);
+			socketio.emit('userEnvSave', data);
+		} 
+    });
+
+	// 센서 정보 요청
+	$("#senAccInfo").on('click', function() { socketio.emit('senAccInfo', 'senAccInfo'); });	
+	// 센서 정보 표시
+	socketio.on("senAccInfo", function(data) {
+		$( "#sensor_addr" ).val(data['addr']);
+		$( "#sensor_user" ).val(data['user']);
+		$( "#sensor_pass" ).val(data['pass']);
+	});
+	// 센서 정보 저장 
+	$("#senAccSave").on('click', function() { 
+		if (confirm(lan.confirmSaveSetting[cfg.language.selected])) {
+			var data = { 
+				addr: $( "#sensor_addr" ).val(),
+				user: $( "#sensor_user" ).val(),
+				pass: $( "#sensor_pass" ).val()
+			}
+			socketio.emit('senAccSave', data);
+		} 
+    });
+
+	$( "#maskSelect" ).change(function() {
+		socketio.emit('setMaskSelect' ,$("#maskSelect").val() ); 
+	});
+
+	// $( "path .allowGroup" ).on('click', function() { 
+	// 	changrMaskID(); 
+	// });
+
+	// 재시작 요청
+	$("#restartProgram").on('click', function() { 
+		if (confirm(lan.confirmRestart[cfg.language.selected])) {
+			socketio.emit('systemCmd', cfg.systemCmd.restart); 
+		}
+    });	
+	$("#rebootSystem").on('click', function() { 
+		if (confirm(lan.confirmRebooting[cfg.language.selected])) {
+			socketio.emit('systemCmd', cfg.systemCmd.reboot); 
+		}
+    });	
+	// $("#systemConfig").on('click', function() { 
+	// 	// http://192.168.0.50/bbs/member_confirm.php?url=http://192.168.0.50/bbs/register_form.php
+	// 	var popup = window.open('http://192.168.0.50/bbs/member_confirm.php?url=http://192.168.0.50/bbs/register_form.php', 'SRF', 'width=700px,height=800px,scrollbars=yes');
+    // });	
+	
+	// $("#lockBGM").click();
+
+});
+
+///// 마스킹 그리기
+var mBox = {};
+function startDrag(evt){
+	// console.log(evt);
+	if ($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	curAction = $('input[name=masking]:checked', '#masking').val();
+	mBox["mID"] = evt.clientX.toString()+'_'+evt.clientY.toString();
+	curContent = $('#svg_id #maskArea').html();
+	if(curAction == 'Delete' && evt.srcElement.localName == 'path') {
+		try {
+			$('#'+evt.srcElement.id).remove();
+			// delMasking 
+			var data = { 
+				id: evt.srcElement.id,
+				mask: evt.srcElement.className.baseVal
+			}
+			socketio.emit('delMasking', data); // 아래내용 전송
+		} catch (e) {
+		   // console.log(e); // pass exception object to error handler
+		}
+		return 0;
+	} else if(curAction == 'Allow') {
+		curContent += "<path class='allowGroup' id='"+mBox["mID"]+"' d='M0,0 l0,0 0,0 0,0 0,0 z'></path>";
+	} else if(curAction == 'Deny') {
+		curContent += "<path class='denyGroup' id='"+mBox["mID"]+"' d='M0,0 l0,0 0,0 0,0 0,0 z'></path>";
+	} else if(curAction == 'Change' && evt.srcElement.localName == 'path') {
+		var newID = prompt("'" + evt.srcElement.id + "' - Input new name of mask ID :\n(Special character is only allow underbar and dash.)");
+		if (newID.length) {
+			//$('#'+evt.srcElement.id).id = newID;
+			//$('.'+evt.srcElement.id).innerHTML = newID;
+			//$('.'+evt.srcElement.id).className = newID;
+			// document.getElementsByClassName(evt.srcElement.id).className = newID;
+
+			var data = { 
+				id: newID.replace(/\W/g, '_'),
+				mask: $('#'+evt.srcElement.id).attr('class'),
+				value: $('#'+evt.srcElement.id).attr("d")
+			}
+			if((typeof data.mask !== 'undefined') && (typeof data.value !== 'undefined')) {
+				socketio.emit('setMasking', data); // 아래내용 전송
+			
+				$('#'+evt.srcElement.id).remove();
+				var data = { 
+					id: evt.srcElement.id,
+					mask: evt.srcElement.className.baseVal
+				}
+				socketio.emit('delMasking', data); // 아래내용 전송
+			}
+		}
+	} else {
+		return 0;
+	}
+	
+	$('#svg_id #maskArea').html(curContent);
+	
+	currTrans = $('svg g').css('transform').split(/[()]/)[1];
+	mBox["scX"] = parseFloat(currTrans.split(',')[0]);
+	mBox["scY"] = parseFloat(currTrans.split(',')[3]);
+	
+	var offset = $("#maskArea").offset(); // Take the offset from the grid, change the ID as you need.
+	evt.stopPropagation();
+	x = (evt.clientX-offset.left) / mBox["scX"];
+	y = (evt.clientY-offset.top) / mBox["scY"];
+	mBox["sX"] = x - (rangeMaxX/2*aMeter);
+	mBox["sY"] = y;
+	mBox["boxing"] = true;
+	$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l0,0 0,0 0,0 0,0 z");
+	// $('.'+mBox["mID"]).attr("x",mBox["sX"]);
+	// $('.'+mBox["mID"]).attr("y",mBox["sY"]);
+}
+
+function moveMouse(evt){
+	if ($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	var offset = $("#maskArea").offset();
+	evt.stopPropagation();
+	if(mBox["boxing"]){
+		x = (evt.clientX-offset.left) / mBox["scX"];
+		y = (evt.clientY-offset.top) / mBox["scY"];
+		mBox["eX"] = x - (rangeMaxX/2*aMeter);
+		mBox["eY"] = y;
+		width = mBox["eX"]-mBox["sX"];
+		height = mBox["eY"]-mBox["sY"];
+		$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l"+width+",0 0,"+height+" "+(width*-1)+",0 0,"+(height*-1)+" z");
+	}
+}
+
+function endDrag(evt){
+	if($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	if(mBox["boxing"] == false) return 0;
+	var offset = $("#maskArea").offset();
+	evt.stopPropagation();
+	x = (evt.clientX-offset.left) / mBox["scX"];
+	y = (evt.clientY-offset.top) / mBox["scY"];
+	mBox["eX"] = x - (rangeMaxX/2*aMeter);
+	mBox["eY"] = y;
+	mBox["boxing"] = false;
+	width = mBox["eX"]-mBox["sX"];
+	height = mBox["eY"]-mBox["sY"];
+	
+	if(width>aMeter && height>aMeter) { // aMeter 이하는 삭제 크기가 없으면 삭제 한다.
+		$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l"+width+",0 0,"+height+" "+(width*-1)+",0 0,"+(height*-1)+" z");
+		var data = { 
+			id: mBox["mID"],
+			mask: $('#'+mBox["mID"]).attr('class'),
+			value: $('#'+mBox["mID"]).attr("d")
+		}
+		if((typeof data.mask !== 'undefined') && (typeof data.value !== 'undefined'))
+			socketio.emit('setMasking', data); // 아래내용 전송
+	} else {
+		$('#'+mBox["mID"]).remove();
+	}
+}
+	
+</script>
+<style>
+:root {
+  --gauge_pan_size: 140px;
+}
+
+html { width:100%;height:100%;padding:0;margin:0; }
+body { 
+	width: 100%;
+	height: 100%; 
+	padding: 0;
+	margin: 0;
+	font-size: 1vh;
+	overflow: hidden;
+	background-color: black;
+	
+	/* The image used */
+	/* Center and scale the image nicely */
+	/* background-image: url("__background_live_url__"); */
+	/* background-image: url(http://photos1.blogger.com/blogger/7247/804/1600/20060805-1.0.jpg); */
+	/* background-color: cornsilk;						*/
+	/* background-position: center;                     */
+	/* background-repeat: no-repeat;                    */
+	/* background-size: contain; */ /* contain; cover;  */
+	/* overflow: hidden;                                */
+}
+hr {
+	height: 4px;
+    border-width: 1px;
+    border-color: transparent;
+    background-color: transparent;
+    margin-top: 4px;
+}
+button:disabled, button[disabled]{ color: #666666; }
+
+.hide { display: none; }
+.btn_grp { margin: 0 6px 0 14px; line-height: 16px; }
+
+/* #camera {
+    position: absolute;
+	left: 0;
+    bottom: 0;
+	overflow: hidden;
+	width: 384px;
+	height: 216px;
+	background-image: url(__camera_live_url__);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	display: none;
+} */
+
+#content { position: absolute; height: 100%; width: 100%; top:0; left:0 }
+#svg_id { display: inline; width: 100%; height: 100%; transform: matrix(1, 0, 0, 1, 0, 0); }
+
+/* #showMenu { z-index:100; }	 */
+#showControl { position: absolute; top: 0px; left: 0px; }
+#control { color:silver; background-color: #00000080; user-select: none; padding: 4px 10px 4px 0; position: absolute; top: 20px; left: 4px; display: none; } 
+
+#logList { height: 200px; }
+#logList, #lastEvent, #keyStatus { padding:8px; width: 100%; overflow: hidden; }
+
+#charts_RCS, #charts_SPD { position:relative; text-align: center; display: none; }
+  
+#optex_logo_frame { background-position: center; background-repeat: no-repeat; background-size: contain; opacity: 0.6; overflow: hidden; position: fixed; clear: both; width:4vw; height: 4vw; right: 1vw; bottom: 1vw; }
+
+#myIP { position: absolute; top: 0; right: 0; color: #ffffff80; padding-right: 4px; }
+
+.allowGroup { fill:#ffffff20;stroke-width:2cm;stroke:lightgreen; }
+.denyGroup { fill:#ffffff20;stroke-width:2cm;stroke:orange; }
+ 
+.setup { 
+	color: silver;
+    position: absolute;
+    right: 2px;
+    top: 14px;
+    width: 20vw;
+    height: 70vh;
+    padding: 10px;
+	background-color: #00000080;
+	overflow-x: hidden;
+    overflow-y: auto;
+	display: none;
+	/* opacity: 0.01; */
+}
+.setup::-webkit-scrollbar-track
+{
+	background-color: black;
+}
+.setup::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #F5F5F5;
+}
+.setup::-webkit-scrollbar-thumb
+{
+	background-color: silver;
+}
+
+.inputCss, .selectCss {
+	color: silver;
+	background-color: #00000000;
+	border: 1px solid #80808070;
+	padding-left: 4px;
+	width: 100%;
+	font-size: 8pt;
+}
+.btnControl, #gotoHome, #setInit {
+	color: silver;
+	background-color: #80808080;
+	border: 0;
+	padding: 0 4px;
+	margin: 4px;
+	border-radius: 2px;
+	box-shadow: 1px 1px 1px #ffffff80;
+}
+
+.theEvent:hover { fill: gray; }
+
+</style>
+</head> 
+
+<body>
+	
+<div id="content">
+	<svg id="svg_id">
+	<g id="background">__svg_background__</g>
+	<g id="grid">__boundary_of_grid__</g>
+	<g id="maskArea" onmousedown="startDrag(evt)" onmouseup="endDrag(evt)" onmousemove="moveMouse(evt)">__boundary_of_zone__</g>
+	<g id="event">__boundary_of_event__</g>
+	<g id="cover">__boundary_of_mask__</g>
+	</svg>
+</div>
+	
+<!-- https://getbootstrap.com/docs/4.0/components/buttons/ -->
+<div id="control">
+	<div class="btn_grp">
+		<div class="owner" name="postFilter" id="rcsLevelD"></div>
+		<div class="owner" name="postFilter" id="slider-rangeRCS"></div>
+		<div class="owner" name="postFilter" id="spdLevelD"></div>
+		<div class="owner" name="postFilter" id="slider-rangeSPD"></div>
+		<!-- <div class="owner" name="postFilter" id="zoomLevelD"></div>
+		<div class="owner" name="postFilter" id="slider-rangeZoom"></div> -->
+	</div>
+	
+	<div class="btn_grp">
+		<div id="objectsTag"></div>
+		<div id="slider-objects"></div>
+		<div id="bgOpacityTag"></div>
+		<div id="slider-bgOpacity"></div>
+		<div id='svgView'><span id='UD'>UD</span> <span id='LR'>LR</span></div>
+	</div>
+	
+	<div class="btn_grp">
+		<input type="checkbox" id="beepAlarm" /><label for="beepAlarm" data-lan="alarm"></label>
+		<input type="checkbox" id="beepDetect" /><label for="beepDetect" data-lan="warning"></label><br>
+		<input type="checkbox" id="showGAG" /><label for="showGAG" data-lan="timeline"></label>
+		<!-- <input type="checkbox" id="showBGM" /><label for="showBGM">B</label> -->
+		<input type="checkbox" id="lockBGM" /><label for="lockBGM" data-lan="unlock"></label>
+	</div>
+
+	<div class="status">
+		<div id="logList"></div>
+		<hr>
+		<div id="lastEvent"></div>
+		<hr>
+		<div id="keyStatus"></div>
+	</div>
+<!-- 	
+	<div>
+		<button id="showCamera" type="button" class="btnControl" data-lan="camera"></button>
+	</div> -->
+
+</div>
+<!-- <div id="camera">
+	<button id="gotoHome" data-name="toggleBt" type="button" class="btn" data-lan="gotoToCenter"></button>
+	<button id="setInit" data-name="toggleBt" type="button" class="btn" data-lan="setCenter"></button>
+	<input id="keyCtrl" data-name="toggleBt" type="checkbox" /><label class="btnControl" for="keyCtrl" data-lan="adjustment"></label>
+	<input id="camTrac" data-name="toggleBt" type="checkbox" /><label class="btnControl" for="camTrac" data-lan="tracking"></label>
+</div> -->
+
+<div class="setup">
+
+	<div class="hide"><label data-lan="sensorSetup"></label>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="inputCss" id="sensor_addr" readonly placeholder="sensorIP"/></div>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="inputCss" id="sensor_user" readonly placeholder="userID" /></div>
+		<div style="margin-left: 10px;"><form><input type="password" data-name="toggleBt" class="inputCss" id="sensor_pass" readonly autocomplete="off" placeholder="password" /></form></div>
+	</div>
+	<div class="hide"><label data-lan="windCondition"></label>
+		<div style="margin-left: 10px;"><select data-name="toggleBt" class="selectCss" id="preset_env">
+			<option value="noSelect" disabled="">Select</option>
+			<option value="no_wind">no wind</option>
+			<option value="light_wind">light 1 ~ 8 km/h</option>
+			<option value="medium_wind">medium 8 ~ 25 km/h</option>
+			<option value="strong_wind">strong 25 ~ km/h</option>
+			<option value="over_water">over water</option>
+		</select></div>
+	<hr>
+	</div>
+	<div><label data-lan="selectMask"></label>
+		<div style="margin-left: 10px;"><select class="selectCss" id="maskSelect" data-name="toggleBt">
+			<option value="0" data-lan="optionAll"></option>
+			<option value="1" selected data-lan="optionAllow"></option>
+			<option value="2" data-lan="optionDeny"></option>
+		</select></div>
+		<div style="margin-left: 10px;" class="btn_grp">
+			<form id="masking">
+				<input type="checkbox" data-name="toggleBt" id="setMask" /><label for="setMask" data-lan="unlock">Unlock</label>
+				<input type="radio" name="masking" disabled value="Allow" /><label for="setMask" data-lan="allow">Allow</label>
+				<input type="radio" name="masking" disabled value="Deny" /><label for="setMask" data-lan="deny">Deny</label>
+				<input type="radio" name="masking" disabled value="Delete" /><label for="setMask" data-lan="delete">Delete</label>
+				<input type="radio" name="masking" disabled value="Change" /><label for="setMask" data-lan="rename">Rename</label>
+			</form>
+		</div>
+		<hr>
+	</div>
+	<div><label data-lan="preFiltering"></label>
+		<div style="margin-left: 10px;" class="btn_grp">
+			<div data-name="toggleBt" class="owner" id="preRCS">RCS</div>
+			<div data-name="toggleBt" class="owner" id="slider-preRCS"></div>
+			<div data-name="toggleBt" class="owner" id="preSpeed">SPD</div>
+			<div data-name="toggleBt" class="owner" id="slider-preSpeed"></div>
+		</div>
+		<hr>
+	</div>
+	<div class="hide"><label data-lan="detectionFilter"></label>
+		<div style="margin-left: 10px;" class="btn_grp">
+			<div class="owner" id="detectionMinVelocity">Detection Min Velocity:임계 속도(m/s)</div>
+			<div class="owner" id="slider-detectionMinVelocity"></div>
+			<div class="owner" id="localFilterSensitivity">Local Filter Sensitivity:감도(주변)</div>
+			<div class="owner" id="slider-localFilterSensitivity"></div>
+			<div class="owner" id="timeFilterSensitivity">Time Filter Sensitivity:감도(위치기록)</div>
+			<div class="owner" id="slider-timeFilterSensitivity"></div>
+		</div>
+		<hr>
+	</div>
+	<div class="hide"><label data-lan="trackingFilter"></label>
+		<div style="margin-left: 10px;" class="btn_grp">
+			<div class="owner" id="trackRangeThreshold">Track Range Threshold:임계 거리(meter)</div>
+			<div class="owner" id="slider-trackRangeThreshold"></div>
+			<div class="owner" id="trackActivationTime">Track Activation Time:임계 시간(초)</div>
+			<div class="owner" id="slider-trackActivationTime"></div>
+			<div class="owner" id="trackMinDetection">Track Min Detection:임계 횟수</div>
+			<div class="owner" id="slider-trackMinDetection"></div>
+		</div>
+		<hr>
+	</div>
+
+	<div><label data-lan="userEnv"></label>
+		<div class="show" style="margin-left: 10px;">
+			Http Request 01<input type="checkbox" data-name="toggleBt" id="enUsr_0">
+			Post<input type="checkbox" data-name="toggleBt" id="typeReq_0">
+			<input type="text" data-name="toggleBt" class="inputCss" id="userSrvRequest_0" placeholder="http://1st.userSrvUrl"/>
+			<input type="text" data-name="toggleBt" class="inputCss" id="dataReq_0" placeholder="name=value, ..."/></div>
+		<div class="hide" style="margin-left: 10px;">
+			Http Request 02<input type="checkbox" data-name="toggleBt" id="enUsr_1">
+			Post<input type="checkbox" data-name="toggleBt" id="typeReq_1">
+			<input type="text" data-name="toggleBt" class="inputCss" id="userSrvRequest_1" placeholder="http://2nd.userSrvUrl" />
+			<input type="text" data-name="toggleBt" class="inputCss" id="dataReq_1" placeholder="name=value, ..."/></div>
+		<div style="margin-left: 10px;">itsAPI Link<input type="checkbox" data-name="toggleBt" id="enableAPI">
+			<div style="display: flex;" id="itsAPIsLink">
+			1<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io01" class="inputCss"/>
+			2<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io02" class="inputCss"/>
+			3<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io03" class="inputCss"/>
+			4<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io04" class="inputCss"/>
+			5<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io05" class="inputCss"/>
+			6<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io06" class="inputCss"/>
+			7<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io07" class="inputCss"/>
+			8<input type="checkbox" name="enableAPI" data-name="toggleBt" id="io08" class="inputCss"/>
+			</div>
+		</div>
+		<div style="margin-left: 10px;">
+			<button type="button" data-name="toggleBt" id="userEnvInfo" class="hide btnControl" data-lan="read"></button>
+			<button type="button" data-name="toggleBt" id="userEnvSave" class="btnControl" data-lan="save"></button>
+		</div>
+		<hr>
+	</div>
+	<div><label data-lan="systemSetup"></label>
+		<div style="margin-left: 10px;">Owner IP Address<input type="text" data-name="toggleBt" class="inputCss" id="license_ownerIp" placeholder="ownerIP" /></div>
+		<div style="margin-left: 10px;"><form><input type="password" data-name="toggleBt" class="hide inputCss" id="license_ownerPass" autocomplete="off" placeholder="ownerPwd" /></form></div>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="hide inputCss" id="interface_portIn" readonly placeholder="sensorPort" /></div>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="hide inputCss" id="interface_portOut" readonly placeholder="interfacePort" /></div>
+		<div style="margin-left: 10px;">ITS License Key<input type="text" data-name="toggleBt" class="inputCss" id="license_key" placeholder="licenseKey" /></div>
+		<div style="margin-left: 10px;">ITS IP Address<input type="text" data-name="toggleBt" class="inputCss" id="its_address" placeholder="itsAddress" /></div>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="hide inputCss" id="its_netmask" placeholder="itsNetmask" /></div>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="hide inputCss" id="its_gateway" placeholder="itsGateway" /></div>
+		<div style="margin-left: 10px;">Language<select data-name="toggleBt" class="selectCss" id="languageSelect"></select></div>
+		<div style="margin-left: 10px;">
+			<button type="button" data-name="toggleBt" id="sysAccInfo" class="hide btnControl" data-lan="read"></button>
+			<button type="button" data-name="toggleBt" id="sysAccSave" class="btnControl" data-lan="save"></button>
+		</div>
+		<hr>
+	</div>
+
+	<div class="hide"><label data-lan="cameraSetup"></label>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="inputCss" id="camera_addr" placeholder="cameraIP"/></div>
+		<div style="margin-left: 10px;"><input type="text" data-name="toggleBt" class="inputCss" id="camera_user" placeholder="userID" /></div>
+		<div style="margin-left: 10px;"><form><input type="password" data-name="toggleBt" class="inputCss" id="camera_pass" autocomplete="off" placeholder="password" /></form></div>
+		<div style="margin-left: 10px;">
+			<button type="button" data-name="toggleBt" id="camAccInfo" class="hide btnControl" data-lan="read"></button>
+			<button type="button" data-name="toggleBt" id="camAccSave" class="btnControl" data-lan="save"></button>
+		</div>
+		<hr>
+	</div>
+
+	<div>
+		<button type="button" data-name="toggleBt" class="btnControl" id="restartProgram" data-lan="reLoadProgram"></button>
+		<button type="button" data-name="toggleBt" class="btnControl" id="rebootSystem" data-lan="systemReboot"></button>
+		<!-- <button type="button" data-name="toggleBt" class="btnControl" id="systemConfig" data-lan="systemConfig"></button> -->
+	</div>
+	<!-- <hr>
+	<div><b>Camera Keyboard Control</b>
+		<div> - Up, Down, Left, Right</div>
+		<div> - Home: UpLeft, End: DownLeft</div>
+		<div> - PageUp: UpRight, PageDown: DownLight</div>
+		<div> - Z or z: ZoomIn or ZoomOut</div>
+		<div> - F or f: FocusIn or FocusOut</div>
+		<div> - I or i: IrisIn or IrisOut</div>
+		<hr>
+	</div> -->
+</div>
+
+<div id="charts_RCS"><canvas id="timeLineRCS" width="1000" height="40"></canvas></div>
+<div id="charts_SPD"><canvas id="timeLineSPD" width="1000" height="40"></canvas></div>
+<div id="optex_logo_frame"></div>
+
+<div id="myIP"></div>
+
+<div id="showMenu">
+	<button id="showControl" type="button" class="btnControl" data-lan="menu"></button>
+</div>
+
+<script>
+$(document).ready(function(){
+	console.log('document.ready');
+});
+
+$(window).ready(function(){
+	console.log('window.ready');
+});
+
+window.onload = function() {
+	console.log('window.onload');
+};
+
+var track_A = '';
+for(k = l = 11025; k--;) {
+  track_A += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33)* Math.min((l-k)/83,k/l)*127 + 128);
+}
+var track_B = '';
+for(k = 11025; k--;) {
+  track_B += String.fromCharCode(Math.sin(k/44100*2*Math.PI*659.26)*127+128);
+}
+var track_C = '';
+for(i=0;i<4;) { // i: 
+	i++;
+	for(k = l = 11025; k--;) {
+		track_C += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33) * Math.min((l-k)/83,k/l) * (i%2&&i%8-3?99:33) + 128);
+	}
+}
+function beep_A() {
+    var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\0'+track_A));
+    snd.play();
+}
+function beep_B() {
+    var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_B));
+    snd.play();
+}
+function beep_C() {
+    var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_C));
+    snd.play();
+}</script>
+</body>
+</html>

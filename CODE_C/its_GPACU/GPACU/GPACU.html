@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__style_bootstrap_js__
+__style_bootstrap_css__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+//////////////////////////////////////////////
+function activeAdd(id){
+    $('#'+id).addClass("active");
+};
+function activeDel(id){
+    $('#'+id).removeClass("active");
+};
+
+$( document ).ready(function() {
+	var socketio = io.connect();
+	socketio.on("io_status", function(data) {
+		var id = data['id'];
+		var status = data['status'];
+		var msg = data['msg'];
+		// console.log(data);
+		
+		if(status == 0) { 
+			activeDel(id);
+		} else {
+			activeAdd(id);
+		}
+	});
+
+    $(".btn").on('click', function() { 
+		socketio.emit('btnClick', $(this).attr('id'));
+    });	
+	
+	// 최초 1회 실행 - 지난 하루치 로그 요청
+	socketio.emit('getCurrentStatus');
+});	
+
+</script>
+
+<style>
+.hide { display:none; }
+.gHead { text-align: center; }
+.gBody { text-align: center; margin: 0 0 4px 0; }
+button { margin: 4px; }
+
+@media (max-width: 600px) {
+	.btn { font-size:6pt; height: 20px; margin: 0 1px; padding: 0 8px; }
+	.gHead { font-size:6pt; height: 16px; margin: 0; padding: 0; }
+}
+</style>
+</head> 
+
+<body>
+
+<div>
+	<div class="gBody">
+		__html_acu_button__
+	</div>
+</div>
+<div>
+	<div class="gBody">
+		<button id="pw01" type="button" class="btn btn-outline-warning" data-toggle="button">P01</button>
+		<button id="pw02" type="button" class="btn btn-outline-warning" data-toggle="button">P02</button>
+	</div>
+</div>
+
+</body>
+</html>

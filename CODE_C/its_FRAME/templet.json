@@ -1,0 +1,653 @@
+{
+	"A": {
+		"framePageID": "A",
+		"frameQtyRow": "",
+		"frameQtyCol": "",
+		"frameStyle": {
+			"frame_000": {
+				"width": "60vw",
+				"height": "66.63146779303062vh",
+				"left": "0vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_003": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "60vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_004": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "80vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_008": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "60vw",
+				"top": "33.262935586061246vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_009": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "80vw",
+				"top": "33.262935586061246vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_010": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "0vw",
+				"top": "66.63146779303062vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_011": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "20vw",
+				"top": "66.63146779303062vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_012": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "40vw",
+				"top": "66.63146779303062vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_013": {
+				"width": "20vw",
+				"height": "33.262935586061246vh",
+				"left": "60vw",
+				"top": "66.63146779303062vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_014": {
+				"width": "20vw",
+				"height": "33.157338965153116vh",
+				"left": "80vw",
+				"top": "66.63146779303062vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			}
+		}
+	},
+	"B": {
+		"framePageID": "B",
+		"frameQtyRow": "",
+		"frameQtyCol": "",
+		"frameStyle": {
+			"frame_000": {
+				"width": "50vw",
+				"height": "66.57407407407408vh",
+				"left": "0vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_003": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "50vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_004": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "66.66666666666667vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_005": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "83.33333333333334vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_009": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "50vw",
+				"top": "33.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_010": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "66.66666666666667vw",
+				"top": "33.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_011": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "83.33333333333334vw",
+				"top": "33.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_012": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "0vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_013": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "16.666666666666668vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_014": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "33.333333333333336vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_015": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "50vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_016": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "66.66666666666667vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_017": {
+				"width": "16.666666666666668vw",
+				"height": "33.33333333333333vh",
+				"left": "83.33333333333334vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			}
+		}
+	},
+	"C": {
+		"framePageID": "C",
+		"frameQtyRow": "",
+		"frameQtyCol": "",
+		"frameStyle": {
+			"frame_000": {
+				"width": "66.61458333333334vw",
+				"height": "75vh",
+				"left": "0vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_002": {
+				"width": "33.333333333333336vw",
+				"height": "25vh",
+				"left": "66.66666666666667vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_005": {
+				"width": "33.333333333333336vw",
+				"height": "25vh",
+				"left": "66.66666666666667vw",
+				"top": "25vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_008": {
+				"width": "33.333333333333336vw",
+				"height": "25vh",
+				"left": "66.66666666666667vw",
+				"top": "50vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_009": {
+				"width": "33.333333333333336vw",
+				"height": "25vh",
+				"left": "0vw",
+				"top": "75vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_010": {
+				"width": "33.333333333333336vw",
+				"height": "25vh",
+				"left": "33.333333333333336vw",
+				"top": "75vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_011": {
+				"width": "33.333333333333336vw",
+				"height": "25vh",
+				"left": "66.66666666666667vw",
+				"top": "75vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			}
+		}
+	},
+	"D": {
+		"framePageID": "D",
+		"frameQtyRow": "",
+		"frameQtyCol": "",
+		"frameStyle": {
+			"frame_000": {
+				"width": "50vw",
+				"height": "60vh",
+				"left": "0vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_003": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "50vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_004": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "66.66666666666667vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_005": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "83.33333333333334vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_009": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "50vw",
+				"top": "20vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_010": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "66.66666666666667vw",
+				"top": "20vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_011": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "83.33333333333334vw",
+				"top": "20vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_015": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "50vw",
+				"top": "40vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_016": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "66.66666666666667vw",
+				"top": "40vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_017": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "83.33333333333334vw",
+				"top": "40vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_018": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "0vw",
+				"top": "60vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_019": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "16.666666666666668vw",
+				"top": "60vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_020": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "33.333333333333336vw",
+				"top": "60vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_021": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "50vw",
+				"top": "60vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_022": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "66.66666666666667vw",
+				"top": "60vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_023": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "83.33333333333334vw",
+				"top": "60vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_024": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "0vw",
+				"top": "80vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_025": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "16.666666666666668vw",
+				"top": "80vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_026": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "33.333333333333336vw",
+				"top": "80vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_027": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "50vw",
+				"top": "80vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_028": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "66.66666666666667vw",
+				"top": "80vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_029": {
+				"width": "16.666666666666668vw",
+				"height": "20vh",
+				"left": "83.33333333333334vw",
+				"top": "80vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			}
+		}
+	},
+	"E": {
+		"framePageID": "E",
+		"frameQtyRow": "",
+		"frameQtyCol": "",
+		"frameStyle": {
+			"g500t100_192_168_0_29_0002": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "0vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_001": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "12.5vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_002": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "25vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_003": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "37.5vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_004": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "50vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_005": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "62.5vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_006": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "75vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_007": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "87.5vw",
+				"top": "0vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_008": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "0vw",
+				"top": "16.666666666666664vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_009": {
+				"width": "75vw",
+				"height": "66.66666666666666vh",
+				"left": "12.5vw",
+				"top": "16.666666666666664vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_015": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "87.5vw",
+				"top": "16.666666666666664vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_016": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "0vw",
+				"top": "33.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_023": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "87.5vw",
+				"top": "33.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_024": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "0vw",
+				"top": "50vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_031": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "87.5vw",
+				"top": "50vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_032": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "0vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_039": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "87.5vw",
+				"top": "66.66666666666666vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_040": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "0vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_041": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "12.5vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_042": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "25vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_043": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "37.5vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_044": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "50vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_045": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "62.5vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_046": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "75vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			},
+			"frame_047": {
+				"width": "12.5vw",
+				"height": "16.666666666666664vh",
+				"left": "87.5vw",
+				"top": "83.33333333333333vh",
+				"background-image": "url(\"http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png\")",
+				"background-size": "contain"
+			}
+		}
+	}
+}

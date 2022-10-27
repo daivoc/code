@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# 백그라운드 실행시 프로세서 제거 해야 함
+python /home/pi/GIKENT/run_GIKENT.pyc

@@ -1,0 +1,557 @@
+{ 
+	"colorFont": {
+		"circ": {
+			"a": "\ud83d\udd34",
+			"b": "\ud83d\udfe0",
+			"c": "\ud83d\udfe1",
+			"d": "\ud83d\udfe2",
+			"e": "\ud83d\udd35",
+			"f": "\ud83d\udfe3",
+			"g": "\ud83d\udfe4",
+			"h": "\u26ab",
+			"i": "\u26aa"
+		},
+		"rect": {
+			"a": "\ud83d\udfe5",
+			"b": "\ud83d\udfe7",
+			"c": "\ud83d\udfe8",
+			"d": "\ud83d\udfe9",
+			"e": "\ud83d\udfe6",
+			"f": "\ud83d\udfea",
+			"g": "\ud83d\udfeb",
+			"h": "\u2b1b",
+			"i": "\u2b1c"
+		}
+	},
+	"gpio": {
+		"in": {
+			"13": "Relay_02",
+			"17": "Relay_07",
+			"19": "Relay_01",
+			"22": "Relay_05",
+			"27": "Relay_06",
+			"4": "Relay_08",
+			"5": "Relay_04",
+			"6": "Relay_03"
+		},
+		"out": {
+			"18": "Alert_01",
+			"23": "Alert_02",
+			"24": "Alert_03",
+			"25": "Alert_04"
+		},
+		"activeOn": 1
+	},
+	"iface": {
+		"eth1": "192.168.168.10",
+		"eth2": "192.168.167.10",
+		"eth3": "192.168.166.10"
+	},
+	"ioBoard": {
+		"acu": {
+			"gp485": {
+				"rt": 14,
+				"tr": 15
+			},
+			"gpio": {
+				"io01": 19,
+				"io02": 13,
+				"io03": 6,
+				"io04": 5,
+				"io05": 22,
+				"io06": 27,
+				"io07": 17,
+				"io08": 4,
+				"io09": 26,
+				"io10": 21,
+				"io11": 20,
+				"io12": 16,
+				"io13": 7,
+				"io14": 25,
+				"io15": 24,
+				"io16": 23
+			},
+			"gppw": {
+				"pw01": 12,
+				"pw02": 8
+			},
+			"gprp": {
+				"rp01": 2,
+				"rp02": 3,
+				"rp03": 10,
+				"rp04": 9,
+				"rp05": 11,
+				"rp06": 0,
+				"rp07": 1,
+				"rp08": 8
+			},
+			"setIO": {
+				"io01": true,
+				"io02": true,
+				"io03": true,
+				"io04": true,
+				"io05": true,
+				"io06": true,
+				"io07": true,
+				"io08": true,
+				"io09": false,
+				"io10": false,
+				"io11": false,
+				"io12": false,
+				"io13": false,
+				"io14": false,
+				"io15": false,
+				"io16": false
+			},
+			"setPW": {
+				"pw01": true,
+				"pw02": true
+			}
+		},
+		"psw": {
+			"gp485": {
+				"rt": 14,
+				"tr": 15
+			},
+			"gpio": {
+				"io01": 19,
+				"io02": 13,
+				"io03": 6,
+				"io04": 5,
+				"io05": 22,
+				"io06": 27,
+				"io07": 17,
+				"io08": 4,
+				"io09": 26,
+				"io10": 21,
+				"io11": 20,
+				"io12": 16,
+				"io13": 7,
+				"io14": 25,
+				"io15": 24,
+				"io16": 23
+			},
+			"gppw": {
+				"pw01": 12,
+				"pw02": 8
+			},
+			"setIO": {
+				"io01": true,
+				"io02": true,
+				"io03": true,
+				"io04": true,
+				"io05": true,
+				"io06": true,
+				"io07": true,
+				"io08": true,
+				"io09": true,
+				"io10": true,
+				"io11": true,
+				"io12": true,
+				"io13": true,
+				"io14": false,
+				"io15": false,
+				"io16": false
+			},
+			"setPW": {
+				"pw01": true,
+				"pw02": true
+			}
+		},
+		"std": {
+			"gpio": {
+				"io01": 19,
+				"io02": 13,
+				"io03": 6,
+				"io04": 5,
+				"io05": 22,
+				"io06": 27,
+				"io07": 17,
+				"io08": 4,
+				"io09": 18,
+				"io10": 23,
+				"io11": 24,
+				"io12": 25
+			},
+			"gppw": {
+				"pw01": 12
+			},
+			"setIO": {
+				"io01": false,
+				"io02": false,
+				"io03": false,
+				"io04": false,
+				"io05": false,
+				"io06": false,
+				"io07": false,
+				"io08": false,
+				"io09": true,
+				"io10": true,
+				"io11": true,
+				"io12": true
+			},
+			"setPW": {
+				"pw01": true
+			}
+		}
+	},
+	"license": {
+		"server_addr": "119.207.126.79",
+		"server_url": "http://119.207.126.79/its_server/ecosLicense",
+		"trial_limit_due": 30
+	},
+	"network": {
+		"confPath": {
+			"interfaces": "/etc/network/interfaces",
+			"dhcpcd": "/etc/dhcpcd.conf",
+			"wpa_supplicant": "/etc/wpa_supplicant/wpa_supplicant.conf"
+		},
+		"ifaces": ["eth0", "eth1", "eth2", "eth3", "wlan0", "wlan1"],
+		"interfaces": {
+			"basic": [
+			"# Please note that this file is written to be used with dhcpcd",
+			"# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'",
+			"",
+			"# Include files from /etc/network/interfaces.d:",
+			"source-directory /etc/network/interfaces.d",
+			"",
+			"auto lo",
+			"iface lo inet loopback",
+			"iface eth0 inet manual",
+			"iface eth1 inet manual",
+			"iface eth2 inet manual",
+			"iface eth3 inet manual",
+			"",
+			"allow-hotplug wlan0",
+			"iface wlan0 inet manual",
+			"    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf",
+			"",
+			"allow-hotplug wlan1",
+			"iface wlan1 inet manual",
+			"    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf"
+			]
+		},
+		"dhcpcd": { 
+			"basic": [
+				"# interface eth0",
+				"# static ip_address=192.168.0.115/24",
+				"# static routers=192.168.0.1",
+				"# static domain_name_servers=192.168.0.1",
+				"",
+				"# Custom static IP address for eth0.",
+				"interface eth0",
+				"static ip_address={eth0_ip}/24",
+				"static routers={eth0_route}",
+				"static domain_name_servers={eth0_domain}",
+				"",
+				"# Custom static IP address for wlan0.",
+				"interface wlan0",
+				"static ip_address={wlan0_ip}/24",
+				"static routers={wlan0_route}",
+				"static domain_name_servers={wlan0_domain}"
+			],
+			"format": {
+				"interface": "interface",
+				"ip_address": "ip_address/24",
+				"routers": "routers",
+				"domain_name_servers": "domain"
+			}
+		},
+		"wpa_supplicant": { 
+			"basic": [
+				"ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev",
+				"update_config=1",
+				"",
+				"network={",
+				"    ssid='homenetwork'",
+				"    psk='h0mepassw0rd'",
+				"}"
+			]
+		}
+	},
+	"mPlayer": {
+		"mplayer": {
+			"volume": 70
+		},
+		"omxplayer": {
+			"volume": "0db"
+		}
+	},
+	"mysql": {
+		"host": "localhost",
+		"name": "its_web",
+		"pass": "GXnLRNT9H50yKQ3G",
+		"user": "its"
+	},
+	"path": {
+		"api": "/home/pi/API",
+		"api3": "/home/pi/API3",
+		"audio": "/var/www/html/its_web/data/audio",
+		"bind": "/home/pi/optex_BIND",
+		"bss": "/home/pi/optex_BSS",
+		"bss_r": "/home/pi/optex_BSS_R",
+		"camera": "/home/pi/CAM",
+		"common": "/home/pi/common",
+		"config": "/home/pi/.config",
+		"counter": "/home/pi/COUNTER",
+		"tailing": "/home/pi/TAILING",
+		"fsi": "/home/pi/FSI",
+		"frame": "/home/pi/FRAME",
+		"gikenp": "/home/pi/GIKENP",
+		"gikent": "/home/pi/GIKENT",
+		"gikenc": "/home/pi/GIKENC",
+		"gpacu": "/home/pi/GPACU",
+		"gpcio": "/home/pi/GPCIO",
+		"gpio": "/home/pi/GPIO",
+		"gpwio": "/home/pi/GPWIO",
+		"home": "/home/pi",
+		"img": "/var/www/html/its_web/data/image",
+		"its_web": "/var/www/html/its_web",
+		"log": "/var/www/html/its_web/data/log",
+		"mon_tbl": "/home/pi/MON_TBL",
+		"monitor": "/home/pi/MONITOR",
+		"parking": "/home/pi/optex_PARKING",
+		"rls": "/home/pi/optex_RLS",
+		"rls_r": "/home/pi/optex_RLS_R",
+		"rls_v": "/home/pi/optex_RLS_V",
+		"rls3": "/home/pi/RLS3",
+		"speed": "/home/pi/optex_SPEED",
+		"srf": "/home/pi/SRF",
+		"streaming": "/home/pi/API",
+		"table": "/home/pi/common",
+		"user": {
+			"home": "/theme/ecos-its_optex/user",
+			"audio": "/theme/ecos-its_optex/user/audio",
+			"code": "/theme/ecos-its_optex/user/code",
+			"config": "/theme/ecos-its_optex/user/config",
+			"image": "/theme/ecos-its_optex/user/image",
+			"note": "/theme/ecos-its_optex/user/note",
+			"video": "/theme/ecos-its_optex/user/video"
+		},
+		"utility": "/home/pi/utility"
+	},
+	"port": {
+		"aoip": 28001,
+		"api": 34001,
+		"userApi": 32001,
+		"fsi": 52001,
+		"frame": {
+			"portIn": 33000,
+			"portOut": 33100
+		},
+		"gikenp":{
+			"portIn":34000,
+			"portOut":34100
+		},
+		"gikent": {
+			"portIn": 35000,
+			"portOut": 35100
+		},
+		"tailing": {
+			"portIn": 36000,
+			"portOut": 36100
+		},
+		"gikenc":{
+			"portIn":37000,
+			"portOut":37100
+		},
+		"gpio": {
+			"portIn": 44001,
+			"portOut": 46001
+		},
+		"gpwio": {
+			"portIn": 8040,
+			"portOut": 8080
+		},
+		"ims": 38088,
+		"its": 54001,
+		"pms": 48001,
+		"systemIn": 50000,
+		"systemOut": 51000,
+		"tableUnion": 64444,
+		"watchdog": {
+			"interval": 10,
+			"portIO": 53000
+		}
+	},
+	"run": {},
+	"runTable": {
+		"table": {
+			"command": "run_table.pyc"
+		},
+		"gpwio": {
+			"command": "GPWIO.pyc"
+		},
+		"gpacu": {
+			"command": "GPACU.pyc"
+		},
+		"gpio": {
+			"command": "run_GPIO.pyc"
+		},
+		"api": {
+			"command": "run_itsAPI.pyc"
+		},
+		"api3": {
+			"command": "run_itsAPI.pyc"
+		},
+		"gikenp": {
+			"command": "run_GIKENP.pyc"
+		},
+		"gikent": {
+			"command": "run_GIKENT.pyc"
+		},
+		"gikenc": {
+			"command": "run_GIKENC.pyc"
+		},
+		"fsi": {
+			"command": "run_FSI.pyc"
+		},
+		"srf": {
+			"command": "spotter.pyc"
+		},
+		"rls_r": {
+			"command": "run_optex.pyc"
+		},
+		"rls_v": {
+			"command": "run_optex.pyc"
+		},
+		"rls3": {
+			"command": "run_RLS3.pyc"
+		},
+		"speed": {
+			"command": "run_optex.pyc"
+		},
+		"bss": {
+			"command": "run_optex.pyc"
+		},
+		"camera": {
+			"command": "run_CAM.pyc"
+		},
+		"streaming": {
+			"command": "run_streaming.pyc"
+		},
+		"monitor": {
+			"command": "run_IMS.pyc"
+		}
+	},
+	"status": {
+		"0": "NORMAL",
+		"1": "ACTIVE_EVENT",
+		"2": "HEARTBEAT",
+		"3": "RESERVED",
+		"4": "RESERVED",
+		"5": "WARNING",
+		"6": "RESERVED",
+		"7": "ERR_CONNECT",
+		"8": "ERR_COVER",
+		"9": "ERR_EVENT"
+	},
+	"systemCmd": {
+		"execCnt": 1,
+		"reboot": "sudo reboot"
+	},
+	"table": {
+		"bind": "g5_write_g200t400",
+		"box": "g5_write_g500t300",
+		"bss": "g5_write_g200t100",
+		"bss_r": "g5_write_g200t110",
+		"camera": "g5_write_g500t100",
+		"counter": "g5_write_g300t200",
+		"fsi": "g5_write_g400t100",
+		"fsi_fd": "g5_write_g400t140",
+		"gikenp": "g5_write_g400t200",
+		"gikent": "g5_write_g400t300",
+		"tailing": "g5_write_g400t400",
+		"gikenc": "g5_write_g400t500",
+		"gpacu": "g5_write_g300t400",
+		"gpcio": "g5_write_g300t300",
+		"gpio": "g5_write_g300t100",
+		"gpwio": "g5_write_g300t500",
+		"light": "g5_write_g500t500",
+		"parking": "g5_write_g200t220",
+		"relay": "g5_write_g100t160",
+		"rls": "g5_write_g200t200",
+		"rls_r": "g5_write_g200t210",
+		"rls_v": "g5_write_g200t230",
+		"rls3": "g5_write_g200t240",
+		"rxtx": "g5_write_g100t100",
+		"speaker": "g5_write_g500t400",
+		"speed": "g5_write_g200t120",
+		"spot": "g5_write_g200t500",
+		"zone": "g5_write_g500t200"
+	},
+	"logger": {
+		"A01": {
+			"name":"table",
+			"run": "run_table.pyc"
+		},
+		"B01": {
+			"name":"gpwio",
+			"run": "GPWIO.pyc"
+		},
+		"B02": {
+			"name":"gpacu",
+			"run": "GPACU.pyc"
+		},
+		"B03": {
+			"name":"gpio",
+			"run": "run_GPIO.pyc"
+		},
+		"C01": {
+			"name":"camera",
+			"run": "run_CAM.pyc"
+		},
+		"C02": {
+			"name":"streaming",
+			"run": "run_streaming.pyc"
+		},
+		"D01": {
+			"name":"bss",
+			"run": "run_optex.pyc"
+		},
+		"D02": {
+			"name":"speed",
+			"run": "run_optex.pyc"
+		},
+		"E01": {
+			"name":"api",
+			"run": "run_itsAPI.pyc"
+		},
+		"G01": {
+			"name":"gikenp",
+			"run": "run_GIKENP.pyc"
+		},
+		"G02": {
+			"name":"gikent",
+			"run": "run_GIKENT.pyc"
+		},
+		"G03": {
+			"name":"gikenc",
+			"run": "run_GIKENC.pyc"
+		},
+		"F01": {
+			"name":"fsi",
+			"run": "run_FSI.pyc"
+		},
+		"M01": {
+			"name":"monitor",
+			"run": "run_IMS.pyc"
+		},
+		"S01": {
+			"name":"srf",
+			"run": "spotter.pyc"
+		},
+		"R01": {
+			"name":"rls_r",
+			"run": "run_optex.pyc"
+		},
+		"R02": {
+			"name":"rls_v",
+			"run": "run_optex.pyc"
+		},
+		"R03": {
+			"name":"rls3",
+			"run": "run_RLS3.pyc"
+		}
+	}
+}

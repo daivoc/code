@@ -1,0 +1,42 @@
+{
+	"local": {
+		"camUrl": "rtsp://root:RLS-3060V@192.168.168.30:554/stream/0",
+		"holeTime": 1,
+		"cntPreShotMax": 30,
+		"cntPostShotMax": 20,
+		"description": "RLS3060V",
+		"memo": "rls3060v"
+	},
+	"local_tmp": {
+		"camUrl": 0,
+		"holeTime": 0.5,
+		"cntPreShotMax": 30,
+		"cntPostShotMax": 20,
+		"description": "local device camera",
+		"memo": "local"
+	},
+	"walkerSt": {
+		"camUrl": "rtsp://admin:admin@96.48.233.195:5540",
+		"holeTime": 1,
+		"cntPreShotMax": 20,
+		"cntPostShotMax": 10,
+		"description": "location on vancouver",
+		"memo": ""
+	},
+	"axis": {
+		"camUrl": "rtsp://root:pass@192.168.0.243/axis-media/media.amp",
+		"holeTime": 0.5,
+		"cntPreShotMax": 20,
+		"cntPostShotMax": 10,
+		"description": "axis ptz camera",
+		"memo": ""
+	},
+	"wisenet": {
+		"camUrl": "",
+		"holeTime": 0.5,
+		"cntPreShotMax": 20,
+		"cntPostShotMax": 10,
+		"description": "XNP-6330RH",
+		"memo": "한화 카메라"
+	}
+}

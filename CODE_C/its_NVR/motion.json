@@ -1,0 +1,214 @@
+{
+	"Basic Setup Mode": {
+		"logfile": {
+			"value":"/home/pi/iotNVR.log",
+			"desc":"로그파일 저장 위치"
+		},
+		"log_level": {
+			"value":"9",
+			"desc":"Level of log messages [1..9] (EMG, ALR, CRT, ERR, WRN, NTC, INF, DBG, ALL). (default: 6 / NTC)"
+		}
+	},
+	"Capture device options": {
+		"width": {
+			"value":"1920",
+			"desc":""
+		},
+		"height": {
+			"value":"1080",
+			"desc":""
+		},
+		"framerate": {
+			"value":"100",
+			"desc":""
+		},
+		"netcam_url": {
+			"value":"rtsp://192.168.0.38/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast",
+			"desc":""
+		},
+		"netcam_userpass": {
+			"value":"manager:manager",
+			"desc":""
+		}
+	},
+	"Motion Detection Settings": {
+		"threshold": {
+			"value":"25000",
+			"desc":""
+		},
+		"lightswitch": {
+			"value":"60",
+			"desc":"갑작스러운 광량 변화를 무시 (백분율 1% - 100%, 0 - 무시)"
+		},
+		"threshold_tune": {
+			"value":"off",
+			"desc":""
+		},
+		"event_gap": {
+			"value":"60",
+			"desc":""
+		},
+		"max_movie_time": {
+			"value":"0",
+			"desc":""
+		},
+		"emulate_motion": {
+			"value":"off",
+			"desc":""
+		}
+	},
+	"Image File Output": {
+		"output_pictures": {
+			"value":"on",
+			"desc":""
+		},
+		"output_debug_pictures": {
+			"value":"off",
+			"desc":""
+		},
+		"quality": {
+			"value":"75",
+			"desc":""
+		},
+		"picture_type": {
+			"value":"jpeg",
+			"desc":""
+		},
+		"ffmpeg_output_movies": {
+			"value":"on",
+			"desc":""
+		},
+		"ffmpeg_output_debug_movies": {
+			"value":"off",
+			"desc":""
+		},
+		"ffmpeg_variable_bitrate": {
+			"value":"0",
+			"desc":""
+		},
+		"ffmpeg_video_codec": {
+			"value":"mkv",
+			"desc":""
+		},
+		"timelapse_codec": {
+			"value":"mpg",
+			"desc":""
+		}
+	},
+	"Snapshots": {
+		"locate_motion_mode": {
+			"value":"off",
+			"desc":""
+		},
+		"locate_motion_style": {
+			"value":"box",
+			"desc":""
+		},
+		"text_right": {
+			"value":"%Y-%m-%d\n%T-%q",
+			"desc":""
+		},
+		"text_left": {
+			"value":"CAMERA %t",
+			"desc":""
+		},
+		"text_changes": {
+			"value":"on",
+			"desc":""
+		},
+		"text_double": {
+			"value":"on",
+			"desc":""
+		},
+		"target_dir": {
+			"value":"/var/www/html/cctv/motion_axis",
+			"desc":""
+		},
+		"picture_filename": {
+			"value":"%v-%Y%m%d%H%M%S-%q",
+			"desc":""
+		},
+		"movie_filename": {
+			"value":"%v-%Y%m%d%H%M%S",
+			"desc":""
+		},
+		"timelapse_filename": {
+			"value":"%Y%m%d-timelapse",
+			"desc":""
+		}
+	},
+	"Live Stream Server": {
+		"stream_port": {
+			"value":"8090",
+			"desc":""
+		},
+		"stream_quality": {
+			"value":"50",
+			"desc":""
+		},
+		"stream_motion": {
+			"value":"on",
+			"desc":""
+		},
+		"stream_localhost": {
+			"value":"off",
+			"desc":""
+		}
+	},
+	"Common Options": {
+		"sql_log_picture": {
+			"value":"on",
+			"desc":""
+		},
+		"sql_log_snapshot": {
+			"value":"on",
+			"desc":""
+		},
+		"sql_log_movie": {
+			"value":"on",
+			"desc":""
+		},
+		"sql_log_timelapse": {
+			"value":"on",
+			"desc":""
+		},
+		"sql_query_start": {
+			"value":"insert into motion_events(camera, start_time) values ('%t', '%Y-%m-%d %T')",
+			"desc":""
+		},
+		"sql_query": {
+			"value":"insert into security_events(camera, filename, frame, file_type, time_stamp, event_time_stamp) values('%t', '%f', '%q', '%n', '%Y-%m-%d %T', '%C')",
+			"desc":""
+		},
+		"sql_query_stop": {
+			"value":"update motion_events set end_time='%Y-%m-%d %T' where event_id=%{dbeventid}",
+			"desc":""
+		}
+	},
+	"Database Options": {
+		"database_type": {
+			"value":"mysql",
+			"desc":""
+		},
+		"database_dbname": {
+			"value":"motion",
+			"desc":""
+		},
+		"database_host": {
+			"value":"localhost",
+			"desc":""
+		},
+		"database_user": {
+			"value":"daivoc",
+			"desc":""
+		},
+		"database_password": {
+			"value":"323Walker!",
+			"desc":""
+		},
+		"database_port": {
+			"value":"3306",
+			"desc":""
+		}
+	}
+}

@@ -1,0 +1,212 @@
+{
+	"mysql":{
+		"host":"localhost",
+		"user":"its",
+		"pass":"GXnLRNT9H50yKQ3G",
+		"name":"its_web"
+	},
+	"path":{
+		"common":"/home/pi/common",
+		"utility":"/home/pi/utility",
+		"spotter":"/home/pi/SRF",
+		"webRoot":"/var/www/html/its_web",
+		"home":"/SRF",
+		"log":"/SRF/log",
+		"img":"/SRF/image",
+		"json":"/SRF/json",
+		"config":"/SRF/config"
+	},
+	"file":{
+		"html_src":"/spotter_templet.html",
+		"html_dst":"/spotter.html",
+		"html_bg":"/spotter.svg",
+		"img_logo_home":"/ecos_icon.png",
+		"img_logo_main":"/ecos_icon.png",
+		"config":"/config.json"
+	},
+	"systemCmd":{
+		"restart":"python spotter.pyc",
+		"reboot":"sudo reboot"
+	},
+	"license":{
+		"ownerIp":"",
+		"ownerPass":"",
+		"op_code":"ecos",
+		"passed":0,
+		"key":"06cf4f646fad65f6542344a8907fe1158fb46fe82d84bc9165e70672fe00471e"
+	},
+	"interface":{
+		"portAddr":"169.254.254.1",
+		"portIn":18100,
+		"portOut":28100,
+		"portAPI":34001,
+		"portAPIWEB":28080,
+		"portMasq":38080,
+		"its":{
+			"address":"192.168.0.50",
+			"netmask":"255.255.255.0",
+			"gateway":"192.168.0.1"	
+		},
+		"ims":{
+			"address":"192.168.0.0",
+			"port":"38087"
+		}
+	},
+	"userEnv":{
+		"enUsrRequest": {
+			"url_0":false,
+			"url_1":false,
+			"url_2":false,
+			"url_3":false
+		},
+		"userSrvRequest":{
+			"url_0":"http://192.168.0.50/SRF/get_post_receiver.php",
+			"url_1":"",
+			"url_2":"",
+			"url_3":""
+		},
+		"usrReqData":{
+			"url_0":"<EventMessage><Type>1700</Type><AlarmGroup>9</AlarmGroup><ID>1</ID><AlarmTime></AlarmTime></EventMessage>",
+			"url_1":"",
+			"url_2":"",
+			"url_3":""
+		},
+		"usrReqPost": {
+			"url_0":false,
+			"url_1":false,
+			"url_2":false,
+			"url_3":false
+		},
+		"userSrvTcpIp":{
+			"tcpip_0":["192.168.0.0", 0],
+			"tcpip_1":["192.168.0.0", 0],
+			"tcpip_2":["192.168.0.0", 0],
+			"tcpip_3":["192.168.0.0", 0]
+		},
+		"enableAPI": false,
+		"callAPI": {
+			"io01": false,
+			"io02": false,
+			"io03": false,
+			"io04": false,
+			"io05": false,
+			"io06": false,
+			"io07": false,
+			"io08": false
+		}
+	},
+
+	"sensor":{
+		"name":"SpotterRF",
+		"nickname":"RADAR",
+		"model":"CK10",
+		"addr":"169.254.254.254",
+		"user":"admin",
+		"pass":"its_iot",
+		"rangeMax":150,
+		"rcsValue":{
+			"min":0.1,
+			"max":25,
+			"cMin":1,
+			"cMax":20
+		},
+		"spdValue":{
+			"min":0.1,
+			"max":25,
+			"cMin":1,
+			"cMax":20
+		},
+		"calibration":{
+			"angleOffset":-27.717757,
+			"leftCoefficients":[0.62,0.33,-0.14],
+			"rightCoefficients":[0.62,-0.13,0.17]
+		},
+		"coverage":{
+			"x":20,
+			"y":130
+		},
+		"datetime":{
+			"syncWithGps":false,
+			"ntpServers":[],
+			"timezoneLocation":"Asia/Seoul"
+		},
+		"detections":{
+			"minVelocity":1,
+			"rangeDepSensitivity":true,
+			"sensitivity":8,
+			"localFilterSensitivity":10,
+			"timeFilterSensitivity":8,
+			"disableTimeFilter":true,
+			"filter":false,
+			"weatherAdaption":false
+		},
+        "tracks":{
+            "activationTime": 3,
+            "filterWind": false,
+            "killTime": 4,
+            "largeTargetMode": false,
+            "minDetection": 5,
+            "rangeThreshold": 1,
+            "smoothOutput": false
+        },
+		"geolocation":{
+			"latitude":0,
+			"longitude":0,
+			"altitude":0,
+			"declination":-7.32,
+			"acquireGpsOnBoot":false,
+			"bearing":0,
+			"acquireOrientationOnBoot":false
+		}
+	},
+	"camera":{
+		"addr":"192.168.0.205",
+		"user":"root",
+		"pass":"pass",
+		"model":"axis",
+		"video":"/axis-cgi/mjpg/video.cgi",
+		"image":"/axis-cgi/jpg/image.cgi",
+		"ptzCommand":"/axis-cgi/com/ptz.cgi?camera=1&",
+		"calibration":{
+			"angleOffset": -117.69,
+			"pan": -117.69,
+			"tilt": 0,
+			"zoomStep": 1,
+			"zoomValue":{
+				"min":1,
+				"max":9999,
+				"cMin":1,
+				"cMax":999
+			}
+		},
+		"tracking": false
+	},
+	"screen":{
+		"body":{
+			"background-image":"",
+			"background-color":""
+		},
+		"svg":{
+			"matrix":""
+		},
+		"logo":{
+			"imageURL":""
+		},
+		"bgOpacityTag":1,
+		"objectsTag":128
+	},
+	"actionLog":[],
+	"masking":{
+        "allowGroup": {},
+        "denyGroup": {}
+	},
+	"maskCoord": {
+		"allowGroup":{},
+		"denyGroup":{}
+	},
+	"maskSelect": 0,
+	"language":{
+		"selected":0,
+		"country":["English","Japaness","Koean"]
+	}
+}

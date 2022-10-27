@@ -1,0 +1,6 @@
+#!/bin/sh
+pkill -9 -ef streaming.pyc
+pkill -9 -ef itsAPI.pyc
+pkill -9 -ef itsAPI.js
+# python ./run_streaming.pyc
+python ./run_itsAPI.pyc

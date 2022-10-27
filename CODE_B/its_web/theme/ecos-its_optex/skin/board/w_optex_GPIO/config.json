@@ -1,0 +1,17 @@
+{
+	"init_value" : {
+		"Event_read_cycle" : 1.5,
+		"MAX_event_holdTime" : 10,
+		"MAX_event_pickTime" : 60,
+
+		"MAX_numberOfDist" : 100000,
+		"MAX_numberOfZone" : 1,
+
+		"DEVICE_IP" : "192.168.168.30",
+		"DEVICE_port" : "6000",
+		"DEVICE_vPort" : "4000",
+
+		"DEVICE_table_PortIn" : "8000",
+		"DEVICE_table_PortOut" : "9000"
+	}
+}

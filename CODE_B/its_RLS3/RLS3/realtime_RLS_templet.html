@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__svg_pan_zoom__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+var myKey = window.performance.now(); // 클라이언트 브라우져 유니크 아이디
+var myIP = ""; // 등록된 자신의 아이피
+var myID = ""; // 등록된 자신의 사용자
+var myLV = ""; // 등록된 자신의 등급
+
+var rangeMaxX = ""; // 전체 폭 미터
+var rangeMaxY = ""; // 전체 높이 미터
+var rangeTopY = ""; // -4.15미터
+var aMeter = ""; // 1미터
+
+var cfg = {};
+var mBox = {};
+
+function draw_circle(id,x,y,r) {
+	cR = id % 256;
+	cG = id % 254;
+	cB = id % 253;
+
+	// 이벤트 표시 갯수 제한(클라이언트 메모리 때문)
+	var line_max = 10; 
+	var line_cnt = document.getElementsByTagName('circle').length;
+
+	var i = line_cnt - line_max;
+	if (i > 0) { // 최고값 이상의 로그는 과거 값기즌으로 삭제
+		while (i--) {
+			document.getElementsByTagName('circle')[i].remove();
+		}
+	}
+
+	var curContent = $('#rls_event').html();
+	var toInsert = '<circle id="'+id+'" cx="'+x+'" cy="'+y+'" r="'+r / 2+'" fill="rgba('+cR+', '+cG+', '+cB+', 0.6)" stroke="white" stroke-width=0.4 class="the_circ" />';
+	$('#rls_event').html(curContent + toInsert);	
+}
+
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
+
+$(document).ready(function() {
+	var dd = new Date();
+	var ss = 'Start Time ' + dd.getFullYear() + ' ' + pad((dd.getMonth()+1),2) + ' ' + pad((dd.getDate()+1),2) + ' ' + pad(dd.getHours(),2) + ' ' + pad(dd.getMinutes(),2) + ' ' + pad(dd.getSeconds(),2);
+	$( "#datetime" ).html(ss); // 시작 일자 표시
+	
+	var rotation = 0;
+	$("#Home").on('click', function() { // 홈 위치로 이동
+		rotation = 0;
+		$('#svg_id').css('transform', 'scale(1,1) rotate('+ rotation +'deg)');
+		document.body.style.backgroundColor = 'black';
+	});
+	$("#RO").on('click', function() { // 회전
+		rotation += 10;
+		$('#svg_id').css('transform', 'rotate('+ rotation +'deg)');
+	});
+	$("#UD").on('click', function() { // 홈 위치로 이동
+		var values = $('#svg_id').css('transform').match(/-?[\d\.]+/g);
+		$('#svg_id').css('transform', 'scale(' + values[0] + ',' + values[3] * -1 + ')');	
+	});
+	$("#LR").on('click', function() { // 홈 위치로 이동
+		var values = $('#svg_id').css('transform').match(/-?[\d\.]+/g);
+		$('#svg_id').css('transform', 'scale(' + values[0] * -1 + ',' + values[3] + ')');	
+	});
+	$('#BG').on('click',function(){
+		document.body.style.backgroundColor = document.body.style.backgroundColor == 'black' ? '#00000040' : 'black';
+	});
+
+	$('#toggleSizeCam').click(function() {
+		var href = cfg.camera.liveMjpg;
+		var style = "body {background-image: url("+href+");background-size: cover;background-repeat: round;}";
+		var body = "<div style='width:100%;height:1px;margin:unset;padding:unset;background-color:crimson;position:absolute;top:50%;left:0'></div><div style='width:1%;height:2%;margin:unset;padding:unset;background-color:crimson;position:absolute;top:50%;left:50%'></div>";
+		var win = window.open('','RLS', 'width=400,height=200,scrollbars=yes');
+		win.document.write('<html><head><title>RLS</title></head><style>'+style+'</style><body>');
+		win.document.write(body);
+		win.document.write('</body></html>');
+		// win.print();
+		// win.close();	
+	});
+
+	var panZoomR = svgPanZoom('#svg_id', {
+		viewportSelector: '.svg-pan-zoom_viewport',
+		zoomEnabled: true,
+		maxZoom: 100,
+		controlIconsEnabled: false,
+		fit: true,
+		center: true,
+	});
+
+	$("#setMask").click(function() { 
+		if ($(this).prop('checked')) {
+			panZoomR.disablePan();
+			panZoomR.disableZoom();
+			panZoomR.disableDblClickZoom();
+			panZoomR.disableMouseWheelZoom();
+			$('input[name=masking]').prop('disabled', false);
+			$('input[name=prefix]').prop('disabled', false);
+			$('input[name=level]').prop('disabled', false);
+			$('input[name=size]').prop('disabled', false);
+			$('input[name=due]').prop('disabled', false);
+			$('input[name=cont]').prop('disabled', false);
+			// $('.setConfig input').prop('disabled', false);
+		} else {
+			panZoomR.enablePan();
+			panZoomR.enableZoom();
+			panZoomR.enableDblClickZoom();
+			panZoomR.enableMouseWheelZoom();
+			$('input[name=masking]').prop('disabled', true);
+			$('input[name=prefix]').prop('disabled', true);
+			$('input[name=level]').prop('disabled', true);
+			$('input[name=size]').prop('disabled', true);
+			$('input[name=due]').prop('disabled', true);
+			$('input[name=cont]').prop('disabled', true);
+			// $('.setConfig input').prop('disabled', true);
+		}
+    });
+
+	$('#level').on('click', '#saveLevel', function() {
+		var data = {
+			"level": document.querySelector('input[type=radio][name=level]:checked').value,
+			"hold":{
+				"cont":parseInt(document.getElementById("contQty").value),
+				"due":parseInt(document.getElementById("dueTime").value),
+				"keep":document.getElementById("contKeep").checked
+			},
+			"size":{
+				"max":parseInt(document.getElementById("sizeMax").value),
+				"min":parseInt(document.getElementById("sizeMin").value)
+			},
+			"reset":parseInt(document.getElementById("resetCycle").value)
+		}
+		var reponse = (confirm('Are you sure ? '+cfg.level[data.level].name+'\nMin: '+data.size.min/10+'cm, Max: '+data.size.max/10+'cm, Count: '+data.hold.cont+', Time: '+data.hold.due+', Keep: '+data.hold.keep+', Reset: '+data.reset));
+		if(reponse) socketio.emit('setLevel', data);
+		// console.log(data);
+	});
+
+	$('#level input').on('click', function() {
+		if ($('input[name=level]:checked', '#level').val() == '') return; // 라디오버튼 값만 수용한다.
+		// console.log($('input[name=level]:checked', '#level').val());
+		socketio.emit('readLevel', $('input[name=level]:checked', '#level').val());
+	});
+
+	// 로컬스토리지를 이용한 HTML5 + Background Color 기능
+	if (localStorage.getItem("areaOpacity") !== null) {
+		var bgColor = localStorage.getItem("areaOpacity"); // 데이터 가져오기
+		$("body").css("backgroundColor", bgColor);
+		var opacity = bgColor.split(' ');
+		var opacity = opacity[opacity.length - 1]; // str.substring(0, str.length - 1);
+		var opacity = opacity.substring(0, opacity.length - 1);
+		$("#areaOpacity").val(opacity);
+		if (0.2 < parseFloat($("#areaOpacity").val()) && 0.5 > parseFloat($("#areaOpacity").val())) $("body").css("color", "white"); else $("body").css("color", "gray");
+	} else {
+		$("body").css("backgroundColor", "rgba(0 0 0 / 1)");
+		$("#areaOpacity").val("1");
+	}
+	$("#areaOpacity").on("input change", function() { 
+		localStorage.setItem("areaOpacity", 'rgba(0 0 0 / '+this.value+')'); // 데이터 쓰기
+		$("body").css("backgroundColor", 'rgba(0 0 0 / '+this.value+')');
+		if (0.2 < parseFloat($("#areaOpacity").val()) && 0.5 > parseFloat($("#areaOpacity").val())) $("body").css("color", "white"); else $("body").css("color", "gray");
+	});	
+
+	$('#config').on('click', '#restart', function () { // 수정모드 내의 기능
+		var reponse = (confirm('Are you sure ? Restart Program'));
+		if(reponse) socketio.emit('restart_self');
+	});
+
+	$('#config').on('click', '#reboot', function () { // 수정모드 내의 기능
+		var reponse = (confirm('Are you sure ? Reboot ITS'));
+		if(reponse) socketio.emit('reboot_self');
+	});
+	
+	// $('#config').on('click', '#saveConfig', function() {
+	// 	var data = {
+	// 		"imsIP":document.getElementById("imsIP").value, // cfg.server.ims.addr;
+	// 		"manager":document.getElementById("manager").value, // cfg.permission.filterIP.deny;
+	// 		"denyIP":document.getElementById("denyIP").value // cfg.permission.filterIP.deny;
+	// 	}
+
+	// 	var reponse = (confirm('Are you sure ? \n  timsIP: '+data.imsIP+'\n  manager: '+data.manager+'\n  denyIP: '+data.denyIP));
+	// 	if(reponse) socketio.emit('setConfig', data);
+	// });
+
+	socketio.emit('findClientIP', { myKey:myKey }); // 자신의 아이피 확인
+
+});
+
+///////////////////////////
+// 좌표 관리
+function startDrag(event){
+	// console.log(event);
+	if ($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	curAction = $('input[name=masking]:checked', '#masking').val();
+	curLevel = $('input[name=level]:checked', '#level').val();
+	// curPrefix = $('input[name=prefix]:checked', '#prefix').val();
+	curPrefix = $('#prefix').val();
+	if((typeof curAction === 'undefined') || (typeof curLevel === 'undefined') || curPrefix.length === 0 || parseInt(curPrefix) < 100 || parseInt(curPrefix) > 999 ) {
+		return 0
+	}
+
+	mBox["mID"] = curPrefix+'Z'+curLevel+'-'+event.clientX.toString()+'_'+event.clientY.toString();
+	console.log(mBox["mID"]);
+	curContent = $('#svg_id #rls_mask').html();
+	if(curAction == 'Allow') {
+		curContent += "<path class='allowGroup' id='"+mBox["mID"]+"' d='M0,0 l0,0 0,0 0,0 0,0 z'></path>";
+	} else if(curAction == 'Deny') {
+		curContent += "<path class='denyGroup' id='"+mBox["mID"]+"' d='M0,0 l0,0 0,0 0,0 0,0 z'></path>";
+	} else if(curAction == 'Delete' && event.srcElement.localName == 'path') {
+		try {
+			$('#'+event.srcElement.id).remove();
+			var data = { 
+				id: event.srcElement.id,
+				mask: event.srcElement.className.baseVal
+			}
+			socketio.emit('delMasking', data); // 아래내용 전송
+		} catch (e) {
+			console.log(e); // pass exception object to error handler
+		}
+		return 0; // moveMouse(), endDrag() 를 건너뛴다.
+	} else if(curAction == 'Change' && event.srcElement.localName == 'path') {
+		var newID = prompt("'" + event.srcElement.id + "' - Input new name of mask ID :\n(Special character is only allow underbar.)");
+		if (newID.length) {
+			var data = { 
+				// id: newID.replace(/\W/g, ''),
+				id: newID,
+				mask: $('#'+event.srcElement.id).attr('class'),
+				value: $('#'+event.srcElement.id).attr("d")
+			}
+			if((typeof data.mask !== 'undefined') && (typeof data.value !== 'undefined')) {
+				socketio.emit('setMasking', data); // 아래내용 전송
+			
+				$('#'+event.srcElement.id).remove();
+				var data = { 
+					id: event.srcElement.id,
+					mask: event.srcElement.className.baseVal
+				}
+				socketio.emit('delMasking', data); // 아래내용 전송
+			}
+		}
+		return 0; // moveMouse(), endDrag() 를 건너뛴다.
+	} else {
+		return 0;
+	}
+
+	$('#svg_id #rls_mask').html(curContent);
+	
+	currTrans = $('svg g').css('transform').split(/[()]/)[1];
+	mBox["scX"] = parseFloat(currTrans.split(',')[0]);
+	mBox["scY"] = parseFloat(currTrans.split(',')[3]);
+	
+	var offset = $("#rls_mask").offset(); // Take the offset from the grid, change the ID as you need.
+	event.stopPropagation();
+	x = (event.clientX-offset.left) / mBox["scX"];
+	y = (event.clientY-offset.top) / mBox["scY"];
+	mBox["sX"] = x - (rangeMaxX/2*aMeter);
+	mBox["sY"] = y - (rangeTopY*aMeter);
+	mBox["boxing"] = true;
+	
+	$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l0,0 0,0 0,0 0,0 z");
+	
+	$('#cursorLoc').css('display', 'block');
+}
+
+function moveMouse(event){
+	// console.log(event);
+	if ($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	var offset = $("#rls_mask").offset();
+	event.stopPropagation();
+	if(mBox["boxing"]){
+		x = (event.clientX-offset.left) / mBox["scX"];
+		y = (event.clientY-offset.top) / mBox["scY"];
+		mBox["eX"] = x - (rangeMaxX/2*aMeter);
+		mBox["eY"] = y - (rangeTopY*aMeter);
+		width = mBox["eX"]-mBox["sX"];
+		height = mBox["eY"]-mBox["sY"];
+		$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l"+width+",0 0,"+height+" "+(width*-1)+",0 0,"+(height*-1)+" z");
+		// console.log(width, height);
+		
+		$('#cursorLoc').css('top', event.pageY - 12); // 커서에서 div 높이 적용
+		$('#cursorLoc').css('left', event.pageX);
+		$('#cursorLoc').html(" W:"+ Number((width / aMeter).toFixed(1))+"m, H:"+ Number((height / aMeter).toFixed(1))+"m");
+	}
+}
+
+function endDrag(event){
+	// console.log(event);
+	if($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	if(mBox["boxing"] == false) return 0;
+	var offset = $("#rls_mask").offset();
+	event.stopPropagation();
+	x = (event.clientX-offset.left) / mBox["scX"];
+	y = (event.clientY-offset.top) / mBox["scY"];
+	mBox["eX"] = x - (rangeMaxX/2*aMeter);
+	mBox["eY"] = y - (rangeTopY*aMeter);
+	mBox["boxing"] = false;
+	width = mBox["eX"]-mBox["sX"];
+	height = mBox["eY"]-mBox["sY"];
+	
+	// 죄측 상단에서 시작하여 우측 하단으로 그리는것만 수용한다.
+	if(width < 0 || height < 0) {
+		$('#'+mBox["mID"]).remove();
+		return 0;
+	}
+		
+	if(width>aMeter || height>aMeter) { // aMeter 이하는 삭제 크기가 없으면 삭제 한다.
+		$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l"+width+",0 0,"+height+" "+(width*-1)+",0 0,"+(height*-1)+" z");
+		var data = { 
+			id: mBox["mID"],
+			mask: $('#'+mBox["mID"]).attr('class'),
+			value: $('#'+mBox["mID"]).attr("d")
+		}
+		if((typeof data.mask !== 'undefined') && (typeof data.value !== 'undefined')) {
+			socketio.emit('setMasking', data); // 아래내용 전송
+		}
+	} else {
+		$('#'+mBox["mID"]).remove();
+	}
+	
+	$('#cursorLoc').css('display', 'none');
+}
+
+function sizeMinMaxVal(){
+	var a = parseInt(document.getElementById("sizeMin").value);
+	var b = parseInt(document.getElementById("sizeMax").value);
+	if (a > b) {
+		[a, b] = [b, a]
+		document.getElementById("sizeMin").value = a;
+		document.getElementById("sizeMax").value = b;
+	}
+	document.getElementById("sizeMinVal").innerHTML = (a/10)+' cm';
+	document.getElementById("sizeMaxVal").innerHTML = (b/10)+' cm';
+}
+
+function setTimeVal(){
+	document.getElementById("setTimeVal").innerHTML = document.getElementById("dueTime").value+' sec';
+}
+
+function contQtyVal(){
+	document.getElementById("setQtyVal").innerHTML = document.getElementById("contQty").value;
+}
+
+function resetVal(){
+	document.getElementById("resetVal").innerHTML = document.getElementById("resetCycle").value+' sec';
+}
+
+</script>
+
+<style>
+body { color:gray;background-color:rgba(0 0 0 / 1);overflow:hidden; }
+div { font-size: 7pt; }
+circle:hover { fill: gray; }
+#mainTitle { position: absolute; top: 10px; } 
+#datetime { position: absolute; top: 20px; } 
+#liveData { position: absolute; top: 40px; } 
+#using { position: absolute; top: 30px;} 
+#content { position: absolute; top: 0px; right: 0; bottom: 0; left: 0; overflow: hidden; }
+#location { height: 100px; position: absolute; bottom: 0; left: 1vh; overflow: hidden; z-index:0; }
+#svgView { position: absolute; top: 0; right: 0; padding: 4px 8px; z-index:1; }
+#myIP {position:absolute;top:0;right:0;color:gray;font-size:1vh;}
+
+#liveCam {display:none;background-size:cover;background-repeat:round;width:10vw;height:10vh;position:absolute;top:2vh;right:0vh;border:1px solid gray; z-index:1;}
+#liveCam:hover {transform: scale(4) translate(-38%, 38%); transition: 1s ease;}
+#liveCam {transform:unset;transition: 1s ease;}
+
+#userEnv {display:none;position: absolute; right:1vh; bottom:1vh; z-index:1;}
+/* #userEnv:hover {transform: scale(2) translate(-25%, -25%); transition: 1s ease;}
+#userEnv {transform:unset;transition: 1s ease;} */
+
+#health {display:none;position:absolute;top:13vh;right:0;width:10vw; z-index:1;}
+#health .wdWrap {border:unset;}
+#health .wdName {width:30%;border:unset;float: left;color:silver;}
+#health .wdStatus {width:64%;border:unset;display: flex;}
+#health .wdLeftover {width:20%;background-color:#d8d8d8;}
+#health hr {height:6px;clear:unset;}
+#health:hover {transform: scale(2) translate(-25%, 25%); transition: 1s ease;}
+#health {transform:unset;transition: 1s ease;}
+
+/* #masking { position: absolute; right:2px; bottom:24px; z-index:1;padding: 0 4px;}
+#prefix { position: absolute; right:4px; bottom:4px; z-index:1;padding-right:4px; border:1px solid gray;} */
+label { vertical-align: super; }
+/* .noscale .the_circ {vector-effect: non-scaling-stroke;} */
+
+/* .setPrefix, .setMask,.setLevel,.setSize,.setDue,.setReset,.setCont, .setConfig {display:none; padding: 0 4px;text-align: right;} */
+.setPrefix, .setMask,.setLevel,.setSize,.setDue,.setReset,.setCont {display:none; padding: 0 4px;text-align: right;}
+.candidate {color:yellow;}
+.detected {color:orange;}
+.filtered {color:snow;}
+.setPrefix input {margin-left: 1vh;vertical-align:top;font-size: 8px;}
+
+#saveLevel {display:none;}
+
+.infoGroup { color:silver; }
+.allowGroup { fill:#ffffff20;stroke-width:20px;stroke:lightgreen; }
+.denyGroup { fill:#ffffff20;stroke-width:20px;stroke:orange; }
+
+.html_scan { stroke-width: 6px; stroke:white; fill:#09200d60; }
+.html_grid { stroke:#ffffff80; stroke-width:6px; }
+.html_gridB { stroke:#ffffff80; stroke-width:24px; }
+.html_zone { fill:#00000080; stroke:gray; stroke-width:6px; }
+.html_frame { fill:#00000040; }
+.html_over { fill:#00000080; stroke:gray; stroke-width:6px; }
+
+<!-- /* y 기준으로 화면을 플립한다. transform: scale(1,-1); */  -->
+<!-- /* svg { transform: scale(1,-1);} */ -->
+svg { display: inline; width: 100%; min-width: inherit; max-width: inherit; height: 100%; min-height: inherit; max-height: inherit;  transform: matrix(1, 0, 0, 1, 0, 0);}
+
+#cursorLoc {
+	display: none;
+    position: absolute;
+    color: orange;
+}
+</style>
+</head>
+
+<body>
+__health__
+__liveCam__
+<div id="myIP"></div>
+<div id='cursorLoc'>cursorLoc</div>
+<div id='mainTitle'>OPTEX __model_and_rev__ Ver:__version__</div>
+<div id='datetime'></div>
+<div id='liveData'></div>
+<div id='using'>Zoom/Move : Wheel, Drag, DblClick[Shift]</div>
+<pre id='location'></pre>
+<div id='svgView' style="display: none;">
+	<span id='UD'>UD</span> <span id='LR'>LR</span> <span id='RO'>RO</span> <span id='BG'>BG</span> <span id='Home'>Home</span>
+</div>
+
+<div id="userEnv">
+	<!-- <div class="setConfig">
+		<form id="config">
+		<div><label for="config">ims IP</label><input type="input" id="imsIP" name="imsIP" value="" disabled /></div>
+		<div><label for="config">manager</label><input type="input" id="manager" name="manager" value="" disabled /></div>
+		<div><label for="config">deny IP</label><input type="input" id="denyIP" name="denyIP" value="" disabled /></div>
+		<div>
+			<input type="checkbox" id="checkbox01" name="checkbox01" disabled /><label for="config">checkbox01</label>
+			<input type="button" id="restart" name="restart" disabled style="height:2vh"/><label for="config">restart</label>
+			<input type="button" id="reboot" name="reboot" disabled style="height:2vh"/><label for="config">reboot</label>
+			<input type="button" id="saveConfig" name="saveConfig" disabled style="height:2vh"/><label for="config">save</label>
+		</div>
+		</form>
+	</div> -->
+	<div class="setMask">
+		<form id="masking">
+		<label for="setMask">Mask Area</label><input type="checkbox" id="setMask" />
+		<input type="radio" name="masking" disabled value="Allow" /><label for="setMask">Allow</label>
+		<input type="radio" name="masking" disabled value="Deny" /><label for="setMask">Deny</label>
+		<input type="radio" name="masking" disabled value="Delete" /><label for="setMask">Delete</label>
+		<!-- <input type="radio" name="masking" disabled value="Change" /><label for="setMask">Rename</label> -->
+		<input type="range" id="areaOpacity" name="masking" disabled min="0" max="1" value="0.7" step="0.01">
+		</form>
+	</div>
+	<!-- <div class="setPrefix">
+		<form id="prefix">
+		<label for="setPrefix">Zone</label>
+		<input type="radio" name="prefix" disabled value="A" checked="checked" /><label for="setPrefix">A</label>
+		<input type="radio" name="prefix" disabled value="B" /><label for="setPrefix">B</label>
+		<input type="radio" name="prefix" disabled value="C" /><label for="setPrefix">C</label>
+		<input type="radio" name="prefix" disabled value="D" /><label for="setPrefix">D</label>
+		<input type="radio" name="prefix" disabled value="E" /><label for="setPrefix">E</label>
+		<input type="radio" name="prefix" disabled value="F" /><label for="setPrefix">F</label>
+		<input type="radio" name="prefix" disabled value="G" /><label for="setPrefix">G</label>
+		<input type="radio" name="prefix" disabled value="H" /><label for="setPrefix">H</label>
+		<input type="radio" name="prefix" disabled value="I" /><label for="setPrefix">I</label>
+		<input type="radio" name="prefix" disabled value="J" /><label for="setPrefix">J</label>
+		</form>
+	</div> -->
+	<div class="setLevel">
+		<form id="level">
+		<span class="setPrefix">
+			<label for="config">Zone</label>
+			<input type="number" id="prefix" name="prefix" min="101" max="999" value="101" disabled />
+		</span>
+		<label for="setLevel">Level</label>
+		<input type="radio" name="level" disabled value="0" checked="checked" /><label for="setLevel">0</label>
+		<input type="radio" name="level" disabled value="1" /><label for="setLevel">1</label>
+		<input type="radio" name="level" disabled value="2" /><label for="setLevel">2</label>
+		<input type="radio" name="level" disabled value="3" /><label for="setLevel">3</label>
+		<input type="radio" name="level" disabled value="4" /><label for="setLevel">4</label>
+		<input type="button" name="level" disabled id="saveLevel" style="height:3vh" value="S"/>
+		</form>
+	</div>
+	<div class="setSize">
+		<form id="size">
+		<div>
+		<label for="sizeMin">Size Min</label>
+		<label id="sizeMinVal"></label>
+		<input type="range" id="sizeMin" name="size" disabled min="0" max="50000" value="0" step="10" onchange="sizeMinMaxVal(this.value)">
+		</div>
+		<div>
+		<label for="sizeMax">Size Max</label>
+		<label id="sizeMaxVal"></label>
+		<input type="range" id="sizeMax" name="size" disabled min="0" max="50000" value="0" step="10" onchange="sizeMinMaxVal(this.value)">
+		</div>
+		</form>
+	</div>
+	<div class="setDue">
+		<form id="due">
+		<div>
+		<label for="dueMin">Due(Sec)</label>
+		<label id="setTimeVal"></label>
+		<input type="range" id="dueTime" name="due" disabled min="0" max="100" value="0" step="1" onchange="setTimeVal(this.value)">
+		</div>
+		</form>
+	</div>
+	<div class="setReset">
+		<form id="reset">
+		<div>
+		<label for="reset">Reset(Sec)</label>
+		<label id="resetVal"></label>
+		<input type="range" id="resetCycle" name="reset" disabled min="1" max="30" value="5" step="1" onchange="resetVal(this.value)">
+		</div>
+		</form>
+	</div>
+	<div class="setCont">
+		<form id="cont">
+		<div>
+		<label for="conter">Keep</label>
+		<input type="checkbox" id="contKeep" name="cont" disabled />
+		<label for="conter">Conunter</label>
+		<label id="setQtyVal"></label>
+		<input type="range" id="contQty" name="cont" min="0" max="100" value="0" step="1" disabled onchange="contQtyVal(this.value)">
+		</div>
+		</form>
+	</div>
+
+</div>
+  
+<div id='content'>
+	<svg id="svg_id" viewBox="__svg_viewBox__" class="noscale">
+		<!-- text text-anchor="middle" x="0" y="0" style="font-size: 60pt;fill: white;font-family: monospace;">(-)<- X ->(+)</text>
+		<text text-anchor="middle" x="0" y="-40" style="font-size: 60pt;fill: white;font-family: monospace;transform: scale(1,-1);">Y</text>
+		<text text-anchor="middle" x="0" y="-140" style="font-size: 60pt;fill: white;font-family: monospace;transform: scale(1,-1);">(+)</text -->
+		<g id="rls_zone">__boundary_of_zone__</g>
+		<g id="rls_frame">__boundary_of_frame__</g>
+		<g id="rls_over">__boundary_of_over__</g>
+		<g id="rls_grid">__boundary_of_grid__</g>
+		<g id="rls_area">__boundary_of_area__</g>
+		<g id="rls_background">__boundary_of_background__</g>
+		<g id="rls_allocate">__boundary_of_allocate__</g>
+		<g id="rls_mask" onmousedown="startDrag(event)" onmouseup="endDrag(event)" onmousemove="moveMouse(event)">__boundary_of_mask__</g>
+		<g id="rls_event">__boundary_of_event__</g>
+	</svg>
+</div>
+
+<script>
+
+
+// 소켓.온
+var socketio = io.connect();
+
+// 환경변수를 실행되고있는 브라우저에 적용한다.
+socketio.on('global_var', function(data) {
+	cfg = data;
+	rangeMaxX = cfg.model[cfg.gInfoDevice.model].rangeMaxX; // 전체 폭 미터
+	rangeMaxY = cfg.model[cfg.gInfoDevice.model].rangeMaxY; // 전체 높이 미터
+	rangeTopY = cfg.model[cfg.gInfoDevice.model].rangeTopY; // -4.15미터
+	aMeter = cfg.model[cfg.gInfoDevice.model].aMeter; // 1미터
+	// var mBox = {};
+	// var rangeMaxX = 100; // 전체 폭 미터
+	// var rangeMaxY = 50; // 전체 높이 미터
+	// var rangeTopY = 4.15; // -4.15미터
+	// var aMeter = 1000; // 1미터
+});
+
+// 진단 정보 표시 - 아이티에스 시스템 상태 확인
+// 센서 건강 상태
+socketio.on("cmdGetInfoStatus", function(data) {
+	// {"profile":0,"usage":{"cpu":90,"memory":62},"windowSoiling":0,"temp":41.3}
+	// console.log(data);
+	cfg.gInfoStatus = data
+	// io.sockets.emit('cmdGetInfoStatus', cfg.gInfoStatus); // 최초실행시 수집한 정보를 1회 전송
+
+	wdKey = "health";
+	// CPU
+	$("#"+wdKey+" .cpu").css("width", parseInt(cfg.gInfoStatus.usage.cpu)+"%"); 
+	$("#"+wdKey+" .cpuOv").css("width", (100 - parseInt(cfg.gInfoStatus.usage.cpu))+"%");
+	$("#"+wdKey+" .cpuStataus").prop('title', cfg.gInfoStatus.usage.cpu+"%");
+
+	// 메모리
+	$("#"+wdKey+" .mem").css("width", parseInt(cfg.gInfoStatus.usage.memory)+"%"); 
+	$("#"+wdKey+" .memOv").css("width", (100 - parseInt(cfg.gInfoStatus.usage.memory))+"%");
+	$("#"+wdKey+" .memStataus").prop('title', cfg.gInfoStatus.usage.memory+"%");
+
+	// 먼지
+	$("#"+wdKey+" .soil").css("width", parseInt(cfg.gInfoStatus.windowSoiling)+"%"); 
+	$("#"+wdKey+" .soilOv").css("width", (100 - parseInt(cfg.gInfoStatus.windowSoiling))+"%");
+	$("#"+wdKey+" .soilStataus").prop('title', cfg.gInfoStatus.windowSoiling+"% Soil");
+	
+	// 온도
+	$("#"+wdKey+" .temp").css("width", parseInt(cfg.gInfoStatus.temp)+"%"); 
+	$("#"+wdKey+" .tempOv").css("width", (100 - parseInt(cfg.gInfoStatus.temp))+"%");
+	$("#"+wdKey+" .tempStataus").prop('title', cfg.gInfoStatus.temp+"℃");
+
+	// 등록일시
+	var dd = new Date();
+	var ss = pad((dd.getMonth()+1),2) + '/' + pad((dd.getDate()+1),2) + ' ' + pad(dd.getHours(),2) + ':' + pad(dd.getMinutes(),2) + ':' + pad(dd.getSeconds(),2);
+	$("#"+wdKey+" .lastStataus .wdStatus").html(ss);
+	$("#"+wdKey+" .lastStataus .wdStatus").effect("highlight", {color: 'red'}, 800)
+});
+socketio.emit('cmdGetInfoStatus'); // 최초실행시 
+
+// 사용자 권한에 따른 화면에 메뉴표시
+socketio.on('findClientIP', function(data) { // { myKey: data['myKey'], myIP: clientIP, myID: userID });
+	// console.log(data, myKey);
+	if(myKey == data['myKey']) {
+		// 자신의 레벨을 저장 한다.
+		myIP = data['myIP']; // 클라이언트 아이피
+		myID = data['myID']; // 레벨의 종류는 admin, manager, viewer, guest
+		$('#myIP').html(myID+'('+myIP+')'); // 화면 좌측 상단에 자신의 아이피와 레벨 표시
+
+		if(myID == 'admin') { // admin 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+			myLV = 9;
+			$('.setMask').show('slow');
+			$('.setPrefix').show('slow');
+			$('.setLevel').show('slow');
+			$('.setSize').show('slow');
+			$('.setCont').show('slow');
+			$('.setReset').show('slow');
+			$('#saveLevel').show('slow');
+			$('#liveCam').show('slow');
+			$('#health').show('slow');
+			$('#userEnv').show('slow');
+			// $('.setConfig').show('slow');
+			// socketio.emit('readConfig'); // setConfig 값을 읽어들임
+		} else if(myID == 'manager') { // manager 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+			myLV = 7;
+			$('.setMask').show('slow');
+			$('.setPrefix').show('slow');
+			$('.setLevel').show('slow');
+			$('.setSize').show('slow');
+			$('.setCont').show('slow');
+			$('.setReset').show('slow');
+			$('#saveLevel').remove(); // Delete Element
+			$('#liveCam').show('slow');
+			$('#health').show('slow');
+			$('#userEnv').show('slow');
+			// $('.setConfig').remove(); // Delete Element
+		} else if(myID == 'viewer') { // viewer 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+			myLV = 5;
+			$('.setMask').show('slow');
+			$('.setPrefix').show('slow');
+			$('.setLevel').show('slow');
+			$('.setSize').remove(); // Delete Element
+			$('.setCont').remove(); // Delete Element
+			$('.setReset').remove(); // Delete Element
+			$('#saveLevel').remove(); // Delete Element
+			$('#liveCam').remove(); // Delete Element
+			$('#health').remove(); // Delete Element
+			$('#userEnv').remove(); // Delete Element
+			// $('.setConfig').remove(); // Delete Element
+		} else if(myID == 'guest') { // guest 사용자 레벨이 뷰어이면 관리자 메뉴를 삭제 한다.
+			myLV = 1;
+			$('.setMask').remove(); // Delete Element
+			$('.setPrefix').remove(); // Delete Element
+			$('.setLevel').remove(); // Delete Element
+			$('.setSize').remove(); // Delete Element
+			$('.setCont').remove(); // Delete Element
+			$('.setReset').remove(); // Delete Element
+			$('#saveLevel').remove(); // Delete Element
+			$('#liveCam').remove(); // Delete Element
+			$('#health').remove(); // Delete Element
+			$('#userEnv').remove(); // Delete Element
+			// $('.setConfig').remove(); // Delete Element
+		} 
+	}
+});	
+
+// 이벤트 값을 화면에 실시간 표시 한다.
+socketio.on("liveEventData", function(data) {
+	// console.log(data)
+	// {'id': 0, 'kind': 'candidate', 'initialPos': {'x': -3673, 'y': 7288}, 'currentPos': {'x': -3670, 'y': 7281}, 'distance': 8154, 'step': 487, 'size': 106}
+	// {events: [ (events.initialPos.x * events.initialPos.y), events.currentPos.x, events.currentPos.y, events.size ]}
+	var dd = new Date();
+	var ss = '' + pad(dd.getHours(),2) + ':' + pad(dd.getMinutes(),2) + ':' + pad(dd.getSeconds(),2);
+	var id = (data.initialPos.x * data.initialPos.y);
+	draw_circle(id,data.currentPos.x,data.currentPos.y,data.size); // svg 그리기 data.distance * 100 / 50000
+
+	var objAngle = (data.step - 20) * cfg.model[cfg.gInfoDevice.model].unit; // 3060: 0.25, 50100: 0.125;
+	var distCamDiv = (50 * data.currentPos.x / cfg.wsDetectArea.svg.scanWidth) + 50; 
+
+	// console.log('Object Angle: '+objAngle+' X: '+data.distance+' AbsX: '+data.currentPos.x+' CamX: '+parseInt(distCamDiv));
+
+	// 켑쳐이미지내 스켄선상의 위치
+	document.getElementById("objPostion").style.left = distCamDiv + "%";
+
+	// 화면 하단좌측 이밴트 목록
+	$('#location').append('<div class="evt_log '+data.kind+'" >'+ss+' '+data.currentPos.x+' '+data.currentPos.y+' '+data.size+'</div>');
+
+	// 화면 상단좌측 마지막 이밴트 정보
+	$('#liveData').html('Object Angle: '+objAngle+' AbsX: '+data.currentPos.x+' CamX: '+parseInt(distCamDiv));
+});
+
+// 마스킹 정보 화면에 적용
+socketio.on("readMasking", function(data) {
+	// console.log(data)
+	svgCover = "<rect x='"+(rangeMaxX * aMeter) / 2 * -1+"' y='-"+(rangeTopY*aMeter)+"' width='"+(rangeMaxX * aMeter)+"' height='"+((rangeMaxY+rangeTopY) * aMeter)+"' style='fill:#00000000; stroke:gray; stroke-width:10px;' />";
+	svgCover += data;
+	// $('#svg_id #rls_frame').html(svgCover);
+	$('#svg_id #rls_mask').html(svgCover);
+});
+socketio.emit('readMasking', 'readMasking'); // 최초실행시 
+
+// 레벨에 관련 설정 화면에 적용
+socketio.on("readLevel", function(data) {
+	// console.log(data);
+	document.getElementById("sizeMinVal").innerHTML = parseInt(data.size.min/10)+' cm'; // parseInt(data.min/10)+'cm'
+	document.getElementById("sizeMaxVal").innerHTML = parseInt(data.size.max/10)+' cm';
+	document.getElementById("sizeMin").value = data.size.min;
+	document.getElementById("sizeMax").value = data.size.max;
+
+	document.getElementById("setTimeVal").innerHTML = data.hold.due+' sec';
+	document.getElementById("dueTime").value = data.hold.due;
+	document.getElementById("setQtyVal").innerHTML = data.hold.cont;
+	document.getElementById("contQty").value = data.hold.cont;
+	document.getElementById("contKeep").checked = data.hold.keep; // true false
+
+	document.getElementById("resetVal").innerHTML = data.reset+' sec';
+	document.getElementById("resetCycle").value = data.reset;
+});
+
+socketio.on("readConfig", function(data) {
+	// Config Data Update
+	document.getElementById("imsIP").value = data.imsIP; // server.ims.addr;
+	document.getElementById("manager").value = data.manager; //permission.filterIP.deny;
+	document.getElementById("denyIP").value = data.denyIP; //permission.filterIP.deny;
+});
+
+// 일정 자료 이상은 오래된것 부터 삭제후 화면 위치 고정
+setInterval(function(){
+	var line_max = 10;
+	var line_cnt = document.getElementsByClassName('evt_log').length;
+	
+	var i = line_cnt - line_max;
+	if (i > 0) { // 최고값 이상의 로그는 과거 값기즌으로 삭제
+		while (i--) {
+			document.getElementsByClassName('evt_log')[i].remove();
+			// console.log(i);
+		}
+	}
+	document.getElementById('location').scrollTo(0, document.getElementById('location').scrollHeight);
+	
+}, 500); // 1000 = 1초
+
+</script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__svg_pan_zoom__
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socketio = io.connect();
+
+function draw_circle(id,x,y,r) {
+	cR = id % 256;
+	cG = id % 254;
+	cB = id % 253;
+
+	// 이벤트 표시 갯수 제한(클라이언트 메모리 때문)
+	var line_max = 10; 
+	var line_cnt = document.getElementsByTagName('circle').length;
+
+	var i = line_cnt - line_max;
+	if (i > 0) { // 최고값 이상의 로그는 과거 값기즌으로 삭제
+		while (i--) {
+			document.getElementsByTagName('circle')[i].remove();
+		}
+	}
+
+	var curContent = $('#rls_event').html();
+	var toInsert = '<circle id="'+id+'" cx="'+x+'" cy="'+y+'" r="'+r / 2+'" fill="rgba('+cR+', '+cG+', '+cB+', 0.4)" stroke="white" stroke-width=0.4 class="the_circ" />';
+	$('#rls_event').html(curContent + toInsert);	
+}
+
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
+
+$(document).ready(function() {
+	var dd = new Date();
+	var ss = 'Start Time ' + dd.getFullYear() + ' ' + pad((dd.getMonth()+1),2) + ' ' + pad((dd.getDate()+1),2) + ' ' + pad(dd.getHours(),2) + ' ' + pad(dd.getMinutes(),2) + ' ' + pad(dd.getSeconds(),2);
+	$( "#datetime" ).html(ss); // 시작 일자 표시
+	
+	var rotation = 0;
+	$("#Reset").on('click', function() { // 홈 위치로 이동
+		rotation = 0;
+		$('#svg_id').css('transform', 'scale(1,1) rotate('+ rotation +'deg)');
+		document.body.style.backgroundColor = 'black';
+	});
+	$("#RO").on('click', function() { // 회전
+		rotation += 10;
+		$('#svg_id').css('transform', 'rotate('+ rotation +'deg)');
+	});
+	$("#UD").on('click', function() { // 홈 위치로 이동
+		var values = $('#svg_id').css('transform').match(/-?[\d\.]+/g);
+		$('#svg_id').css('transform', 'scale(' + values[0] + ',' + values[3] * -1 + ')');	
+	});
+	$("#LR").on('click', function() { // 홈 위치로 이동
+		var values = $('#svg_id').css('transform').match(/-?[\d\.]+/g);
+		$('#svg_id').css('transform', 'scale(' + values[0] * -1 + ',' + values[3] + ')');	
+	});
+	$('#BG').on('click',function(){
+		document.body.style.backgroundColor = document.body.style.backgroundColor == 'black' ? '#00000040' : 'black';
+	});
+
+	var panZoomR = svgPanZoom('#svg_id', {
+		viewportSelector: '.svg-pan-zoom_viewport',
+		zoomEnabled: true,
+		maxZoom: 100,
+		controlIconsEnabled: false,
+		fit: true,
+		center: true,
+	});
+
+	$("#setMask").click(function() { 
+		if ($(this).prop('checked')) {
+			panZoomR.disablePan();
+			panZoomR.disableZoom();
+			panZoomR.disableDblClickZoom();
+			panZoomR.disableMouseWheelZoom();
+			$('input[name=masking]').prop('disabled', false);
+			$('input[name=prefix]').prop('disabled', false);
+			
+	
+		} else {
+			panZoomR.enablePan();
+			panZoomR.enableZoom();
+			panZoomR.enableDblClickZoom();
+			panZoomR.enableMouseWheelZoom();
+			$('input[name=masking]').prop('disabled', true);
+			$('input[name=prefix]').prop('disabled', true);
+		}
+    });	
+});
+
+///////////////////////////
+// 좌표 관리
+var mBox = {};
+var rangeMaxX = 100; // 전체 폭 미터
+var rangeMaxY = 50; // 전체 높이 미터
+var rangeTopY = 4.15; // -4.15미터
+var aMeter = 1000; // 1미터
+
+function startDrag(event){
+	console.log(event);
+	if ($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	curAction = $('input[name=masking]:checked', '#masking').val();
+	curPrefix = $('input[name=prefix]:checked', '#prefix').val();
+	mBox["mID"] = curPrefix+'_'+event.clientX.toString()+'_'+event.clientY.toString();
+	curContent = $('#svg_id #rls_mask').html();
+	if(curAction == 'Allow') {
+		curContent += "<path class='allowGroup' id='"+mBox["mID"]+"' d='M0,0 l0,0 0,0 0,0 0,0 z'></path>";
+	} else if(curAction == 'Deny') {
+		curContent += "<path class='denyGroup' id='"+mBox["mID"]+"' d='M0,0 l0,0 0,0 0,0 0,0 z'></path>";
+	} else if(curAction == 'Delete' && event.srcElement.localName == 'path') {
+		try {
+			$('#'+event.srcElement.id).remove();
+			var data = { 
+				id: event.srcElement.id,
+				mask: event.srcElement.className.baseVal
+			}
+			socketio.emit('delMasking', data); // 아래내용 전송
+		} catch (e) {
+			console.log(e); // pass exception object to error handler
+		}
+		return 0; // moveMouse(), endDrag() 를 건너뛴다.
+	} else if(curAction == 'Change' && event.srcElement.localName == 'path') {
+		var newID = prompt("'" + event.srcElement.id + "' - Input new name of mask ID :\n(Special character is only allow underbar.)");
+		if (newID.length) {
+			var data = { 
+				id: newID.replace(/\W/g, ''),
+				mask: $('#'+event.srcElement.id).attr('class'),
+				value: $('#'+event.srcElement.id).attr("d")
+			}
+			if((typeof data.mask !== 'undefined') && (typeof data.value !== 'undefined')) {
+				socketio.emit('setMasking', data); // 아래내용 전송
+			
+				$('#'+event.srcElement.id).remove();
+				var data = { 
+					id: event.srcElement.id,
+					mask: event.srcElement.className.baseVal
+				}
+				socketio.emit('delMasking', data); // 아래내용 전송
+			}
+		}
+		return 0; // moveMouse(), endDrag() 를 건너뛴다.
+	} else {
+		return 0;
+	}
+
+	$('#svg_id #rls_mask').html(curContent);
+	
+	currTrans = $('svg g').css('transform').split(/[()]/)[1];
+	mBox["scX"] = parseFloat(currTrans.split(',')[0]);
+	mBox["scY"] = parseFloat(currTrans.split(',')[3]);
+	
+	var offset = $("#rls_mask").offset(); // Take the offset from the grid, change the ID as you need.
+	event.stopPropagation();
+	x = (event.clientX-offset.left) / mBox["scX"];
+	y = (event.clientY-offset.top) / mBox["scY"];
+	mBox["sX"] = x - (rangeMaxX/2*aMeter);
+	mBox["sY"] = y - (rangeTopY*aMeter);
+	mBox["boxing"] = true;
+	
+	$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l0,0 0,0 0,0 0,0 z");
+	
+	$('#cursorLoc').css('display', 'block');
+}
+
+function moveMouse(event){
+	// console.log(event);
+	if ($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	var offset = $("#rls_mask").offset();
+	event.stopPropagation();
+	if(mBox["boxing"]){
+		x = (event.clientX-offset.left) / mBox["scX"];
+		y = (event.clientY-offset.top) / mBox["scY"];
+		mBox["eX"] = x - (rangeMaxX/2*aMeter);
+		mBox["eY"] = y - (rangeTopY*aMeter);
+		width = mBox["eX"]-mBox["sX"];
+		height = mBox["eY"]-mBox["sY"];
+		$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l"+width+",0 0,"+height+" "+(width*-1)+",0 0,"+(height*-1)+" z");
+		console.log(width, height);
+		
+		$('#cursorLoc').css('top', event.pageY - 12); // 커서에서 div 높이 적용
+		$('#cursorLoc').css('left', event.pageX);
+		$('#cursorLoc').html(" W:"+ Number((width / aMeter).toFixed(1))+"m, H:"+ Number((height / aMeter).toFixed(1))+"m");
+	}
+}
+
+function endDrag(event){
+	// console.log(event);
+	if($('#setMask').prop('checked')==false) return 0; // setMask가 활성인 경우에 만 실행
+	if(mBox["boxing"] == false) return 0;
+	var offset = $("#rls_mask").offset();
+	event.stopPropagation();
+	x = (event.clientX-offset.left) / mBox["scX"];
+	y = (event.clientY-offset.top) / mBox["scY"];
+	mBox["eX"] = x - (rangeMaxX/2*aMeter);
+	mBox["eY"] = y - (rangeTopY*aMeter);
+	mBox["boxing"] = false;
+	width = mBox["eX"]-mBox["sX"];
+	height = mBox["eY"]-mBox["sY"];
+	
+	// 죄측 상단에서 시작하여 우측 하단으로 그리는것만 수용한다.
+	if(width < 0 || height < 0) {
+		$('#'+mBox["mID"]).remove();
+		return 0;
+	}
+		
+	if(width>aMeter || height>aMeter) { // aMeter 이하는 삭제 크기가 없으면 삭제 한다.
+		$('#'+mBox["mID"]).attr("d","M"+mBox["sX"]+","+mBox["sY"]+" l"+width+",0 0,"+height+" "+(width*-1)+",0 0,"+(height*-1)+" z");
+		var data = { 
+			id: mBox["mID"],
+			mask: $('#'+mBox["mID"]).attr('class'),
+			value: $('#'+mBox["mID"]).attr("d")
+		}
+		if((typeof data.mask !== 'undefined') && (typeof data.value !== 'undefined')) {
+			socketio.emit('setMasking', data); // 아래내용 전송
+		}
+	} else {
+		$('#'+mBox["mID"]).remove();
+	}
+	
+	$('#cursorLoc').css('display', 'none');
+}
+</script>
+
+<style>
+body {color: silver;background-color:#222;}
+div { font-size: 7pt; }
+circle:hover { fill: gray; }
+#datetime #using { font-size: 7pt; color: silver; } 
+#content { position: absolute; top: 0px; right: 0; bottom: 0; left: 0; overflow: hidden; }
+#location { height: 180px; color: silver; position: absolute; bottom: 0; left: 0; right: 0; overflow: hidden; overflow-y: auto; z-index:0; }
+#svgView { position: absolute; top: 0; right: 0; padding: 4px 8px; z-index:1;}
+#masking { position: absolute; right:200px; bottom:4px; z-index:1;padding: 0 4px;}
+#prefix, #prefix_dis  { position: absolute; right:4px; bottom:4px; z-index:1;padding-right:4px; border:1px solid gray;}
+label { vertical-align: super; }
+/* .noscale .the_circ {vector-effect: non-scaling-stroke;} */
+.infoGroup { color:silver; }
+.allowGroup { fill:#ffffff20;stroke-width:20px;stroke:lightgreen; }
+.denyGroup { fill:#ffffff20;stroke-width:20px;stroke:orange; }
+
+.html_scan { stroke-width: 6px; stroke:white; fill:rgb(119, 0, 0); }
+.html_grid { stroke:#ffffff80; stroke-width:6px; }
+.html_zone { fill:#00000080; stroke:gray; stroke-width:6px; }
+.html_frame { fill:#00000040; }
+.html_over { fill:#00000080; stroke:gray; stroke-width:6px; }
+
+<!-- /* y 기준으로 화면을 플립한다. transform: scale(1,-1); */  -->
+<!-- /* svg { transform: scale(1,-1);} */ -->
+svg { display: inline; width: 100%; min-width: inherit; max-width: inherit; height: 100%; min-height: inherit; max-height: inherit;  transform: matrix(1, 0, 0, 1, 0, 0);}
+
+#cursorLoc {
+	display: none;
+    position: absolute;
+    color: orange;
+}
+</style>
+</head>
+
+<body>
+<div id='cursorLoc'>cursorLoc</div>
+<div id='mainTitle'>OPTEX __model_and_rev__ Ver:__version__</div>
+<div id='datetime'></div>
+<div id='using'>Zoom In Out: Mouse Wheel, DblClick[Shift], Move Window: Drag</div>
+<div id='liveData'></div>
+<div id='location'></div>
+<div id='svgView'>
+	<span id='UD'>UD</span> <span id='LR'>LR</span> <span id='RO'>RO</span> <span id='BG'>BG</span> <span id='Reset'>Reset</span>
+</div>
+<div class="setMask">
+	<form id="masking">
+	<input type="checkbox" id="setMask" /><label for="setMask">Unlock</label>
+	<input type="radio" name="masking" disabled value="Allow" /><label for="setMask" data-lan="allow">Allow</label>
+	<input type="radio" name="masking" disabled value="Deny" /><label for="setMask" data-lan="deny">Deny</label>
+	<input type="radio" name="masking" disabled value="Delete" /><label for="setMask" data-lan="delete">Delete</label>
+	<!-- input type="radio" name="masking" disabled value="Change" /><label for="setMask" data-lan="rename">Rename</label -->
+	</form>
+</div>
+<div class="setPrefix">
+	<form id="prefix">
+	<!-- <input type="radio" name="prefix" disabled value="0" checked="checked" /><label for="setPrefix" data-lan="0">0</label> -->
+	<input type="radio" name="prefix" disabled value="1" /><label for="setPrefix" data-lan="1">1</label>
+	<input type="radio" name="prefix" disabled value="2" /><label for="setPrefix" data-lan="2">2</label>
+	<input type="radio" name="prefix" disabled value="3" /><label for="setPrefix" data-lan="3">3</label>
+	<input type="radio" name="prefix" disabled value="4" /><label for="setPrefix" data-lan="4">4</label>
+	<!-- <input type="radio" name="prefix_dis" disabled value="5" /><label for="setPrefix" data-lan="5">5</label>
+	<input type="radio" name="prefix" disabled value="6" /><label for="setPrefix" data-lan="6">6</label>
+	<input type="radio" name="prefix" disabled value="7" /><label for="setPrefix" data-lan="7">7</label> -->
+	</form>
+</div>
+
+<div id='content'>
+	<svg id="svg_id" viewBox="__svg_viewBox__" class="noscale">
+		<!-- text text-anchor="middle" x="0" y="0" style="font-size: 60pt;fill: white;font-family: monospace;">(-)<- X ->(+)</text>
+		<text text-anchor="middle" x="0" y="-40" style="font-size: 60pt;fill: white;font-family: monospace;transform: scale(1,-1);">Y</text>
+		<text text-anchor="middle" x="0" y="-140" style="font-size: 60pt;fill: white;font-family: monospace;transform: scale(1,-1);">(+)</text -->
+		<g id="rls_zone">__boundary_of_zone__</g>
+		<g id="rls_frame">__boundary_of_frame__</g>
+		<g id="rls_over">__boundary_of_over__</g>
+		<g id="rls_allocate">__boundary_of_allocate__</g>
+		<g id="rls_grid">__boundary_of_grid__</g>
+		<g id="rls_area">__boundary_of_area__</g>
+		<g id="rls_background">__boundary_of_background__</g>
+		<g id="rls_mask" onmousedown="startDrag(event)" onmouseup="endDrag(event)" onmousemove="moveMouse(event)">__boundary_of_mask__</g>
+		<g id="rls_event">__boundary_of_event__</g>
+	</svg>
+</div>
+<script>
+// 일정 자료 이상은 오래된것 부터 삭제후 화면 위치 고정
+setInterval(function(){
+	var line_max = 10;
+	var line_cnt = document.getElementsByClassName('evt_log').length;
+	
+	var i = line_cnt - line_max;
+	if (i > 0) { // 최고값 이상의 로그는 과거 값기즌으로 삭제
+		while (i--) {
+			document.getElementsByClassName('evt_log')[i].remove();
+			// console.log(i);
+		}
+	}
+	document.getElementById('location').scrollTo(0, document.getElementById('location').scrollHeight);
+	
+}, 500); // 1000 = 1초
+
+// 소켓.온
+var socketio = io.connect();
+socketio.on("message_to_client", function(data) {
+	var dd = new Date();
+	// var ss = '' + dd.getFullYear() + pad((dd.getMonth()+1),2) + pad((dd.getDate()+1),2) + pad(dd.getHours(),2) + pad(dd.getMinutes(),2) + pad(dd.getSeconds(),2);
+	var ss = '' + pad(dd.getHours(),2) + ':' + pad(dd.getMinutes(),2) + ':' + pad(dd.getSeconds(),2);
+	var objInfo = data['objInfo'];
+	var cood_xyr = objInfo.split(',');
+	var id = cood_xyr[0];
+	var x = cood_xyr[1];
+	var y = cood_xyr[2];
+	var r = cood_xyr[3];
+	draw_circle(id,x,y,r);
+	$('#location').append('<div class=evt_log>'+ss+' ID:'+id+' X:'+parseInt(x/10)+'cm Y:'+parseInt(y/10)+'cm D:'+parseInt(r/10)+'cm</div>');
+	$('#liveData').html('Realtime Location - ID:'+id+' X:'+x+' Y:'+y+' D:'+r);
+});
+
+// 마스킹 정보 화면 적용
+socketio.on("readMasking", function(data) {
+	// console.log(data)
+	svgCover = "<rect x='"+(rangeMaxX * aMeter) / 2 * -1+"' y='-"+(rangeTopY*aMeter)+"' width='"+(rangeMaxX * aMeter)+"' height='"+((rangeMaxY+rangeTopY) * aMeter)+"' style='fill:#00000000; stroke:gray; stroke-width:10px;' />";
+	svgCover += data;
+	// $('#svg_id #rls_frame').html(svgCover);
+	$('#svg_id #rls_mask').html(svgCover);
+});
+
+socketio.emit('readMasking', 'readMasking'); // 최초실행시 
+
+</script>
+</body>
+</html>

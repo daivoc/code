@@ -1,0 +1,34 @@
+{
+	"local": {
+		"camUrl": 0,
+		"holeTime": 0.5,
+		"cntPreShotMax": 30,
+		"cntPostShotMax": 20,
+		"description": "local device camera",
+		"memo": ""
+	},
+	"walkerSt": {
+		"camUrl": "rtsp://admin:admin@96.48.233.195:5540",
+		"holeTime": 1,
+		"cntPreShotMax": 20,
+		"cntPostShotMax": 10,
+		"description": "location on vancouver",
+		"memo": ""
+	},
+	"axis": {
+		"camUrl": "rtsp://root:pass@192.168.0.243/axis-media/media.amp",
+		"holeTime": 0.5,
+		"cntPreShotMax": 20,
+		"cntPostShotMax": 10,
+		"description": "axis ptz camera",
+		"memo": ""
+	},
+	"wisenet": {
+		"camUrl": "",
+		"holeTime": 0.5,
+		"cntPreShotMax": 20,
+		"cntPostShotMax": 10,
+		"description": "XNP-6330RH",
+		"memo": "한화 카메라"
+	}
+}

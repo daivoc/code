@@ -1,0 +1,190 @@
+{
+    "nickname": "RADAR",
+    "serial": "60169",
+    "settings": {
+        "calibration": {
+            "angleOffset": -27.717757,
+            "leftCoefficients": [
+                0.62,
+                0.33,
+                -0.14
+            ],
+            "rightCoefficients": [
+                0.62,
+                -0.13,
+                0.17
+            ]
+        },
+        "datetime": {
+            "ntpServers": [
+                {
+                    "address": "169.254.0.254",
+                    "servers": false
+                }
+            ],
+            "syncWithGps": false,
+            "timezoneLocation": "Asia/Seoul"
+        },
+        "detections": {
+            "disableTimeFilter": true,
+            "filter": false,
+            "localFilterSensitivity": 9,
+            "minVelocity": 1,
+            "rangeDepSensitivity": true,
+            "sensitivity": 8,
+            "timeFilterSensitivity": 8,
+            "weatherAdaption": false
+        },
+        "geolocation": {
+            "acquireGpsOnBoot": false,
+            "acquireOrientationOnBoot": false,
+            "altitude": 0,
+            "bearing": 0,
+            "declination": 0,
+            "latitude": 0,
+            "longitude": 0
+        },
+        "health": {
+            "autoTune": false,
+            "tuneThreshold": 0.1
+        },
+        "network": {
+            "default": {
+                "auto": true,
+                "cidr": "16",
+                "enabled": true,
+                "gateway": null,
+                "ipaddr": "169.254.254.254",
+                "mode": "static",
+                "netmask": "255.255.0.0"
+            },
+            "deviceName": "spotter60169",
+            "dhcp": {
+                "addressType": "ipv4",
+                "auto": true,
+                "cidr": null,
+                "enabled": false,
+                "gateway": null,
+                "ipaddr": null,
+                "ipv6Addr": null,
+                "mode": "dhcp",
+                "netmask": null
+            },
+            "dns": "8.8.8.8 8.8.4.4",
+            "mDns": {
+                "enabled": true
+            },
+            "macAddr": "2e:52:46:2a:6f:7b",
+            "user": {
+                "auto": true,
+                "cidr": null,
+                "gateway": null,
+                "ipaddr": null,
+                "mode": "",
+                "netmask": null
+            },
+            "userAddrs": []
+        },
+        "notifications": {
+            "hardware": {
+                "errThresholds": {
+                    "maxTransmitPwr": 0,
+                    "minTransmitPwr": 0,
+                    "temperature": 90
+                },
+                "warnThresholds": {
+                    "maxTransmitPwr": 0,
+                    "minTransmitPwr": 0,
+                    "temperature": 80
+                }
+            },
+            "orientation": {
+                "errThresholds": {
+                    "pitch": 15,
+                    "roll": 15,
+                    "yaw": 15
+                },
+                "target": {
+                    "pitch": null,
+                    "roll": null,
+                    "yaw": null
+                },
+                "warnThresholds": {
+                    "pitch": 6,
+                    "roll": 6,
+                    "yaw": 6
+                }
+            },
+            "signal": {
+                "errThresholds": {
+                    "interference": 80,
+                    "jamming": 80,
+                    "rfReturn": 20,
+                    "rfReturnDiff": 20,
+                    "saturation": 40
+                },
+                "warnThresholds": {
+                    "interference": 0,
+                    "jamming": 0,
+                    "rfReturn": 41.67,
+                    "rfReturnDiff": 4.37,
+                    "saturation": 0
+                }
+            }
+        },
+        "rotation": {
+            "acquireOrientationOnBoot": false,
+            "acquireTiltOnBoot": false,
+            "ignoreTiltDuringAcquire": true,
+            "pitch": 0.94,
+            "roll": -1.48,
+            "yaw": 0
+        },
+        "sensor": {
+            "captureDataSource": "live",
+            "exclusions": [],
+            "lowPower": false,
+            "phaseCalibrationOffset": -27.717757,
+            "phaseCalibrationRotation": 0,
+            "pulseChannel": 4,
+            "rfChannel": "K3",
+            "timeChannel": 1,
+            "transmitPower": 100
+        },
+        "tls": {
+            "ciphers": [],
+            "httpEnabled": true,
+            "minVersion": 770,
+            "privateKey": "",
+            "publicKey": "-----BEGIN CERTIFICATE-----\nMIIB2jCCAUOgAwIBAgIIRP4mSE2GqKAwDQYJKoZIhvcNAQELBQAwFDESMBAGA1UE\nChMJU3BvdHRlclJGMB4XDTAwMDEwMTAwMDAyNFoXDTQ5MTIzMTIzNTk1OVowFDES\nMBAGA1UEChMJU3BvdHRlclJGMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDL\n9giDuyAGDwHG7re47+O/kOKSKJu+zDSArT/mOt/UUlHFL+fvnJKQ6oxf2ibtebKf\nV1ffSS1y85Zv+fbltxJtiFqLbLZ0VulVwUSayTHpDCbppYmioa9ziH7AknZD5FoV\n8DO7b+k0rhTV+CkiBWHsHHMEKInZrAXWp3T1TzkBUQIDAQABozUwMzAOBgNVHQ8B\nAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADANBgkq\nhkiG9w0BAQsFAAOBgQBGrqK6kknBukkaX877RUVBXd8Ty3J1RHCu20DI4c40/MeN\na2POhBlWYNsmgBkSL6/tfyahn47JL2l8oNvSIRBnBKUXFjSihjWXQ/DBmTqRgAux\nOkajVQrWmoCX3FBZkAVCAWXsSb2/0HWbh8aPoFKXRJsgLEvO037n7RScDLLarQ==\n-----END CERTIFICATE-----\n",
+            "sshEnabled": true
+        },
+        "tracks": {
+            "activationTime": 3,
+            "filterWind": false,
+            "killTime": 4,
+            "largeTargetMode": false,
+            "minDetection": 5,
+            "rangeThreshold": 1,
+            "smoothOutput": false
+        },
+        "trails.kml": {
+            "kmlPointsToAvg": 4,
+            "kmlTimeout": 10
+        }
+    },
+    "subscriptions": {
+        "tracks.json": {
+            "9a9b7c76-ddaf-437d-56a1-ebde12a8f77e": {
+                "filter": {},
+                "hostname": "169.254.254.1",
+                "id": "9a9b7c76-ddaf-437d-56a1-ebde12a8f77e",
+                "moduleName": "tracks.json",
+                "params": {},
+                "port": 18100,
+                "protocol": "tcp:"
+            }
+        }
+    },
+    "version": "3.21.0-01044"
+}

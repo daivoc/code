@@ -1,0 +1,11 @@
+{
+    "gChkBox":{
+        "beep":true,
+        "adjustment":false,
+        "snapshut":false,
+        "showLive":false
+    },
+    "server": {
+        "accessible": []
+    }
+}

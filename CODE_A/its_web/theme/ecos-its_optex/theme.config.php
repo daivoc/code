@@ -1,0 +1,203 @@
+<?php
+if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
+
+// 테마가 지원하는 장치 설정 pc, mobile
+// 선언하지 않거나 값을 지정하지 않으면 그누보드5의 설정을 따른다.
+// G5_SET_DEVICE 상수 설정 보다 우선 적용됨
+define('G5_THEME_DEVICE', 'pc');
+
+$theme_config = array();
+
+// 갤러리 이미지 수 등의 설정을 지정하시면 게시판관리에서 해당 값을
+// 가져오기 기능을 통해 게시판 설정의 해당 필드에 바로 적용할 수 있습니다.
+// 사용하지 않는 스킨 설정은 값을 비워두시면 됩니다.
+
+$theme_config = array(
+	'set_default_skin'          => false,   // 기본환경설정의 최근게시물 등의 기본스킨 변경여부 true, false
+	'preview_board_skin'        => 'basic', // 테마 미리보기 때 적용될 기본 게시판 스킨
+	'preview_mobile_board_skin' => 'basic', // 테마 미리보기 때 적용될 기본 모바일 게시판 스킨
+	'cf_member_skin'            => 'basic', // 회원 스킨
+	'cf_mobile_member_skin'     => 'basic', // 모바일 회원 스킨
+	'cf_new_skin'               => 'basic', // 최근게시물 스킨
+	'cf_mobile_new_skin'        => 'basic', // 모바일 최근게시물 스킨
+	'cf_search_skin'            => 'basic', // 검색 스킨
+	'cf_mobile_search_skin'     => 'basic', // 모바일 검색 스킨
+	'cf_connect_skin'           => 'basic', // 접속자 스킨
+	'cf_mobile_connect_skin'    => 'basic', // 모바일 접속자 스킨
+	'cf_faq_skin'               => 'basic', // FAQ 스킨
+	'cf_mobile_faq_skin'        => 'basic', // 모바일 FAQ 스킨
+	'bo_gallery_cols'           => 4,       // 갤러리 이미지 수
+	'bo_gallery_width'          => 174,     // 갤러리 이미지 폭
+	'bo_gallery_height'         => 124,     // 갤러리 이미지 높이
+	'bo_mobile_gallery_width'   => 125,     // 모바일 갤러리 이미지 폭
+	'bo_mobile_gallery_height'  => 100,     // 모바일 갤러리 이미지 높이
+	'bo_image_width'            => 600,     // 게시판 뷰 이미지 폭
+	'qa_skin'                   => 'basic', // 1:1문의 스킨
+	'qa_mobile_skin'            => 'basic'  // 1:1문의 모바일 스킨
+);
+
+///////////// 커스텀 환경설정 /////////////////
+///////////// 커스텀 환경설정 /////////////////
+///////////// 커스텀 환경설정 /////////////////
+
+define('G5_CU_UTIL_URL', G5_THEME_URL.'/utility');
+define('G5_CU_UTIL_PATH', G5_THEME_PATH.'/utility');
+
+define('G5_CU_IMG_URL', G5_DATA_URL.'/image');
+define('G5_CU_IMG_PATH', G5_DATA_PATH.'/image');
+
+define('G5_CU_AUD_URL', G5_DATA_URL.'/audio');
+define('G5_CU_AUD_PATH', G5_DATA_PATH.'/audio');
+
+define('G5_CU_VDO_URL', G5_DATA_URL.'/video');
+define('G5_CU_VDO_PATH', G5_DATA_PATH.'/video');
+
+define('G5_CU_CFG_URL', G5_DATA_URL.'/config');
+define('G5_CU_CFG_PATH', G5_DATA_PATH.'/config');
+
+define('G5_CU_MAP_URL', G5_CU_IMG_URL.'/ims');
+define('G5_CU_MAP_PATH', G5_CU_IMG_PATH.'/ims');
+
+define('DAIVOC_MAIL', 'daivoc@gmail.com'); // 개발자 메일
+define('G5_CU_MAIL_ADDR', 'support@ecoskorea.com'); // 메일 전송시 발시자명
+define('G5_CU_PUBLIC_NAME', 'ECOS');
+define('G5_CU_MAIL_DEVELOPER', DAIVOC_MAIL); // 개발자 메일명
+
+// 사용 : G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\skin\member\basic\register_form.skin.php
+$g5_cu_language = array(
+	// 'its_webC' => 'Chinese',
+	'its_webE' => 'English',
+	// 'its_webJ' => 'Japaness',
+	'its_webK' => 'Korean'
+);
+
+// 사용 : G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\skin\member\basic\register_form.skin.php
+$g5_cu_ioBoard = array(
+	'std' => 'STD',
+	'acu' => 'ACU',
+	'psw' => 'PSW' // Power Switch
+);
+
+$g5_cu_systemType = array(
+	'its' => 'ITS',
+	'ims' => 'IMS'
+);
+
+$gJson = json_decode(file_get_contents("/home/pi/common/config.json"), TRUE);
+// print_r($gJson);
+// echo $gJson['license']['key_system];
+
+define('G5_CU_CONF_MANUAL', 'g000t100');
+define('G5_CU_CONF_RXTX', 'g100t100');
+define('G5_CU_CONF_RELAY', 'g100t160');
+define('G5_CU_CONF_BSS', 'g200t100');
+define('G5_CU_CONF_BSS_R', 'g200t110');
+define('G5_CU_CONF_SPEED', 'g200t120');
+define('G5_CU_CONF_RLS', 'g200t200');
+define('G5_CU_CONF_RLS_R', 'g200t210');
+define('G5_CU_CONF_PARKING', 'g200t220');
+define('G5_CU_CONF_RLS_T', 'g200t240');
+define('G5_CU_CONF_BIND', 'g200t400');
+define('G5_CU_CONF_SPOT', 'g200t500');
+define('G5_CU_CONF_GPIO', 'g300t100');
+define('G5_CU_CONF_COUNTER', 'g300t200');
+define('G5_CU_CONF_GPCIO', 'g300t300');
+define('G5_CU_CONF_GPACU', 'g300t400');
+define('G5_CU_CONF_GPWIO', 'g300t500');
+define('G5_CU_CONF_GIKEN_P', 'g400t200');
+define('G5_CU_CONF_GIKEN_T', 'g400t300');
+define('G5_CU_CONF_TAILING', 'g400t400');
+define('G5_CU_CONF_GIKEN_C', 'g400t500');
+define('G5_CU_CONF_CAMERA', 'g500t100');
+define('G5_CU_CONF_ZONE', 'g500t200');
+define('G5_CU_CONF_BOX', 'g500t300');
+
+$G5_CU_CONF_GROUP = array( 
+	'G5_CU_CONF_MANUAL'	=> G5_CU_CONF_MANUAL,	
+	'G5_CU_CONF_RXTX'	=> G5_CU_CONF_RXTX,	
+	'G5_CU_CONF_RELAY'	=> G5_CU_CONF_RELAY,	
+	'G5_CU_CONF_BSS'	=> G5_CU_CONF_BSS,	
+	'G5_CU_CONF_BSS_R'	=> G5_CU_CONF_BSS_R,	
+	'G5_CU_CONF_SPEED'	=> G5_CU_CONF_SPEED,	
+	'G5_CU_CONF_RLS'	=> G5_CU_CONF_RLS,	
+	'G5_CU_CONF_RLS_R'	=> G5_CU_CONF_RLS_R,	
+	'G5_CU_CONF_PARKING'=> G5_CU_CONF_PARKING,	
+	'G5_CU_CONF_RLS_T'	=> G5_CU_CONF_RLS_T,	
+	'G5_CU_CONF_BIND'	=> G5_CU_CONF_BIND,	
+	'G5_CU_CONF_SPOT'	=> G5_CU_CONF_SPOT,	
+	'G5_CU_CONF_GPIO'	=> G5_CU_CONF_GPIO,
+	'G5_CU_CONF_COUNTER'=> G5_CU_CONF_COUNTER,
+	'G5_CU_CONF_GPCIO'	=> G5_CU_CONF_GPCIO,
+	'G5_CU_CONF_GPACU'	=> G5_CU_CONF_GPACU,
+	'G5_CU_CONF_GPWIO'	=> G5_CU_CONF_GPWIO,
+	'G5_CU_CONF_GIKEN_P'=> G5_CU_CONF_GIKEN_P,
+	'G5_CU_CONF_GIKEN_T'=> G5_CU_CONF_GIKEN_T,
+	'G5_CU_CONF_TAILING'	=> G5_CU_CONF_TAILING,
+	'G5_CU_CONF_GIKEN_C'=> G5_CU_CONF_GIKEN_C,
+	'G5_CU_CONF_CAMERA'	=> G5_CU_CONF_CAMERA,
+	'G5_CU_CONF_ZONE'	=> G5_CU_CONF_ZONE,
+	'G5_CU_CONF_BOX'	=> G5_CU_CONF_BOX
+);
+
+define('G5_CU_MASTER_PORT', $gJson['port']['tableUnion']); // 연결된 모든 센서의 모니터링을 위한 TCP Port  예: $_SERVER['SERVER_ADDR'].":".G5_CU_MASTER_PORT
+define('G5_CU_MASTER_NODE_0', G5_CU_MASTER_PORT + 2); // G5_CU_MASTER_PORT 데이터를 Node.js 서버가 읽고 G5_CU_MASTER_NODE_0 포트로 클라이언트 서비스
+define('G5_CU_MASTER_NODE_1', G5_CU_MASTER_PORT + 4); // G5_CU_MASTER_PORT 데이터를 Node.js 서버가 읽고 G5_CU_MASTER_NODE_1 포트로 클라이언트 서비스
+
+define('G5_CU_IMS_PORT', $gJson['port']['ims']); // RLS 모니터링을 위한 TCP Port 
+define('G5_CU_GIKENP_PORT_IN', $gJson['port']['gikenp']['portIn']); // GIKEN 모니터링을 위한 TCP Port 
+define('G5_CU_GIKENP_PORT_OUT', $gJson['port']['gikenp']['portOut']); // GIKEN 모니터링을 위한 TCP Port 
+define('G5_CU_GIKENT_PORT_IN', $gJson['port']['gikent']['portIn']); // GIKEN 모니터링을 위한 TCP Port 
+define('G5_CU_GIKENT_PORT_OUT', $gJson['port']['gikent']['portOut']); // GIKEN 모니터링을 위한 TCP Port 
+define('G5_CU_TAILING_PORT_IN', $gJson['port']['tailing']['portIn']); // TAILING 모니터링을 위한 TCP Port 
+define('G5_CU_TAILING_PORT_OUT', $gJson['port']['tailing']['portOut']); // TAILING 모니터링을 위한 TCP Port 
+define('G5_CU_GIKENC_PORT_IN', $gJson['port']['gikenc']['portIn']); // GIKEN 모니터링을 위한 TCP Port 
+define('G5_CU_GIKENC_PORT_OUT', $gJson['port']['gikenc']['portOut']); // GIKEN 모니터링을 위한 TCP Port 
+define('G5_CU_SYSTEM_PORT_IN', $gJson['port']['systemIn']); // RLS 모니터링을 위한 TCP Port 
+define('G5_CU_SYSTEM_PORT_OUT', $gJson['port']['systemOut']); // RLS 모니터링을 위한 TCP Port 
+define('G5_CU_GPIO_PORT_IN', $gJson['port']['gpio']['portIn']); // GPIO 모니터링을 위한 TCP Port 
+define('G5_CU_GPIO_PORT_OUT', $gJson['port']['gpio']['portOut']); // GPIO 모니터링을 위한 TCP Port 
+
+define('G5_CU_WATCHDOG_INTV', $gJson["port"]["watchdog"]["interval"]); // 와치도그 파일 생성 주기
+
+define('G5_CU_PATH_COUNTER', $gJson['path']['counter']);
+define('G5_CU_PATH_GPIO', $gJson['path']['gpio']);
+define('G5_CU_PATH_GPCIO', $gJson['path']['gpcio']);
+define('G5_CU_PATH_GPACU', $gJson['path']['gpacu']);
+define('G5_CU_PATH_GPWIO', $gJson['path']['gpwio']);
+define('G5_CU_PATH_BSS', $gJson['path']['bss']);
+define('G5_CU_PATH_BSS_R', $gJson['path']['bss_r']);
+define('G5_CU_PATH_RLS', $gJson['path']['rls']);
+define('G5_CU_PATH_RLS_R', $gJson['path']['rls_r']);
+define('G5_CU_PATH_BIND', $gJson['path']['bind']);
+define('G5_CU_PATH_SPEED', $gJson['path']['speed']);
+define('G5_CU_PATH_GIKEN_P', $gJson['path']['gikenp']);
+define('G5_CU_PATH_GIKEN_T', $gJson['path']['gikent']);
+define('G5_CU_PATH_TAILING', $gJson['path']['tailing']);
+define('G5_CU_PATH_GIKEN_C', $gJson['path']['gikenc']);
+define('G5_CU_PATH_SPOTTER', $gJson['path']['spotter']);
+define('G5_CU_PATH_PARKING', $gJson['path']['parking']);
+define('G5_CU_PATH_CAMERA', $gJson['path']['camera']);
+define('G5_CU_PATH_ZONE', $gJson['path']['zone']);
+define('G5_CU_PATH_BOX', $gJson['path']['box']);
+define('G5_CU_PATH_LOG', $gJson['path']['log']);
+define('G5_CU_PATH_CONFIG', $gJson['path']['config']);
+
+define('G5_CU_GPIO_ARR_IN', $gJson['gpio']['in']); // 
+define('G5_CU_GPIO_ARR_OUT', $gJson['gpio']['out']); // 
+
+
+define('G5_CU_LICENSE_SERVER', $gJson['license']['server_addr']); // 라이센스 서버 IP:PORT
+define('G5_CU_LICENSE_URL', $gJson['license']['server_url']); // 라이센스 키 컨펌
+
+// 시스템 시리얼 헤시코드
+$serial = shell_exec("cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2");
+$serial = str_replace(array('.', ' ', "\n", "\t", "\r"), '', $serial);
+$hash_key = hash('sha256', $serial);
+$hash_otx = hash('sha256', shell_exec($hash_key));
+$hash_its = hash('sha256', shell_exec($hash_otx));
+
+define('G5_CU_ITS_SERIAL', $serial); // 기초 프로그램을 가동
+define('G5_CU_ITS_HASH_KEY', $hash_key); // 기초 프로그램을 가동
+define('G5_CU_ITS_HASH_OTX', $hash_otx); // 응용 프로그램 가동
+define('G5_CU_ITS_HASH_ITS', $hash_its); // 관리 및 정비 프로그램 가동
+?>

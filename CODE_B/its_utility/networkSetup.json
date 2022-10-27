@@ -1,0 +1,15 @@
+{
+	"iface": {
+		"address":"192.168.0.120",
+		"netmask":"255.255.255.0",
+		"gateway":"192.168.0.1",
+		"network":"192.168.0.0",
+		"broadcast":"192.168.0.255",
+		"path":"/mnt/etc/network/interfaces"
+	},
+	"wpa": {
+		"name":"ITS_AP",
+		"keys":"GXnLRNT9H50yKQ3G",
+		"path":"/mnt/etc/wpa_supplicant/wpa_supplicant.conf"
+	}
+}

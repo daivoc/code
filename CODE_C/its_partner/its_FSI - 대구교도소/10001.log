@@ -1,0 +1,3344 @@
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:32:57.466</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:32:57.467</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceConfiguration MessageType="Report">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Hyperzone</DeviceType>
+  </DeviceIdentification>
+  <ConfigurationSetting Name="Gain" Units="None" MinimumValue="1" MaximumValue="50" CurrentValue="20"/>
+  <ConfigurationSetting Name="Wind Reject Factor" Units="MilesPerHour" MinimumValue="20" MaximumValue="80" CurrentValue="50"/>
+  <ConfigurationOptionBlock Name="Wind Processing" Units="None">
+    <ConfigurationOption Option="Enabled" Selected="true"/>
+    <ConfigurationOption Option="Disabled" Selected="false"/>
+  </ConfigurationOptionBlock>
+</DeviceConfiguration>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00079</ID>
+      <DetectionEvent>Intrusion</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T15:33:55.640</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:35:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:35:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:35:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:35:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:35:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:35:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:36:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:36:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:36:26.690</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:36:26.691</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:36:31.120</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:36:31.120</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceConfiguration MessageType="Report">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Hyperzone</DeviceType>
+  </DeviceIdentification>
+  <ConfigurationSetting Name="Gain" Units="None" MinimumValue="1" MaximumValue="50" CurrentValue="20"/>
+  <ConfigurationSetting Name="Wind Reject Factor" Units="MilesPerHour" MinimumValue="20" MaximumValue="80" CurrentValue="50"/>
+  <ConfigurationOptionBlock Name="Wind Processing" Units="None">
+    <ConfigurationOption Option="Enabled" Selected="true"/>
+    <ConfigurationOption Option="Disabled" Selected="false"/>
+  </ConfigurationOptionBlock>
+</DeviceConfiguration>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00080</ID>
+      <DetectionEvent>Intrusion</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T15:37:43.420</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:38:40.691</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:38:40.692</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:39:00.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:39:00.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:39:20.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:39:20.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:39:40.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:39:40.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:39:53.862</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:39:53.863</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceConfiguration MessageType="Report">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Hyperzone</DeviceType>
+  </DeviceIdentification>
+  <ConfigurationSetting Name="Gain" Units="None" MinimumValue="1" MaximumValue="50" CurrentValue="20"/>
+  <ConfigurationSetting Name="Wind Reject Factor" Units="MilesPerHour" MinimumValue="20" MaximumValue="80" CurrentValue="50"/>
+  <ConfigurationOptionBlock Name="Wind Processing" Units="None">
+    <ConfigurationOption Option="Enabled" Selected="true"/>
+    <ConfigurationOption Option="Disabled" Selected="false"/>
+  </ConfigurationOptionBlock>
+</DeviceConfiguration>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:42:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:42:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:43:06.685</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:43:06.686</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:43:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:43:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:43:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:43:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:44:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:44:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:44:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:44:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:44:46.683</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:44:46.684</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:45:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:45:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:45:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:45:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:45:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:45:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:46:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:46:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:46:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:46:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:46:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:46:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:47:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:47:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:47:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:47:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:47:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:47:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:48:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:48:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:48:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:48:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:48:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:48:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:49:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:49:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:49:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:49:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:49:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:49:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:50:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:50:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:50:26.699</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:50:26.699</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:50:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:50:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:51:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:51:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:51:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:51:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:51:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:51:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:52:06.697</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:52:06.698</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:52:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:52:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:52:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:52:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:53:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:53:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:53:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:53:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:53:46.696</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:53:46.696</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:54:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:54:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:54:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:54:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:54:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:54:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:55:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:55:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:55:26.694</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:55:26.695</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:55:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:55:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:56:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:56:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:56:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:56:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:56:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:56:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:57:06.693</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:57:06.694</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:57:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:57:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:57:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:57:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:58:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:58:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:58:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:58:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:58:46.691</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:58:46.692</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:59:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:59:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:59:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:59:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T15:59:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T15:59:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:00:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:00:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:00:26.690</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:00:26.691</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:00:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:00:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:01:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:01:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:01:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:01:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:01:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:01:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:02:06.688</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:02:06.689</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:02:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:02:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:02:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:02:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:03:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:03:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:03:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:03:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:03:46.687</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:03:46.688</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:04:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:04:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:04:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:04:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:04:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:04:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:05:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:05:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:05:26.686</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:05:26.686</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:05:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:05:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:06:06.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:06:06.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:06:26.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:06:26.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:06:46.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:06:46.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T16:07:06.684</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T16:07:06.685</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00126</ID>
+      <DetectionEvent>Intrusion</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T23:06:52.089</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00127</ID>
+      <DetectionEvent>Intrusion</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T23:06:59.110</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00128</ID>
+      <DetectionEvent>Intrusion</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T23:07:05.128</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00129</ID>
+      <DetectionEvent>Fault</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T23:07:22.179</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceStatusReport>
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Zone</DeviceType>
+  </DeviceIdentification>
+  <Status>
+    <DeviceState>Fault</DeviceState>
+    <CommunicationState>Fail</CommunicationState>
+    <UpdateTime Zone="GMT">2020-11-24T23:07:22.180</UpdateTime>
+  </Status>
+</DeviceStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceStatusReport>
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Zone</DeviceType>
+  </DeviceIdentification>
+  <Status>
+    <DeviceState>Secure</DeviceState>
+    <CommunicationState>OK</CommunicationState>
+    <UpdateTime Zone="GMT">2020-11-24T23:07:25.188</UpdateTime>
+  </Status>
+  <Detection>
+    <DetectionEvent>Other</DetectionEvent>
+    <Details>Internal line fault</Details>
+    <UpdateTime Zone="GMT">2020-11-24T23:07:25.189</UpdateTime>
+  </Detection>
+</DeviceStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00130</ID>
+      <DetectionEvent>Intrusion</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T23:07:56.281</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceDetectionReport>
+  <DeviceDetectionRecord>
+    <DeviceIdentification>
+      <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Zone</DeviceType>
+    </DeviceIdentification>
+    <Detection>
+      <ID>SZ00131</ID>
+      <DetectionEvent>Fault</DetectionEvent>
+      <UpdateTime Zone="GMT">2020-11-24T23:08:16.341</UpdateTime>
+    </Detection>
+  </DeviceDetectionRecord>
+</DeviceDetectionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceStatusReport>
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Zone</DeviceType>
+  </DeviceIdentification>
+  <Status>
+    <DeviceState>Fault</DeviceState>
+    <CommunicationState>Fail</CommunicationState>
+    <UpdateTime Zone="GMT">2020-11-24T23:08:16.342</UpdateTime>
+  </Status>
+</DeviceStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceStatusReport>
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR Zone</DeviceType>
+  </DeviceIdentification>
+  <Status>
+    <DeviceState>Secure</DeviceState>
+    <CommunicationState>OK</CommunicationState>
+    <UpdateTime Zone="GMT">2020-11-24T23:08:24.465</UpdateTime>
+  </Status>
+  <Detection>
+    <DetectionEvent>Other</DetectionEvent>
+    <Details>Internal line fault</Details>
+    <UpdateTime Zone="GMT">2020-11-24T23:08:24.466</UpdateTime>
+  </Detection>
+</DeviceStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandMessage MessageType="Response" Status="OK">
+  <DeviceIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+  </DeviceIdentification>
+  <Command>
+    <SimpleCommand>Ping</SimpleCommand>
+  </Command>
+</CommandMessage>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T23:08:42.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T23:08:42.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<PlatformStatusReport>
+  <PlatformIdentification>
+    <DeviceName>FD525R-109545</DeviceName>
+    <DeviceCategory>Sensor</DeviceCategory>
+    <DeviceType>SPIDR APU</DeviceType>
+  </PlatformIdentification>
+  <PlatformStatusReport>
+    <PlatformIdentification>
+      <DeviceName>FD525R-109545.HZONE-1</DeviceName>
+      <DeviceCategory>Sensor</DeviceCategory>
+      <DeviceType>SPIDR Hyperzone</DeviceType>
+    </PlatformIdentification>
+    <Status>
+      <DeviceState>Secure</DeviceState>
+      <CommunicationState>OK</CommunicationState>
+      <UpdateTime Zone="GMT">2020-11-24T23:09:02.682</UpdateTime>
+    </Status>
+    <DeviceStatusReport>
+      <DeviceIdentification>
+        <DeviceName>FD525R-109545.HZONE-1.ZONE-001</DeviceName>
+        <DeviceCategory>Sensor</DeviceCategory>
+        <DeviceType>SPIDR Zone</DeviceType>
+      </DeviceIdentification>
+      <Status>
+        <DeviceState>Secure</DeviceState>
+        <CommunicationState>OK</CommunicationState>
+        <UpdateTime Zone="GMT">2020-11-24T23:09:02.683</UpdateTime>
+      </Status>
+    </DeviceStatusReport>
+  </PlatformStatusReport>
+</PlatformStatusReport>

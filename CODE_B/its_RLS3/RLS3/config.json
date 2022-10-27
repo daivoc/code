@@ -1,0 +1,182 @@
+{
+	"mysql": {
+		"host": "localhost",
+		"name": "its_web",
+		"pass": "GXnLRNT9H50yKQ3G",
+		"user": "its",
+		"table": {
+			"config": "e_config_RLS_V",
+			"log": "e_log_RLS_V",
+			"rls_v":"g200t230"
+		}
+	},
+	"permission": {
+		"password": {
+			"admin": "admin",
+			"manager": "manager",
+			"viewer": "viewer"
+		},
+		"filterIP":{
+			"admin":"192.168.0.201,192.168.0.203",
+			"manager":"",
+			"viewer":"",
+			"allow":"",
+			"deny":"192.168.0.10,192.168.0.20"
+		},
+		"accessKey": {
+			"keySource": "",
+			"keyCode": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		}
+	},
+	"server":{
+		"localhost":{
+			"addr":"",
+			"port":0,
+			"desc":""
+		},
+		"ims":{
+			"addr":"192.168.0.91",
+			"port":38087,
+			"desc":""
+		}
+	},
+	"path":{
+		"web":"/var/www/html/its_web/data",
+		"itsCommon":"/home/pi/common",
+		"itsUtility":"/home/pi/utility",
+		"myHome":"/home/pi/RLS3",
+		"data":"/home/pi/RLS3/data",
+		"log":"/home/pi/RLS3/data/log"
+	},
+	"port":{
+		"nodeIn":50198,
+		"nodeOut":51198,
+		"socketIn":52198,
+		"socketOut":53198,
+		"printOut":54198,
+		"masquerade":58000
+	},
+	"sensor":{
+		"addr":"192.168.168.30",
+		"user":"root",
+		"pass":"RLS-0000",
+		"masquerade":true,
+		"pickup":0.4,
+		"heartBeatKey":"100Z0",
+		"heartBeatDue":60.0,
+		"cmd":{
+			"rtsp": "rtsp://{}:{}@{}:554/stream/0",
+			"mjpg":"/api/img/stream/mjpeg",
+			"shot":"/api/onvif/img/get",
+			"gInfoDevice":"/api/info/device/get",
+			"gInfoStatus":"/api/info/status/get",
+			"gInOutCurr":"/api/io/get/current",
+			"gInOutDiff":"/api/io/get/diff",
+			"gMounting":"/api/param/get/system.information.mounting",
+			"pProfile0":"/api/profile/select/0",
+			"pProfile1":"/api/profile/select/1",
+			"wsDetectObj":"/detection",
+			"wsDetectArea":"/area",
+			"wsDetectMask":"/maskalloc",
+			"wsDetectEvent":"/event"
+		}
+	},
+	"camera":{},
+	"model":{
+		"RLS-3060V":{
+			"size":50000,
+			"step":761,
+			"unit":0.25,
+			"rangeMaxX": 100,
+			"rangeMaxY": 50,
+			"rangeTopY": 4.15,
+			"aMeter": 1000
+		},
+		"RLS-50100V":{
+			"size":80000,
+			"step":1521,
+			"unit":0.125,
+			"rangeMaxX": 160,
+			"rangeMaxY": 80,
+			"rangeTopY": 4.15,
+			"aMeter": 1000
+		}
+	},
+	"filter":{
+		"maskCoord":{
+			"allowGroup":{},
+			"denyGroup":{}
+		},
+		"masking":{
+			"allowGroup":{},
+			"denyGroup":{}
+		}
+	},
+	"level":{
+		"0":{
+			"name":"Normal",
+			"reset":5,
+			"hold":{
+				"due":0,
+				"cont":0,
+				"keep":false
+			},
+			"size":{
+				"max":0,
+				"min":0
+			}
+		},
+		"1":{
+			"name":"Alert",
+			"reset":5,
+			"hold":{
+				"due":0,
+				"cont":0,
+				"keep":false
+			},
+			"size":{
+				"max":0,
+				"min":0
+			}
+		},
+		"2":{
+			"name":"Warning",
+			"reset":5,
+			"hold":{
+				"due":0,
+				"cont":0,
+				"keep":false
+			},
+			"size":{
+				"max":0,
+				"min":0
+			}
+		},
+		"3":{
+			"name":"Guide",
+			"reset":5,
+			"hold":{
+				"due":0,
+				"cont":0,
+				"keep":false
+			},
+			"size":{
+				"max":0,
+				"min":0
+			}
+		},
+		"4":{
+			"name":"Other",
+			"reset":5,
+			"hold":{
+				"due":0,
+				"cont":0,
+				"keep":false
+			},
+			"size":{
+				"max":0,
+				"min":0
+			}
+		}
+	}
+}

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes'>
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__script_jquery_ui_css__
+
+<script src='/socket.io/socket.io.js'></script>
+
+<script>
+var myKey = window.performance.now(); // 클라이언트 브라우져 유니크 아이디
+var myIP = ""; // 등록된 자신의 아이피
+var myID = ""; // 등록된 자신의 사용자
+var myLV = ""; // 등록된 자신의 등급
+
+var cfg = {};
+
+var counter = 0;
+var interval = setInterval(function(){
+	counter++;
+	document.getElementById("timer").innerHTML = counter;
+}, 1000);
+function reset_timer(){
+	counter = 0;
+}
+function getCurrentDate() {
+	var date = new Date();
+	var year = date.getFullYear().toString();
+	var month = date.getMonth() + 1;
+	month = month < 10 ? '0' + month.toString() : month.toString();
+	var day = date.getDate();
+	day = day < 10 ? '0' + day.toString() : day.toString();
+	var hour = date.getHours();
+	hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+	var minites = date.getMinutes();
+	minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+	var seconds = date.getSeconds();
+	seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+	return year + '-' + month + '-' + day + ' ' + hour + ':' + minites + ':' + seconds;
+};
+
+$( document ).ready(function() {
+	var socketio = io.connect();
+
+	// <<<< From NodeJS
+	// var PlatformStatusReport = localStorage.getItem("PlatformStatusReport"); // 데이터 가져오기
+	// localStorage.setItem("PlatformStatusReport", data); // 데이터 쓰기
+
+	socketio.on('reset_timer', function(data) {
+		reset_timer();
+	});
+
+	socketio.on('PlatformStatusReport', function(data) {
+		// 타이틀
+		$('header h1').html(data["PlatformIdentification"]["DeviceType"] + " - " + data["PlatformIdentification"]["DeviceName"]);
+
+		var items = "<table class='PlatformStatusReport'><tr><th colspan='4' style='color: yellowgreen;'>Platform Status of "+data["PlatformIdentification"]["DeviceType"]+"</th></tr>";
+		data["DeviceStatusReport"].forEach(function (value, i) {
+			// console.log('%d: %s', i, value);
+			if(i == 0) { // 타이틀 생성
+				items += "<tr>";
+				items += "<th>DeviceName</th>";
+				items += "<th>CommunicationState</th>";
+				items += "<th>DeviceState</th>";
+				items += "<th>Update Time</th>";
+				items += "</tr>";
+			}
+			items += "<tr>";
+			items += "<th>"+value["DeviceIdentification"]["DeviceName"]+"</th>";
+			items += "<td>"+value["Status"]["CommunicationState"]+"</td>";
+			items += "<td>"+value["Status"]["DeviceState"]+"</td>";
+			// items += "<td>"+value["Status"]["UpdateTime"]["#text"]+"</td>";
+			items += "<td>"+getCurrentDate()+"</td>";
+			items += "</tr>";
+		});
+		items += "</table>";
+		$("#PlatformStatusReport").html(items);
+		localStorage.setItem("PlatformStatusReport", $("#PlatformStatusReport").html()); // 데이터 쓰기
+	});
+	var PlatformStatusReport = localStorage.getItem("PlatformStatusReport"); // 데이터 가져오기
+	if (PlatformStatusReport !== null) {
+		$("#PlatformStatusReport").html(PlatformStatusReport);
+	}
+
+	socketio.on('DeviceStatusReport', function(data) {
+		var items = "";
+		items += "<tr>";
+		items += "<th>"+data["DeviceIdentification"]["DeviceName"]+"</th>";
+		items += "<td>"+data["Status"]["CommunicationState"]+"</td>";
+		items += "<td>"+data["Status"]["DeviceState"]+"</td>";
+		if (data["Detection"] === undefined) {
+			items += "<td>-</td>";
+			items += "<td>-</td>";
+		} else{
+			items += "<td>"+data["Detection"]["DetectionEvent"]+"</td>";
+			items += "<td>"+data["Detection"]["Details"]+"</td>";
+		}
+		// items += "<td>"+data["Status"]["UpdateTime"]["#text"]+"</td>";
+		items += "<td>"+getCurrentDate()+"</td>";
+		items += "</tr>";
+		$("#DeviceStatusReport table tbody").append(items);
+		if ($('#DeviceStatusReport tr').length > 12) $('#DeviceStatusReport tr').eq(2).remove(); // 라인수가 20이 넘으면 과거 삭제
+		localStorage.setItem("DeviceStatusReport", $("#DeviceStatusReport").html()); // 데이터 쓰기
+	});
+	var DeviceStatusReport = localStorage.getItem("DeviceStatusReport"); // 데이터 가져오기
+	if (DeviceStatusReport === null) { // 타이틀과 제목을 설정 한다.
+		$("#DeviceStatusReport").html("<table><tr><th colspan='6' style='color: yellowgreen;'>Realtime Device Status</th></tr><tr><th>Device Name</th><th>CommunicationState</th><th>DeviceState</th><th>DetectionEvent</th><th>Details</th><th>Update Time</th></tr></table>");
+	} else {
+		$("#DeviceStatusReport").html(DeviceStatusReport);
+	}
+
+	socketio.on('DeviceStatusReportDetection', function(data) { // DeviceStatusReport에서 실시간 이벤트 발생을 DeviceDetectionReport에 표시한다.
+		var items = "";
+		items += "<tr>";
+		// items += "<th>"+data["DeviceIdentification"]["DeviceName"]+"</th>";
+		items += "<th>"+data["DeviceIdentification"]["DeviceNameCustom"]+" ( - )</th>";
+		items += "<td>Tamper</td>";
+		items += "<td>"+getCurrentDate()+"</td>";
+		items += "</tr>";
+		// items += "</table>";
+		// $('#DeviceDetectionReport').append(items);
+		$("#DeviceDetectionReport table tbody").append(items);
+		if ($('#DeviceDetectionReport tr').length > 20) $('#DeviceDetectionReport tr').eq(2).remove(); // 라인수가 20이 넘으면 과거 삭제
+		localStorage.setItem("DeviceDetectionReport", $("#DeviceDetectionReport").html()); // 데이터 쓰기
+	});
+
+	socketio.on('DeviceConfiguration', function(data) {
+		var channel = data["DeviceIdentification"]["DeviceName"].split(".").pop(); // E110545.CHB -> .CHB
+		$("."+channel+" DeviceName").html(data["DeviceIdentification"]["DeviceName"] + " Device Configuration");
+		$(".DeviceConfiguration ."+channel+" .DeviceName").html(data["DeviceIdentification"]["DeviceName"]);
+
+		var items = "<table class='DeviceConfiguration_"+channel+"'><tr><th colspan='6'>Device Configuration of "+data["DeviceIdentification"]["DeviceName"]+"</th></tr>";
+		data["ConfigurationSetting"].forEach(function (value, i) {
+			// console.log('%d: %s', i, value);
+			if(i == 0) { // 타이틀 생성
+				items += "<tr><th>Device Name</th>";
+				for(key of Object.keys(value)) { 
+					items += "<th>"+key+"</th>";
+				}
+				items += "</tr>";
+				items += "<tr><th rowspan='"+data["ConfigurationSetting"].length+"'>"+data["DeviceIdentification"]["DeviceName"]+"</th>";
+			} else {
+				items += "<tr>";
+			}
+			for(item of Object.values(value)) { // Object.values(object1)
+				items += "<td>"+item+"</td>";
+			}
+			items += "</tr>";
+		});
+		items += "</table>";
+		$("#DeviceConfiguration_"+channel).html(items);
+		// console.log(items);
+		reset_timer();
+	});
+
+	socketio.on('DeviceDetectionReport', function(data) {
+		// var items = "<table class='DeviceDetectionReport'>";
+		var items = "";
+		items += "<tr>";
+		items += "<th>"+data["DeviceDetectionRecord"]["DeviceIdentification"]["DeviceName"]+" ("+data["DeviceDetectionRecord"]["Detection"]["ID"]+")</th>";
+		items += "<td>"+data["DeviceDetectionRecord"]["Detection"]["DetectionEvent"]+"</td>";
+		// items += "<td>"+data["DeviceDetectionRecord"]["Detection"]["UpdateTime"]["#text"]+"</td>";
+		items += "<td>"+getCurrentDate()+"</td>";
+		items += "</tr>";
+		// items += "</table>";
+		// $('#DeviceDetectionReport').append(items);
+		$("#DeviceDetectionReport table tbody").append(items);
+		if ($('#DeviceDetectionReport tr').length > 20) $('#DeviceDetectionReport tr').eq(2).remove(); // 라인수가 20이 넘으면 과거 삭제
+		localStorage.setItem("DeviceDetectionReport", $("#DeviceDetectionReport").html()); // 데이터 쓰기
+	});
+	var DeviceDetectionReport = localStorage.getItem("DeviceDetectionReport"); // 데이터 가져오기
+	if (DeviceDetectionReport === null) { // 타이틀과 제목을 설정 한다.
+		$("#DeviceDetectionReport").html("<table><tr><th colspan='3' style='color:orange;'>Detection Report</th></tr><tr><th>Device Name (ID)</th><th>Status</th><th>Update Time</th></tr></table>");
+	} else {
+		$("#DeviceDetectionReport").html(DeviceDetectionReport);
+	}	
+	// >>>> From NodeJS
+
+
+	// <<<< To NodeJS
+	$('body').on('click', '#ping', function () { // 수정모드 내의 기능
+		socketio.emit('send_ping', {'key': 'Ping'});
+	});
+
+	$('body').on('click', '#restart', function () { // 수정모드 내의 기능
+		socketio.emit('restart_self', {'key': 'restart'});
+	});
+
+	$('body').on('click', '#reboot', function () { // 수정모드 내의 기능
+		socketio.emit('reboot_self', {'key': 'reboot'});
+	});
+	// >>>> To NodeJS
+});
+
+</script>
+
+<style>
+* {color: silver; font-size:1vw; box-sizing: border-box;}
+body {background-color: #222;}
+header,footer {text-align: center; background-color: #444; border-radius: 1vw; padding: 1vw;}
+header {margin-bottom: 2vh;}
+header h1 {margin: 0;color:white; font-size: 2vw;}
+footer {clear: both; background:unset;}
+
+button {color: black;}
+pre {font-size: 1vw;}
+
+table {width:100%;margin-top: 1vw;border: 1px solid gray;}
+table, tr, th, td {font-size: 1vw;}
+th {background-color: #333;}
+th, td {border: 1px solid #c0c0c040;text-align: center;}
+
+#DeviceDetectionReport {border:1px solid gray;height:50vh;overflow-y: scroll;}
+#DeviceDetectionReport table {width:100%;margin:unset;border:unset;}
+</style>
+</head>
+<body>
+
+<header>
+	<hdTopLeft>Fiber SenSys</hdTopLeft>
+	<hdTopRight></hdTopRight>
+	<h1>Device Model</h1>
+	<hdBottomLeft></hdBottomLeft>
+	<hdBottomRight><div id="timer"></div></hdBottomRight>
+</header>
+
+<div id="DeviceDetectionReport"></div>
+
+__PlatformStatusReport__
+
+__DeviceStatusReport__
+
+__DeviceConfiguration__
+
+<footer>
+	<button id="ping" type="button">Ping</button>
+	<button id="save" type="button" disabled>Save</button>
+	<button id="restart" type="button">Restart</button>
+	<button id="reboot" type="button">Reboot</button>
+</footer>
+</body>
+</html>
+
+
+
+

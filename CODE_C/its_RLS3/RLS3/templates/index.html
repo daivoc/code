@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!doctype html>
+<title>Hello from Flask</title>
+
+<head>
+<title>RLS Setup</title>
+<style>
+*,html{margin:0;padding:0;border:0;}
+html{width:100%;height:100%;}
+body{width:100%;height:100%;position:relative;background-color:rgb(32 6 36);}
+.center{width:100%;height:unset;margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:white;font-family:"TrebuchetMS",Helvetica,sans-serif;text-align:center;}
+h1{font-size:10vw;}
+h2{font-size:7vw;}
+p{font-size:5vw;}
+a{color: #b367ff;text-decoration: none;font-weight: bold;}
+
+</style>
+</head>
+
+<body>
+    <div class="center">
+        <h1>WELCOME</h1>
+        <p>to <a href=setup>Setup</a> of REDSCAN PRO</p>
+        {% if name %}
+            <h2>by {{ name }}!</h2>
+        {% else %}
+            <h2>by ECOS</h2>
+        {% endif %}
+    </div>
+</body>
+
+<script>
+
+
+</script>
+
+</html>
+

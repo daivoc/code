@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__global_variables_ims__
+__global_variables_icc__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+var camID;
+var model;
+var subj;
+var addr;
+var user;
+var pass;
+var port;
+
+var socketio = io.connect();
+function camList(id) {
+	$("#getDateTime").html(''); // 현재 이미지 삭제
+	$("#infoPTZ").val(''); // 현재 이미지 삭제
+	$("#getSnapshot").html(''); // 현재 이미지 삭제
+	
+	objCam = document.getElementById(id);
+	camID = objCam.getAttribute("data-camID");
+	model = objCam.getAttribute("data-model");
+	subj = objCam.getAttribute("data-subj");
+	addr = objCam.getAttribute("data-addr");
+	user = objCam.getAttribute("data-user");
+	pass = objCam.getAttribute("data-pass");
+	port = objCam.getAttribute("data-port");
+	
+	document.getElementById("selectedCam").innerHTML = objCam.value;
+	var data = {
+		addr: addr,
+		user: user,
+		pass: pass,
+		port: port,
+		model: model
+	};
+	// console.log(data);
+	socketio.emit('getCamStatus', data);
+}
+
+function ptzOnvifCtl() {
+	$("#getDateTime").html(''); // 현재 이미지 삭제
+	$("#getSnapshot").html(''); // 현재 이미지 삭제
+	
+	var ptzoom = $("#infoPTZ").val().split(",");
+	if(!ptzoom[0]) ptzoom[0] = 0;
+	if(!ptzoom[1]) ptzoom[1] = 0;
+	if(!ptzoom[2]) ptzoom[2] = 0;
+	var data = {
+		camPort: ims.camera[camID].camPort,
+		cmd: 'absoluteMove',
+		pan: parseFloat(ptzoom[0]),
+		tilt: parseFloat(ptzoom[1]),
+		zoom: parseFloat(ptzoom[2]),
+		preset: 0,
+		option: '',
+		addr: addr,
+		user: user,
+		pass: pass,
+		port: port,
+		model: model
+	};
+	socketio.emit('ptzOnvifCtl', data);
+}
+
+$(document).ready(function() {
+	socketio.emit('getCamList'); // 시작시 카메라 리스트 불러오기
+	
+	$('#infoPTZ').keypress(function(event){
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if(keycode == '13'){
+			ptzOnvifCtl(); 
+		}
+	});
+
+//	setInterval(function(){ // 상단 시간 그래프 초기값 0으로 설정
+//		if(addr)
+//			camList(addr);
+//	}, 1000);
+}); 
+
+socketio.on("getCamList", function(data) {
+	var camCode = '';
+	data.sort(function(a, b) { // 이름순으로 정열
+		var nameA = a.subj.toUpperCase(); // ignore upper and lowercase
+		var nameB = b.subj.toUpperCase(); // ignore upper and lowercase
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+		// 이름이 같을 경우
+		return 0;
+	});
+	
+	data.forEach(function(camera) {
+		camCode += "<input type='button' onclick=\"camList('"+camera["addr"]+"')\" class='camList' id='"+camera["addr"]+"' data-camID='"+camera["camID"]+"' data-addr='"+camera["addr"]+"' data-user='"+camera["user"]+"' data-pass='"+camera["pass"]+"' data-port='"+camera["port"]+"' data-model='"+camera["model"]+"' value='"+camera["subj"]+"'>";
+	});
+
+	// console.log(camCode);
+	$("#getCamList").html(camCode);
+});
+
+socketio.on("getStatus", function(data) {
+	if(data) {
+		var x = data['position']['x'];
+		var y = data['position']['y'];
+		var z = data['position']['zoom'];
+		var t = data['utcTime'];
+		// $("#getStatus").html(x+'||'+y+'||'+z);
+		$("#infoPTZ").val(x+','+y+','+z);
+	} else {
+		// $("#getStatus").html("Bullet Camera");
+		$("#infoPTZ").val('');
+	}
+});
+
+socketio.on("getSystemDateAndTime", function(data) {
+	$("#getDateTime").html(data);
+});
+
+socketio.on("getSnapshot", function(data) {
+	var imgHtml = '<img style="width:100%;" src="'+data+'">';
+	$("#getSnapshot").html(imgHtml);
+	// $("#getSnapshot").css("background-image","url('"+data+"')");
+});
+
+</script>
+<style>
+body { font-size: 8pt; background: black; color: silver; }
+.camList { border: 0; font-size: 7pt; color: silver; margin: 2px; padding: 0 4px; background: #ffffff4d; }
+#setPTZ, #infoPTZ {text-align: right; background: black; color: silver; font-size: 8pt; float: right; margin: auto; border: 0; margin-top:4px; }
+#setPTZ { display: none; }
+#getSnapshot { background-size: contain; background-repeat: no-repeat; background-position: center; }
+</style>
+</head> 
+<body>
+
+<div id='getCamList'></div>
+<div id='infoSet'>
+	<span id='selectedCam' style="color: crimson;"></span>
+	<span id='getDateTime'></span>
+
+	<div onclick="ptzOnvifCtl()" id='setPTZ'>[Send]</div>
+	<input id='infoPTZ' value="" placeholder="Pan,Tilt,Zoom" size="50"/>
+</div>
+<div id='getSnapshot'></div>
+	
+</body>
+</html>

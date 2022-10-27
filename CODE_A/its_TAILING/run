@@ -1,0 +1,2 @@
+#!/bin/sh
+python /home/pi/TAILING/run_TAILING.pyc

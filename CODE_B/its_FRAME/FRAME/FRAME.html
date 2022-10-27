@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+//////////////////////////////////////////////
+function classAdd(id, name){
+	$("#"+id).addClass(name);
+};
+function classDel(id, name){
+	$("#"+id).removeClass(name);
+};
+
+// max 수 만큼 0으로 채움
+function pad(str, max) {
+	str = str.toString();
+	return str.length < max ? pad("0" + str, max) :str;
+}
+
+// // 선언된 갯수만큼 프레임에 출력
+// function drawFrame(frameQtyRow, frameQtyCol) {
+// 	if(frameQtyRow && frameQtyCol) {
+// 		var htmlCode = "";
+// 		var frameCnt = frameQtyRow * frameQtyCol;
+// 		var width = "width:" + 100 / frameQtyRow + "vw;";
+// 		var height = "height:" + 100 / frameQtyCol + "vh;";
+// 		for (var i=0; i < frameCnt; i++ ){
+// 			var xPos = "left:" + (100 / frameQtyRow) * (i % frameQtyRow) + "vw;";
+// 			var yPos = "top:" + (100 / frameQtyCol) * parseInt(i / frameQtyRow) + "vh;";
+// 			var styleIs = width + height + xPos + yPos;
+// 			var thisID = "frame_" + pad(i, 3);
+// 			htmlCode += "<div class='frame' id='"+ thisID + "' style='"+ styleIs +"'><div class='head'>FRAME HEAD "+ i + "</div><div class='tail'>FRAME TAIL "+ i + "</div></div>";
+// 			// console.log(htmlCode);
+// 		}
+// 		$("#frameGroup").html(htmlCode);
+// 	}
+// }
+
+// 선언된 갯수만큼 프레임에 출력
+function drawFrame(frameQtyRC) {
+	if(frameQtyRC) {
+		var htmlCode = "";
+		var frameCnt = frameQtyRC * frameQtyRC;
+		var width = "width:" + 100 / frameQtyRC + "vw;";
+		var height = "height:" + 100 / frameQtyRC + "vh;";
+		for (var i=0; i < frameCnt; i++ ){
+			var xPos = "left:" + (100 / frameQtyRC) * (i % frameQtyRC) + "vw;";
+			var yPos = "top:" + (100 / frameQtyRC) * parseInt(i / frameQtyRC) + "vh;";
+			var styleIs = width + height + xPos + yPos;
+			var thisID = "frame_" + pad(i, 3);
+			htmlCode += "<div class='frame' id='"+ thisID + "' style='"+ styleIs +"'><div class='head'>FRAME HEAD "+ i + "</div><div class='tail'>FRAME TAIL "+ i + "</div></div>";
+			// console.log(htmlCode);
+		}
+		$("#frameGroup").html(htmlCode);
+	}
+}
+
+
+// 스타일 설정
+function styleFrame(frameStyle) {
+	// console.log(frameStyle);
+	$.each(frameStyle, function(key, value) {
+		// console.log(key, value);
+		if($("#" + key).length){ // 프레임이 현재 화면에 존재 하면
+			$("#" + key).css("width", value["width"]);
+			$("#" + key).css("height", value["height"]);
+			$("#" + key).css("left", value["left"]);
+			$("#" + key).css("top", value["top"]);
+			$("#" + key).css("background-image", value["background-image"]);
+			$("#" + key).css("background-size", value["background-size"]);
+		}
+	});
+}
+
+// 프레임 출력 및 스타일 설정
+function setFrame(frameStyle) {
+	// console.log(frameStyle);
+	var htmlCode = "";
+	$.each(frameStyle, function(key, value) {
+		// console.log(key, value);
+		var thisID = key;
+		var styleIs = "width:"+value['width']+";"+"height:"+value['height']+";"+"left:"+value['left']+";"+"top:"+value['top']+";"+"background-image:"+value['background-image']+";"+"background-size:"+value['background-size']+";"
+		htmlCode += "<div class='frame' id='"+ thisID + "' style='"+ styleIs +"'><div class='head'>FRAME HEAD "+ key + "</div><div class='tail'>FRAME TAIL "+ key + "</div></div>";
+	});
+	$("#frameGroup").html(htmlCode);
+}
+
+// function End /////////////////////////////////////////
+
+
+var myID = window.performance.now(); // 클라이언트 브라우져 유니크 아이디
+var myLvID = 0;
+var myLvName = "";
+
+var framePageID = "";
+var frameQtyRow = 0; // 가로 프레임수
+var frameQtyCol = 0; // 세로 프페임수
+
+var pageID = localStorage.getItem("framePageID"); // 로컬 저장소
+var unitVW = (100 / document.documentElement.clientWidth);
+var unitVH = (100 / document.documentElement.clientHeight);
+
+$( document ).ready(function() {
+
+	///////////////////////////////////////////
+	// socketio.on Start //////////////////////
+	///////////////////////////////////////////
+
+	var socketio = io.connect();
+
+	socketio.on("curPage", function(data) {
+		// console.log(data)
+		if(myID == data["id"]) {
+			frameStyle = data["fPage"].frameStyle;
+			setFrame(frameStyle)
+		}
+	});
+
+	socketio.on("setCamera", function(data) {
+		// console.log(data["frameStyle"])
+		if(myID == data["id"]) {
+			if(myLvName == "admin") {
+				styleFrame(data["camera"]);
+			}
+		}
+	});
+
+	socketio.on("setCamID", function(data) {
+		// console.log(data["id"], myID, myLvName, data["camID"]);
+		if(myID == data["id"]) {
+			if(myLvName == "admin") {
+				$("#camListBody").html(data["camID"]);
+				// $("#camListBody").trigger("change");
+			}
+		}
+	});
+
+	// 클라이언트 아이피 정보 요청
+	socketio.on("getUserInfo", function(data) { // { ipS: serverIP, ipC: clientIP, id: data, className: className, classID: classID }
+		// console.log(data, myID);
+		if(myID == data["id"]) {
+			myLvName = data["className"]; // 레벨의 종류는 admin:9, manager:7, viewer:5, guest:1
+			myLvID = data["classID"];
+
+			$("#myIP").html(myLvName + " " + data["ipC"] + " from " + data["ipS"] + " wID:" + myID); // 화면 우측 상간에 자신의 아이피와 레벨 표시
+
+			if(myLvName == "viewer") {
+				// $("#setGrid").remove();
+			} 
+			if(myLvName == "guest") {
+				$("head, body").remove();
+				alert("Abnormal approach!");
+			} 
+		} else {
+			$(".actionLog").html("From " + data["ipC"] + "(" + data["className"] + ") getUserInfo");
+		}
+	});
+
+	///////////////////////////////////////////
+	// socketio.on End ////////////////////////
+	///////////////////////////////////////////
+
+	// 프레임 설정 보이기
+	$(document).keydown(function(event) {
+		if ( event.which == 27) {
+			if (myLvName == "admin") {
+				$( ".radioPage" ).toggle( "slow" );
+				// $( ".radioRow" ).toggle( "slow" );
+				// $( ".radioCol" ).toggle( "slow" );
+				$( ".radioRC" ).toggle( "slow" );
+				$( ".radioDesign" ).toggle( "slow" );
+				
+				$( ".radioAction" ).toggle( "slow" );
+				$( ".styleFrame" ).toggle( "slow" );
+				
+			} else {
+				$( ".radioPage" ).toggle( "slow" );
+			}
+		}
+	});
+
+	$(".radioPage").click(function() {
+		var framePageID = $("input:radio[name='framePageID']:checked").val();
+		if(framePageID) {
+			socketio.emit("getPage", {"id": myID, "framePageID": framePageID}); // return -> curPage
+		}
+	});
+	$("#pageID_Set").click(function() { // localStorage내에 페이지 정보 저장
+		var framePageID = $("input:radio[name='framePageID']:checked").val();
+		if(framePageID) {
+			localStorage.setItem("framePageID", framePageID);
+		}
+	});
+	
+	// $(".radioRow, .radioCol").change(function(){
+	// 	var frameQtyRow = $("input:radio[name='frameQtyRow']:checked").val();
+	// 	var frameQtyCol = $("input:radio[name='frameQtyCol']:checked").val();
+	// 	if(frameQtyRow && frameQtyCol) {
+	// 		// console.log(frameQtyRow, frameQtyCol);
+	// 		drawFrame(frameQtyRow, frameQtyCol);
+	// 	}
+	// });
+	
+	$(".radioRC").change(function(){
+		var frameQtyRC = $("input:radio[name='frameQtyRC']:checked").val();
+		if(frameQtyRC) {
+			drawFrame(frameQtyRC);
+		}
+	});
+
+	$(".radioDesign").click(function() {
+		var frameDesignID = $("input:radio[name='frameDesignID']:checked").val();
+		socketio.emit("getDesign", {"id": myID, "frameDesignID": frameDesignID}); // return -> curPage
+	});
+	
+	$("#frameQty_Get").click(function() { // X/Y 그리드 설정 값을 서버로 전송한다.
+		socketio.emit("setCamera", {"id": myID});
+	});
+	
+		// 프레임 그리드 설정 저장
+	$("#frameQty_Set").click(function() { // X/Y 그리드 설정 값을 서버로 전송한다.
+		var framePageID = $("input:radio[name='framePageID']:checked").val();
+		// var unitVW = (100 / document.documentElement.clientWidth);
+		// var unitVH = (100 / document.documentElement.clientHeight);
+		// if(framePageID && frameQtyRow && frameQtyCol) {
+		if(framePageID) {
+			var frameStyle = {};
+			$("#frameGroup .frame").each(function() {
+				frameStyle[this.id] = {};
+				frameStyle[this.id]["width"] = parseInt($(this).css("width")) * unitVW + "vw";
+				frameStyle[this.id]["height"] = parseInt($(this).css("height")) * unitVH + "vh";
+				frameStyle[this.id]["left"] = parseInt($(this).css("left")) * unitVW + "vw";
+				frameStyle[this.id]["top"] = parseInt($(this).css("top")) * unitVH + "vh";
+				frameStyle[this.id]["background-image"] = $(this).css("background-image");
+				frameStyle[this.id]["background-size"] = $(this).css("background-size");
+			});
+			// console.log(frameStyle);
+			socketio.emit("setGrid", {"framePageID": framePageID, "frameStyle": frameStyle});
+		}
+	});
+
+	///////////////////////////////////////////////////////////////////
+	// 카메라 위치 변경 및 프레임 스타일 재설정
+	///////////////////////////////////////////////////////////////////
+	
+	$("#frameBG").change(function(){
+		if (myLvName == "admin") {
+			if($("#actionID").val() == "altKey") {
+				$("#" + $("#selectID").val()).css("background-size", $(this).val());
+				// console.log($("#frameBG").val());
+			}
+		}
+		// resetSelect();
+	});
+
+	$("#frameBigger").click(function(){
+		if (myLvName == "admin") {
+			if($("#actionID").val() == "altKey") {
+				$("#" + $("#selectID").val()).css("width", parseInt($("#" + $("#selectID").val()).css("width")) * unitVW * 2 + "vw");
+				$("#" + $("#selectID").val()).css("height", parseInt($("#" + $("#selectID").val()).css("height")) * unitVH * 2 + "vh");
+			}
+		}
+		// resetSelect();
+	});
+
+	$("#frameSmaller").click(function(){
+		if (myLvName == "admin") {
+			if($("#actionID").val() == "altKey") {
+				$("#" + $("#selectID").val()).css("width", parseInt($("#" + $("#selectID").val()).css("width")) * unitVW / 2 + "vw");
+				$("#" + $("#selectID").val()).css("height", parseInt($("#" + $("#selectID").val()).css("height")) * unitVH / 2 + "vh");
+			}
+		}
+		// resetSelect();
+	});
+
+	$("#frameDelete").click(function(){
+		if (myLvName == "admin") {
+			if($("#actionID").val() == "altKey") {
+				$("#" + $("#selectID").val()).remove();
+			}
+		}
+		resetSelect();
+	});
+
+	$(document).on('click', '#camListBody [id^="cam_"]', function() { 
+		if (myLvName == "admin") {
+			if($("#actionID").val() == "shiftKey") {
+				console.log(this.id);
+				// Do It
+				// 2021-04-27 19:17:11
+			}
+		}
+		resetSelect();
+	});
+
+	function resetSelect() {
+		$("#frameGroup .frame").each(function() {
+			$(this).css("border", "unset");
+			$(this).css("z-index", "unset");
+		});
+		$("#actionID").val("");
+		$("#selectID").val("");
+		$("#selectVal").val("");
+	}
+
+	$("#frameGroup").delegate(".frame","click",function(event) {
+		if (myLvName == "admin") {
+			if(event.ctrlKey) {
+				// console.log(this.id); 
+				if($("#actionID").val() == "ctrlKey") {
+					// 교환 
+					$("#" + $("#selectID").val()).css("background-image", $("#"+ this.id ).css("background-image"));
+					$("#"+ this.id).css("background-image", $("#selectVal").val());
+					resetSelect();
+				} else {
+					resetSelect();
+					// 환경값 저장 actionID
+					$("#actionID").val("ctrlKey");
+					$("#selectID").val(this.id);
+					$("#selectVal").val($("#"+ this.id).css("background-image"));
+					$("#"+ this.id).css("border", "1px solid orange");
+					$("#"+ this.id).css("z-index", "100");
+				}
+			}
+			if(event.altKey) {
+				// console.log("altKey"); 
+				if($("#actionID").val() == "altKey") {
+					resetSelect();
+				} else {
+					resetSelect();
+					// 환경값 저장
+					$("#actionID").val("altKey");
+					$("#selectID").val(this.id);
+					$("#selectVal").val($("#"+ this.id).css("background-size"));
+					$("#frameBG").val($("#selectVal").val());
+					$("#"+ this.id).css("border-right", "1px solid #8bc34a");
+					$("#"+ this.id).css("border-bottom", "1px solid #8bc34a");
+					$("#"+ this.id).css("z-index", "100");
+				}
+			}
+			if(event.shiftKey) {
+				// console.log("shiftKey"); 
+				if($("#actionID").val() == "shiftKey") {
+					resetSelect();
+				} else {
+					resetSelect();
+					// 환경값 저장
+					$("#actionID").val("shiftKey");
+					$("#selectID").val(this.id);
+					$("#selectVal").val($("#"+ this.id).css("background-size"));
+					$("#frameBG").val($("#selectVal").val());
+					$("#"+ this.id).css("border", "1px solid #00bcd4");
+					$("#"+ this.id).css("z-index", "100");
+				}
+			}
+		}
+	});
+
+	document.onkeydown = function(e) {
+		if (myLvName == "admin") {
+			if($("#actionID").val() == "altKey") {
+				switch(e.which) {
+					case 37: // left
+					console.log("left"); 
+					$("#" + $("#selectID").val()).css("width", (parseInt($("#" + $("#selectID").val()).css("width")) - 1) * unitVW +"vw");
+					break;
+
+					case 38: // up
+					console.log("up"); 
+					$("#" + $("#selectID").val()).css("height", (parseInt($("#" + $("#selectID").val()).css("height")) - 1) * unitVH + "vh");
+					break;
+
+					case 39: // right
+					console.log("right"); 
+					$("#" + $("#selectID").val()).css("width", (parseInt($("#" + $("#selectID").val()).css("width")) + 1) * unitVW +"vw");
+					break;
+
+					case 40: // down
+					console.log("down"); 
+					$("#" + $("#selectID").val()).css("height", (parseInt($("#" + $("#selectID").val()).css("height")) + 1) * unitVH + "vh");
+					break;
+
+					default: return; // exit this handler for other keys
+				}
+			}
+			e.preventDefault(); // prevent the default action (scroll / move caret)
+		}
+	};	
+
+	// 최초 1회 실행
+	
+	socketio.emit("getUserInfo", myID); // 자신의 아이피 확인
+	socketio.emit("setCamID", myID); // 자신의 아이피 확인
+	socketio.emit("getPage", {"id": myID, "framePageID": pageID}); // 
+});	
+
+</script>
+
+<style>
+	body {display:block;border:unset;margin:unset;color:gray;background:#000;}
+	.hide { display: none; }
+
+	.frame {
+	display:block;
+	border:unset;
+	background:#444;
+	background-image:url(http://192.168.0.29/theme/ecos-its_optex/img/ptzCamera.png);
+	background-position:center;
+	background-repeat:no-repeat;
+	background-size:contain; /* contain, cover, initial, 100% 100%, */
+
+	position:absolute;
+	color:silver;
+	font-size: 1vh;
+	}
+
+	.head {position:absolute;top:0;}
+	.tail {position:absolute;bottom:0;right:0;}
+	.setGrid {position:absolute;top:0;right:0;color:silver;margin:2px 8px;font-size: small;}
+	.getGrid {position:absolute;bottom:0;right:0;color:silver;margin:2px 8px;font-size: small;}
+	.actionLog {position: absolute;bottom: 0;font-size: 8pt;}
+	.selectItem {position: absolute;top: 0;font-size: 8pt;}
+	.styleFrame {position: absolute;top: 0;font-size: 8pt;z-index:200;}
+	.styleFrame button {font-size: 8pt;}
+	#myIP { font-size:xx-small;color:dimgray;text-align:right; }
+
+	#camListFrame {position: absolute;z-index: 100;background-color: #000000d0;border: 1px solid #d0d0d080;text-align: center;width: 460px;padding-bottom: 10px;}	
+	#camListHead {cursor: move;background-color: #2196F3;color: #fff;}
+	#camListBody {font-size: small;padding: 4px;}
+	.camera { cursor: pointer; float: left;padding: 0 10px; height: 20px; }
+	.camera:hover { color: white; background-color:#017e9a; }
+	.camera:active { color: rgb(78, 160, 255); }
+</style>
+</head> 
+
+<body>
+<div class="frameGroup" id="frameGroup"></div>
+<div class="setGrid" id="setGrid">
+	<div id="myIP"></div>
+	<div class="radioPage hide">
+		<input type="radio" id="framePageID_A" name="framePageID" value="A">A
+		<input type="radio" id="framePageID_B" name="framePageID" value="B">B
+		<input type="radio" id="framePageID_C" name="framePageID" value="C">C
+		<input type="radio" id="framePageID_D" name="framePageID" value="D">D
+		<input type="radio" id="framePageID_E" name="framePageID" value="E">E
+		<input type="radio" id="framePageID_F" name="framePageID" value="F">F
+		<input type="radio" id="framePageID_G" name="framePageID" value="G">G
+		<input type="radio" id="framePageID_H" name="framePageID" value="H">H
+		<input type="radio" id="framePageID_I" name="framePageID" value="I">I
+		<input type="radio" id="framePageID_J" name="framePageID" value="J">J
+		<input type="radio" id="framePageID_K" name="framePageID" value="K">K
+		<input type="radio" id="framePageID_L" name="framePageID" value="L">L
+		<input type="radio" id="framePageID_M" name="framePageID" value="M">M
+		<input type="radio" id="framePageID_N" name="framePageID" value="N">N
+		<input type="radio" id="framePageID_O" name="framePageID" value="O">O
+		<input type="radio" id="framePageID_P" name="framePageID" value="P">P
+		<input type="radio" id="framePageID_Q" name="framePageID" value="Q">Q
+		<input type="radio" id="framePageID_R" name="framePageID" value="R">R
+		<input type="radio" id="framePageID_S" name="framePageID" value="S">S
+		<input type="radio" id="framePageID_T" name="framePageID" value="T">T
+		<button type="text" id="pageID_Set">Set</button>	
+	</div>
+</div>
+<div class="getGrid" id="getGrid">
+	<span class="radioRC hide">
+		<input type="radio" id="frameQtyRC_01" name="frameQtyRC" value="1">1
+		<input type="radio" id="frameQtyRC_02" name="frameQtyRC" value="2">2
+		<input type="radio" id="frameQtyRC_03" name="frameQtyRC" value="3">3
+		<input type="radio" id="frameQtyRC_04" name="frameQtyRC" value="4">4
+		<input type="radio" id="frameQtyRC_05" name="frameQtyRC" value="5">5
+		<input type="radio" id="frameQtyRC_06" name="frameQtyRC" value="6">6
+		<input type="radio" id="frameQtyRC_07" name="frameQtyRC" value="7">7
+		<input type="radio" id="frameQtyRC_08" name="frameQtyRC" value="8">8
+		<input type="radio" id="frameQtyRC_09" name="frameQtyRC" value="9">9
+	</span>
+	<span class="radioDesign hide">
+		<input type="radio" id="frameDesignID_A" name="frameDesignID" value="A">A
+		<input type="radio" id="frameDesignID_B" name="frameDesignID" value="B">B
+		<input type="radio" id="frameDesignID_C" name="frameDesignID" value="C">C
+		<input type="radio" id="frameDesignID_D" name="frameDesignID" value="D">D
+		<input type="radio" id="frameDesignID_E" name="frameDesignID" value="E">E
+		<input type="radio" id="frameDesignID_F" name="frameDesignID" value="F">F
+		<input type="radio" id="frameDesignID_G" name="frameDesignID" value="G">G
+		<input type="radio" id="frameDesignID_H" name="frameDesignID" value="H">H
+		<input type="radio" id="frameDesignID_I" name="frameDesignID" value="I">I
+	</span>
+	<div class="radioAction hide" style="text-align: right; float: right;">
+		<button type="text" id="frameQty_Get">📚</button>
+		<button type="text" id="frameQty_Set">Save</button>
+	</div>
+</div>
+<div class="actionLog" id="actionLog"></div>
+<div class="selectItem hide">
+	<input id="actionID" value="">
+	<input id="selectID" value="">
+	<input id="selectVal" value="">
+</div>
+
+<div class="styleFrame hide" name="styleFrame" id="styleFrame">
+	<select class="frameBG" name="frameBG" id="frameBG">
+		<option value="initial">initial</option>
+		<option value="contain">contain</option>
+		<option value="cover">cover</option>
+		<option value="100% 100%">Fit</option>
+	</select>
+	<button type="text" id="frameBigger" value="Get">Bigger</button>
+	<button type="text" id="frameSmaller" value="Get">Smaller</button>
+	<button type="text" id="frameDelete" value="Get">Delete</button>
+
+	<div class="camListFrame" id="camListFrame">
+		<!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+		<div id="camListHead">Camera List</div>
+		<div id="camListBody"></div>
+	</div>
+</div>
+
+<!-- camListFrame camListHead camListBody -->
+
+<script>
+	// Make the DIV element draggable:
+	dragElement(document.getElementById("camListFrame"));
+	
+	function dragElement(elmnt) {
+		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		if (document.getElementById(elmnt.id + "header")) {
+			// if present, the header is where you move the DIV from:
+			document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+		} else {
+			// otherwise, move the DIV from anywhere inside the DIV:
+			elmnt.onmousedown = dragMouseDown;
+		}
+		
+		function dragMouseDown(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// get the mouse cursor position at startup:
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			document.onmouseup = closeDragElement;
+			// call a function whenever the cursor moves:
+			document.onmousemove = elementDrag;
+		}
+		
+		function elementDrag(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// calculate the new cursor position:
+			pos1 = pos3 - e.clientX;
+			pos2 = pos4 - e.clientY;
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			// set the element's new position:
+			elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+			elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+		}
+		
+		function closeDragElement() {
+			// stop moving when mouse button is released:
+			document.onmouseup = null;
+			document.onmousemove = null;
+		}
+	}
+</script>
+	
+</body>
+</html>

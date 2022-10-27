@@ -1,0 +1,168 @@
+{
+	"g500t100_192_168_0_29_0001": {
+		"addr": "",
+		"boxID": "",
+		"camPort": 34001,
+		"desc": "",
+		"hash": 0,
+		"image": "http://192.168.0.60:16830/cgi-bin/trace.cgi",
+		"mapID": "image965",
+		"model": "Others",
+		"pass": "",
+		"port": 0,
+		"resolution": {
+			"x": 0,
+			"y": 0
+		},
+		"subj": "GIKEN",
+		"user": "",
+		"video": "http://192.168.0.60:16830/cgi-bin/trace.cgi",
+		"background-image": "url('http://192.168.0.120/video/mjpeg/stream3')",
+		"background-size": "contain"
+	},
+	"g500t100_192_168_0_29_0002": {
+		"addr": "",
+		"boxID": "",
+		"camPort": 34002,
+		"desc": "",
+		"hash": 0,
+		"image": "http:///axis-cgi/jpg/image.cgi",
+		"mapID": "rect1447",
+		"model": "AXIS_VAPIX_V3",
+		"pass": "",
+		"port": 0,
+		"resolution": {
+			"x": 0,
+			"y": 0
+		},
+		"subj": "cam2",
+		"user": "",
+		"video": "http:///axis-cgi/mjpg/video.cgi",
+		"background-image": "url('http://192.168.0.120/video/mjpeg/stream2')",
+		"background-size": "contain"
+	},
+	"frame_000": {
+		"background-image": "url('http://192.168.0.120/video/mjpeg/stream3')",
+		"background-size": "contain"
+	},
+	"frame_001": {
+		"background-image": "url('http://192.168.0.120/video/mjpeg/stream2')",
+		"background-size": "contain"
+	},
+	"frame_002": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/camera.png')",
+		"background-size": "contain"
+	},
+	"frame_003": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/charts.png')",
+		"background-size": "contain"
+	},
+	"frame_004": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/config.png')",
+		"background-size": "contain"
+	},
+	"frame_005": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/letter.png')",
+		"background-size": "contain"
+	},
+	"frame_006": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/letter2.png')",
+		"background-size": "contain"
+	},
+	"frame_007": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/List.png')",
+		"background-size": "contain"
+	},
+	"frame_008": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/List2.png')",
+		"background-size": "contain"
+	},
+	"frame_009": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/location.png')",
+		"background-size": "contain"
+	},
+	"frame_010": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/location_01.png')",
+		"background-size": "contain"
+	},
+	"frame_011": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/maintenance.png')",
+		"background-size": "contain"
+	},
+	"frame_012": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/maps.png')",
+		"background-size": "contain"
+	},
+	"frame_013": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/maps2.png')",
+		"background-size": "contain"
+	},
+	"frame_014": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/monitoring.png')",
+		"background-size": "contain"
+	},
+	"frame_015": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/plugin.png')",
+		"background-size": "contain"
+	},
+	"frame_016": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/rader.png')",
+		"background-size": "contain"
+	},
+	"frame_017": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/report2.png')",
+		"background-size": "contain"
+	},
+	"frame_018": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/service.png')",
+		"background-size": "contain"
+	},
+	"frame_019": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/status.png')",
+		"background-size": "contain"
+	},
+	"frame_020": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/status3.png')",
+		"background-size": "contain"
+	},
+	"frame_021": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/terminal.png')",
+		"background-size": "contain"
+	},
+	"frame_022": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/time.png')",
+		"background-size": "contain"
+	},
+	"frame_023": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/waiting.gif')",
+		"background-size": "contain"
+	},
+	"frame_024": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/0d0345f662a7.gif')",
+		"background-size": "contain"
+	},
+	"frame_025": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/Amused.gif')",
+		"background-size": "contain"
+	},
+	"frame_026": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/H0bj.gif')",
+		"background-size": "contain"
+	},
+	"frame_027": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/giphy.gif')",
+		"background-size": "contain"
+	},
+	"frame_028": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/loading.gif')",
+		"background-size": "contain"
+	},
+	"frame_029": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/about.png')",
+		"background-size": "contain"
+	},
+	"frame_030": {
+		"background-image": "url('http://192.168.0.29/theme/ecos-its_optex/img/alarm.png')",
+		"background-size": "contain"
+	}
+}

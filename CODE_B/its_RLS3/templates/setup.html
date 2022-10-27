@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<title>RLS-3060V/50100V</title>
+<script src="/static/jquery-3.5.1.min.js"></script>
+<script src="/static/socket.io-3.0.4.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+var config = {};
+
+$(document).ready(function() {
+	var socket = io();
+
+	socket.on('Return_JSON', function(data) {
+		scroll('#log', "<pre>"+JSON.stringify(data,null,2)+"</pre>");
+	})
+
+	socket.on('Return_STR', function(data) {
+		scroll('#log', "<pre>"+data+"</pre>");
+	})
+
+	// Http Request
+	$('body').on('click', '#gInfoDevice', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInfoDevice);
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#gInfoStatus', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInfoStatus);
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#gInOutCurr', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInOutCurr);
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#gInOutDiff', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInOutDiff);
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#gMounting', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gMounting);
+		waitShow(); // waiting
+	});
+
+	// Web Socket
+	$('body').on('click', '#wsDetectObj', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectObj, data:{"ctrl":"start","maxObject":50,"withCandidate":false} });
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#wsDetectArea', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectArea, data:{"ctrl":"start"} });
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#wsDetectMask', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectMask, data:{"ctrl":"start"} });
+		waitShow(); // waiting
+	});
+	$('body').on('click', '#wsDetectEvent', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectEvent, data:{"ctrl":"start"} });
+		waitShow(); // waiting
+	});
+
+	// Onvif_Api
+	$('body').on('click', '#ovGetDeviceInformation', function(event) {
+		socket.emit('Onvif_Api', { command:'ovGetDeviceInformation', data:'' });
+		waitShow(); // waiting
+	});
+
+	// Onvif_Api
+	$('body').on('click', '#ovSystemReboot', function(event) {
+		socket.emit('Onvif_Api', { command:'ovSystemReboot', data:'' });
+		waitShow(); // waiting
+	});
+
+
+	$('body').on('click', '#mjpg', function(event) {
+		// socket.emit('Request_Api', config.sensor.cmd.mjpg);
+		// waitShow(); // waiting
+		scroll('#log', '<div class="mjpg" style="background-image: url(http://'+config.sensor.vServer+config.sensor.cmd.mjpg+');"></div>'); 
+	});
+	$('body').on('click', '#shot', function(event) {
+		// socket.emit('Request_Api', config.sensor.cmd.mjpg);
+		// waitShow(); // waiting
+		scroll('#log', '<img class="shot" src=http://'+config.sensor.vServer+config.sensor.cmd.shot+'>'); 
+	});
+	$('body').on('click', '#sensor', function(event) {
+		window.open("http://"+config.sensor.vServer, "Sensor Home");
+	});
+	$('body').on('click', '#zoning', function(event) {
+		// window.open("http://"+config.server.localhost.addr+':'+config.port.nodeOut, "Zone Setup");
+		socket.emit('Is_Port_Open', config.port.nodeOut);
+		waitShow(); // waiting
+	});
+		
+	$('body').on('click', '#Save_Config', function(event) {
+		var data = {};
+		data.sensor_addr = $('#IP_Address').val();
+		data.sensor_user = $('#Login_ID').val();
+		data.sensor_pass = $('#Password').val();
+		data.sensor_pickup = parseFloat($('#Pickup_Cycle').val());
+		// data.sensor_masquerade = $('#Masquerade').prop('checked');
+		data.server_ims_addr = $('#IMS_IP_Address').val();
+		data.permission_filterIP_admin = $('#Admin_Group_List').val();
+		data.permission_filterIP_manager = $('#Manager_Group_List').val();
+		data.permission_filterIP_deny = $('#Denial_Group_List').val();
+		socket.emit('Save_Config', data);
+		waitShow(); // waiting
+		return false;
+	});
+
+	$('body').on('click', '#restart', function () { // 수정모드 내의 기능
+		var reponse = (confirm('Are you sure ? Restart Program'));
+		if(reponse) {
+			socket.emit('Restart_Self');
+			// waitShow(); // waiting
+		}
+	});
+
+	$('body').on('click', '#reboot', function () { // 수정모드 내의 기능
+		var reponse = (confirm('Are you sure ? Reboot ITS'));
+		if(reponse) {
+			socket.emit('Reboot_Self');
+			// waitShow(); // waiting
+		}
+	});
+
+	$('body').on('click', '#system_time', function () { // 수정모드 내의 기능
+		socket.emit('clockToggle');
+	});
+
+	// 최초 접속시 서버로부터 환경설정(config.json)값을 가지고 온다.
+	socket.on('connect', function(cfg) {
+		// console.log(cfg);
+		if(cfg) {
+			$('#IP_Address').val(cfg.sensor.addr);
+			$('#Login_ID').val(cfg.sensor.user);
+			$('#Password').val(cfg.sensor.pass);
+			$('#Pickup_Cycle').val(cfg.sensor.pickup);
+			// $('#Masquerade').prop('checked', cfg.sensor.masquerade);
+			$('#IMS_IP_Address').val(cfg.server.ims.addr);
+			$('#Admin_Group_List').val(cfg.permission.filterIP.admin);
+			$('#Manager_Group_List').val(cfg.permission.filterIP.manager);
+			$('#Denial_Group_List').val(cfg.permission.filterIP.deny);
+			config = cfg;
+		}
+	});
+	
+	socket.on('Return_Is_Port_Open', function(status) {
+		// $('#zoning').attr('disabled', status);
+		if(status) {
+			window.open("http://"+config.server.localhost.addr+':'+config.port.nodeOut, "Zone Setup");
+		} else {
+			window.alert("Not Runnig Program of Zone Setup!!");
+		}
+		waitHide();
+	});
+	
+	socket.on('system_time', function(system_time) {
+		// console.log(system_time)
+		$('#system_time').html(system_time);
+	});
+	
+});
+
+function waitHide() { 
+	$("#log").css("background-size", "0vw");
+};
+function waitShow() { 
+	$("#log").css("background-size", "4vw");
+};
+function scroll(id, data) { 
+	// console.log(JSON.stringify(data.data,null,2))
+	$('#log').append(data);
+	$(id).scrollTop($(id)[0].scrollHeight);
+	waitHide();
+};
+
+</script>
+<style>
+/* *,html{margin:0;padding:0;border:0;} */
+html,body{background: ghostwhite;}
+input {width:-webkit-fill-available;border:1px solid silver;color:gray;font-size: 2vh;height:4vh;padding-left:1vh;}
+label {color:purple;}
+h4 {margin: 2vh 0 0 0;}
+
+#config {width: 66vw; margin-left:1vw;}
+#log {position:absolute;top:10vh;right:0;width:28vw;height:80vh;color:silver;overflow-y:scroll;overflow-x:auto;padding:1vh;font-size:1vw;}
+#log {background:black;background-image: url(/static/loading.gif);background-repeat: no-repeat;background-position: center;background-size:0;}
+#system_time {position:absolute;top:0;color:gray;font-size:1vw;}
+.checkSensor {display: flex;}
+.checkSensor button {width:-webkit-fill-available;font-size: 1vw;margin: 1px;}
+.mjpg {height: 20vh;background-size: contain;background-repeat: no-repeat;}
+.shot {height: 20vh;}
+
+.hide {display:none;}
+</style>
+</head>
+<body>
+	<h1>Config of Sensor</h1>
+	<div id="log"></div>
+	<div id="config">
+		<h4>Sensor Access Information</h4>
+		<div class="checkSensor">
+			<button id="gInfoDevice">gInfoDevice</button>
+			<button id="gInfoStatus">gInfoStatus</button>
+			<button id="gInOutCurr">gInOutCurr</button>
+			<button id="gInOutDiff">gInOutDiff</button>
+			<button id="gMounting">gMounting</button>
+		</div>
+		<div class="checkSensor">
+			<button id="wsDetectObj">wsDetectObj</button>
+			<button id="wsDetectArea">wsDetectArea</button>
+			<button id="wsDetectMask">wsDetectMask</button>
+			<button id="wsDetectEvent">wsDetectEvent</button>
+			<button class="hide" id="ovSystemReboot">ovSystemReboot</button>
+			<button class="hide" id="ovGetDeviceInformation">ovGetDeviceInformation</button>
+		</div>
+		<div class="checkSensor">
+			<button id="rtsp" disabled>rtsp</button>
+			<button id="mjpg">mjpg</button>
+			<button id="shot">shot</button>
+			<button id="sensor">sensor</button>
+			<button id="zoning">zoning</button>
+			<button id="restart">restart</button>
+			<button id="reboot">reboot</button>
+		</div>
+		<label for="IP_Address">IP_Address</label><input type="input" id="IP_Address" name="IP_Address" value="" />
+		<label for="Login_ID">Login_ID</label><input type="input" id="Login_ID" name="Login_ID" value="" />
+		<label for="Password">Password</label><input type="input" id="Password" name="Password" value="" />
+		<br>
+		<label for="Pickup_Cycle">Pickup_Cycle</label><input type="input" id="Pickup_Cycle" name="Pickup_Cycle" value="" />
+		<!-- <label for="Pickup_Cycle">Masquerade</label><input type="checkbox" id="Masquerade" name="Masquerade" value="" /> -->
+		<hr>
+		<h4>IMS Server Information</h4>
+		<label for="IMS_IP_Address">IMS_IP_Address</label><input type="input" id="IMS_IP_Address" name="IMS_IP_Address" value="" />
+		<hr>
+		<h4>Access IP Filtering</h4>
+		<label for="Admin_Group_List">Admin_Group_List</label><input type="input" id="Admin_Group_List" name="Admin_Group_List" value="" />
+		<label for="Manager_Group_List">Manager_Group_List</label><input type="input" id="Manager_Group_List" name="Manager_Group_List" value="" />
+		<label for="Denial_Group_List">Denial_Group_List</label><input type="input" id="Denial_Group_List" name="Denial_Group_List" value="" />
+		<hr>
+		<input type="button" id="Save_Config" value="Save_Config">
+	</div>
+	<div id="system_time">ITS Clock</div>
+</body>
+</html>

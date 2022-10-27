@@ -1,0 +1,527 @@
+## 리눅스서버 보안
+
+$ : 명령어 실행
+> : 편집 내용
+# : 도움말
+- : 참조 링크
+
+U-01
+root 계정 원격 접속 제한
+    결과 : 설정(기본값)
+    참고 :
+        sudo 사용
+        $ sudo vi /etc/ssh/sshd_config
+            > PermitRootLogin no
+
+U-02
+패스워드 복잡성 설정
+    결과 : 설정(기본값)
+    참고 : 시스템 연동 간에서 발생 가능한 영향을 고려하여 적용 필요
+
+U-03
+계정 잠금 임계값 설정
+    결과 : 미설정(기본값)
+    참고 :
+        $ sudo vi /etc/pam.d/common-auth
+            > auth required pam_tally2.so deny=5 unlock_time=60
+
+U-04
+패스워드 파일 보호
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo cat /etc/shadow
+
+U-05
+root 이외의 UID가 '0' 금지
+    결과 : 설정(기본값)
+    참고 :
+        # 점검 파일 위치 및 점검 방법
+        $ sudo cat /etc/passwd
+
+U-06
+root 계정 su 제한
+    결과 : 설정(기본값)
+    참고 : 루트 사용자 계정은 보안상 기본적으로 비활성
+        - https://linuxize.com/post/how-to-enable-and-disable-root-user-account-in-ubuntu/
+        $ sudo passwd root # 활성
+        $ sudo passwd -l root # 비활성
+
+U-07
+패스워드 최소 길이 설정
+    결과 : 미설정(기본값)
+    참고 : 시스템 연동 간에서 발생 가능한 영향을 고려하여 적용 필요
+        $ sudo vi /etc/pam.d/common-password
+            > password requisite pam_pwquality.so retry=3 minlen=10 minclass=3
+            # password [success=1 default=ignore] pam_unix.so obscure use_authtok try_first_pass sha512 remember=2
+                remember=2 2회 동안 동일한 비밀번호 생성 금지
+                minlen=10 비밀번호 길이 생성 제한 10자 이상으로
+                minclass=3 새비밀번호에 필요한 문자 클래스 수 제한 (종류 ⇒ 대문자 / 소문자 / 숫자 / 기타)
+
+U-08
+패스워드 최대 사용기간 설정
+    결과 : 미설정(기본값)
+    참고 :
+        $ sudo vi /etc/login.defs
+            > PASS_MAX_DAYS (number)
+        또는 사용자별
+        $ sudo chage -M (days) (user)
+            # -M, --maxdays MAX_DAYS set maximim number of days before password
+
+U-09
+패스워드 최소 사용기간 설정
+    결과 : 미설정(기본값)
+    참고 :
+        $ sudo vi /etc/login.defs
+            > PASS_MIN_DAYS (number)
+        또는 사용자별
+        $ sudo chage -m (days) (user)
+            # -m, --mindays MIN_DAYS set minimum number of days before password
+
+U-10
+불필요한 계정 제거
+    결과 : 설정(기본값)
+    참고 :
+        # 미사용 계정 및 의심스러운 계정 존재 여부 확인
+        $ sudo cat /etc/passwd # 파일 구조 참조
+        $ sudo userdel (user)
+
+U-11
+관리자 그룹에 최소한의 계정 포함
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo cat /etc/group
+            > root:x:0:
+U-12
+계정이 존재하지 않는 GID 금지
+    결과 : 설정(기본값)
+    참고 :
+        # 구성원이 없거나, 더 이상 사용하지 않는 그룹명 삭제
+        $ sudo groupdel (그룹명)
+
+U-13
+동일한 UID 금지
+    결과 : 설정(기본값)
+    참고 :
+        # 중복된 uid가 존재할 경우 시스템에서 동일한 사용자로 인식하여 문제가 발생
+        $ sudo cat /etc/passwd # 파일 구조 내 세번쨰 필드 참조
+
+U-14
+사용자 shell 점검
+    결과 : 설정(기본값)
+    참고 :
+        # 로그인이 필요하지 않은 계정에 대해 /bin/false(nologin) 쉘 부여
+        $ sudo cat /etc/passwd # 파일 구조 내 마지막 필드 참조
+
+U-15
+Session Timeout 설정
+    결과 : 미설정(기본값)
+    참고 :
+        $ sudo visudo
+            > Defaults env_reset, timestamp_timeout=60 # 타임아웃 설정
+
+        # 사용자별 설정 방법
+        $ /etc/profile(.profile)
+            > TIMEOUT=600
+            > export TMOUT
+
+U-16
+root 홈, 패스 디렉터리 권한 및 패스 설정
+    결과 : 설정(기본값)
+    참고 :
+        $ echo $PATH
+            /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+U-17
+파일 및 디렉터리 소유자 설정
+    결과 : 설정(기본값)
+    참고 :
+        # 소유자가 존재하지 않은 파일 및 디렉토리가 존재하지 않는 경우
+        $ sudo find / -nouser -print
+
+U-18
+/etc/passwd 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ ls -l /etc/passwd
+
+U-19
+/etc/shadow 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ ls -l /etc/shadow
+
+U-20
+/etc/hosts 파일 소유자 및  권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ ls -l /etc/hosts
+
+U-21
+/etc/(x)inetd.conf 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 : 만료된 서비스 항목
+
+U-22
+/etc/syslog.conf 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 : 만료된 서비스 항목
+        # 다음으로 대치
+        $ ls -l /etc/rsyslog.d
+
+U-23
+/etc/services 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ ls -l /etc/services
+
+U-24
+SUID,SGID,Stick bit 설정 파일 점검
+    결과 : 설정(기본값)
+    참고 :
+        # 검사 방법
+        $ sudo find / -user root -type f \( -perm -04000 -o -perm -02000 \) -xdev -exec ls -al {} \;
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ sudo chmod -s (파일명)
+
+U-25
+사용자, 시스템 시작파일 및 환경파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ ls -ld ~/.*
+
+U-26
+world writable 파일 점검
+    결과 : 설정(기본값)
+    참고 :
+        # 확인후 조치 (chown, chgrp, chmod)
+        $ sudo find / -perm -2 -ls | more
+
+U-27
+/dev에 존재하지 않는 device 파일 점검
+    결과 : 설정(기본값)
+    참고 :
+        $ find /dev -type f -exec ls -l {} \;
+        # major, minor, number를 가지지 않는 device 일 경우 삭제
+
+U-28
+$HOME/.rhosts, hosts.equiv 사용 금지
+    결과 : 설정(기본값)
+    참고 : 만료된 서비스 항목
+        # $HOME/.rhosts, hosts.equiv은 사용치 않음
+
+U-29
+접속 IP 및 포트 제한
+    결과 : 설정(기본값)
+    참고 :
+        # /etc/hosts.allow  --> 시스템 접근을 허용할 IP 설정
+        # /etc/hosts.deny  --> 시스템 접근을 제한할 IP 설정
+
+U-30
+hosts.lpd 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # 로컬 프린트 서비스 사용안함
+
+U-31
+NIS 서비스 비활성화
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # NIS(Network Information Service)
+
+U-32
+UMASK 설정 관리
+    결과 : 설정(기본값)
+    참고 :
+        # UMASK 값을 022 이하로 설정된 경우, export umask
+        $ sudo vi /etc/profile
+        $ vi ~/.profile
+
+U-33
+홈디렉토리 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        # "/etc/passwd" 파일 내 존재하는 모든 사용자 계정이 적절한 홈 디렉토리를 갖는지 확인함
+
+U-34
+홈디렉토리로 지정한 디렉토리의 존재 관리
+    결과 : 설정(기본값)
+    참고 :
+        # 홈 디렉토리가 존재하지 않는 계정이 발견되지 않는 경우
+        # "/etc/passwd" 파일 참조
+
+U-35
+숨겨진 파일 및 디렉토리 검색 및 제거
+    결과 : 설정(기본값)
+    참고 :
+        # ls -al 명령어로 숨겨진 파일 존재 파악 후 불법적이거나 의심스러운 파일을 삭제함
+
+U-36
+finger 서비스 비활성화
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-37
+Anonymous FTP 비활성화
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-38
+r 계열 서비스 비활성화
+    결과 : 설정(기본값)
+    참고 : 만료된 서비스 항목
+        # rlogin/rsh -> ssh, rcp -> scp 로 변경
+
+U-39
+cron 파일 소유자 및 권한설정
+    결과 : 설정(기본값)
+    참고 :
+        # "cron" 접근제어 설정이 적절하지 않은 경우 아래의 보안설정방법에 따라 설정을 변경함
+        $ ls -ld /etc/cron*
+
+U-40
+Dos 공격에 취약한 서비스 비활성화
+    결과 : 설정(기본값)
+    참고 :
+        # UFW 방화벽 설정으로 서버 보안 강화하기
+
+U-41
+NFS 서비스 비활성화
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # Network File System
+ 
+U-42
+NFS 접근 통제
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # Network File System
+
+U-43
+automountd 제거 
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        $ sudo cat /etc/fstab
+
+U-44
+RPC 서비스 확인
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # RPC - Remote procedure call
+U-45
+
+NIS, NIS+ 점검
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # Network Information System 
+
+U-46
+tftp, talk 서비스 비활성화
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-47
+Sendmail 버전 점검
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-48
+스팸 메일 릴레이 제한
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-49
+일반사용자의 Sendmail 실행 방지
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-50
+DNS 보안 버전 패치
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # Dimain Name Service
+
+U-51
+DNS Zone Transfer 설정
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-52
+Apache 디렉토리 리스팅 제거
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo vi /etc/apache2/apache2.conf
+            # Option 지시자에 Indexes 옵션 제거
+            > <Directory /var/www/>
+            >         # Options Indexes FollowSymLinks
+            >         Options FollowSymLinks
+            >         AllowOverride None
+            >         Require all granted
+            > </Directory>
+        $ sudo service apache2 restart
+
+U-53
+Apache 웹 프로세스 권한 제한
+    결과 : 설정(기본값)
+    참고 :
+        $ csudo vi /etc/apache2/apache2.conf
+            > User ${APACHE_RUN_USER}
+            > Group ${APACHE_RUN_GROUP}
+
+        $ sudo vi /etc/apache2/envvars
+            > export APACHE_RUN_USER=www-data
+            > export APACHE_RUN_GROUP=www-data
+
+
+U-54
+Apache 상위 디렉토리 접근 금지
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo vi /etc/apache2/apache2.conf 
+            # AllowOverride AuthConfig
+            > <Directory /var/www/>
+            >         # Options Indexes FollowSymLinks
+            >         Options FollowSymLinks
+            >         # AllowOverride None
+            >         AllowOverride AuthConfig
+            >         Require all granted
+            > </Directory>
+        $ sudo service apache2 restart
+
+U-55
+Apache 불필요한 파일 제거
+    결과 : 설정(기본값)
+    참고 :
+        # /etc/apache2/apache2.conf에 선언된 Directory내 불필요한 파이 삭제
+
+U-56
+Apache 링크 사용 금지
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo vi /etc/apache2/apache2.conf 
+            # 모든 설정에서 FollowSymLinks 제거
+            > <Directory />
+            >         # Options FollowSymLinks
+            >         AllowOverride None
+            >         Require all denied
+            > </Directory>
+            > ...
+        $ sudo service apache2 restart
+            > LimitRequestBody 5000000 # unit - byte
+
+U-57
+Apache 파일 업로드 및 다운로드 제한
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo vi /etc/php/7.2/apache2/php.ini
+            > upload_max_filesize = 200M
+        $ sudo vi /etc/apache2/apache2.conf 
+
+U-58
+Apache 웹 서비스 영역의 분리
+    결과 : 설정(기본값)
+    참고 :
+        $ sudo vi /etc/apache2/sites-available/000-default.conf
+            > DocumentRoot /var/www/html/its_web
+
+U-59
+ssh 원격접속 허용(22번 포트 변경 포함)
+    결과 : 설정(기본값)
+    참고 :
+        # 상태확인
+            $ sudo netstat -tulnp | grep ssh
+        # 설정확인
+            $ sudo grep -i port /etc/ssh/sshd_config 
+        # 설정변경
+            $ sudo vi /etc/ssh/sshd_config
+                > #Port 22 -> Port 22000
+        # 재실행
+            $ sudo systemctl restart sshd
+        # 확인
+            $ ssh -p 22000 192.168.1.100
+
+U-60
+ftp 서비스 확인
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # File Transfer Protocol
+
+U-61
+ftp 계정 shell 제한
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-62
+Ftpusers 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-63
+Ftpusers 파일 설정
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-64
+at 파일 소유자 및 권한 설정
+    결과 : 설정(기본값)
+    참고 :
+        $ ls -l /etc/at.*
+        $ sudo cat /etc/at.deny
+
+U-65
+SNMP 서비스 구동 점검
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # SNMP(Simple Network Management Protocol)
+
+U-66
+SNMP 서비스 커뮤니티스트링의 복잡성 설정
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-67
+로그온 시 경고 메시지 제공
+    결과 : 설정(기본값)
+    참고 :
+        # MOTD : Message Of The Day
+        $ ls /etc/update-motd.d
+        - https://linuxconfig.org/how-to-change-welcome-message-motd-on-ubuntu-18-04-server
+
+U-68
+NFS 설정 파일 접근권한
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-69
+expn, vrfy 명령어제한 
+    결과 : 설정(기본값)
+    참고 : 사용안함
+        # SMTP(Simple Mail Transfer Protocol)
+
+U-70
+Apache 웹서비스 정보 숨김
+    결과 : 설정(기본값)
+    참고 : 사용안함
+
+U-71
+최신 보안패치 및 벤더 권고사항 적용
+    결과 : 설정(기본값)
+    참고 : 
+        $ sudo apt-get update -y
+        $ sudo apt-get upgrade -y
+
+U-72
+로그의 정기적 검토 및 보고
+    결과 : 설정(기본값)
+    참고 :
+        # 정기적인 로그 분석을 위한 절차 수립
+
+U-73
+정책에 따른 시스템 로깅설정 
+    결과 : 설정(기본값)
+    참고 :
+        $ ls /var/log

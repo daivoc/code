@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__smoothiecharts__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+function sleep(ms){
+	ts1 = new Date().getTime() + ms;
+	do ts2 = new Date().getTime(); while (ts2<ts1);
+}
+
+// Create the charts ///////////////////////////////////////////////////////
+
+function onLoad() {
+	
+	// 스크롤일의 일시정지 기능
+	var isRunning = true;
+	var toggle = document.getElementById("toggle");
+	toggle.onclick = function() {
+		if (isRunning) {
+			chart0.stop();
+		} else {
+			chart0.start();
+		}
+		isRunning = !isRunning;
+	};
+
+	// 스크롤링 주기시간 - 속도
+	var slider = document.getElementById("scrollSpeed");
+	var output = document.getElementById("scrollValue");
+	output.innerHTML = slider.value;
+	slider.oninput = function() {
+		var tmpValue = this.value
+		chart0.options.grid.millisPerLine = tmpValue*50;
+		chart0.options.millisPerPixel = tmpValue;
+		output.innerHTML = tmpValue;
+	};	
+
+	// Create the charts 참고 : http://smoothiecharts.org/builder/ http://jsfiddle.net/h4wcu/14/ 
+	var line1 = new TimeSeries()
+	var line2 = new TimeSeries()
+	var line3 = new TimeSeries()
+	var line4 = new TimeSeries()
+	var line5 = new TimeSeries()
+	var line6 = new TimeSeries()
+	var line7 = new TimeSeries()
+	// millisPerPixel:5 - 화면이 지나가는 주기(초) 
+	// fillStyle:'rgba(0,0,0,0.16)' - 차트 바탕색
+	<!-- var chart0 = new SmoothieChart({maxValue:__COUNTER_maxDist__,minValue:__COUNTER_minDist__, millisPerPixel:5, grid: { strokeStyle: 'rgb(125, 125, 125)', fillStyle: 'rgb(0, 0, 0)', lineWidth: 1, millisPerLine: 250, verticalSections: 2 }, horizontalLines:[{color:'#ff8888',lineWidth:1,value:__COUNTER_limitDist__}]}); -->
+	var chart0 = new SmoothieChart({minValue:__COUNTER_minDist__, maxValue:__COUNTER_maxDist__, millisPerPixel:5, grid:{millisPerLine: 250, fillStyle:'transparent'}, horizontalLines:[{color:'#ff8888',lineWidth:1,value:__COUNTER_limitDist_S__},{color:'#88ff88',lineWidth:1,value:__COUNTER_limitDist_E__}]});
+
+	chart0.addTimeSeries(line1, { strokeStyle: 'rgb(255, 0, 255)', lineWidth: 1 });
+	chart0.addTimeSeries(line2, { strokeStyle: 'rgb(0, 255, 255)', lineWidth: 1 });
+	chart0.addTimeSeries(line3, { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 4 }); // LEFT
+	chart0.addTimeSeries(line4, { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 4 }); // RIGHT
+	chart0.addTimeSeries(line5, { strokeStyle: 'rgb(255, 255, 0)', lineWidth: 4 }); // BOTH
+	chart0.addTimeSeries(line6, { strokeStyle: 'rgb(0, 128, 128)', lineWidth: 4 }); // RETURN
+	chart0.addTimeSeries(line7, { strokeStyle: 'rgb(255, 0, 0)', lineWidth: 4 }); // ERROR
+	chart0.streamTo(document.getElementById("smoothie-chart0"), 0);
+
+	var dirStatus = document.getElementById("dirStatus");
+	var eventOnWas = 0 // 이전 이벤트 상태
+	var socketio = io.connect();
+	socketio.on("message_to_client", function(data) {
+		// ip=192.168.0.9,serial=g300t200_192_168_0_9_0001,subject=ULTRASONIC,dirStat=50,valueIs=231,eventOn=Left
+		// console.log(data);
+		var ip = data['ip'];
+		var serial = data['serial'];
+		var subject = data['subject'];
+		var dirStat = data['dirStat'];
+		var valueIs = data['valueIs'];
+		var eventOn = parseInt(data['eventOn']);
+		var beep = data['beep'];
+		
+		if(dirStat == "dist_L"){
+			<!-- series1.append(new Date().getTime(), valueIs); -->
+			line1.append(new Date().getTime(), valueIs);
+		}
+		
+		if(dirStat == "dist_R"){
+			<!-- series2.append(new Date().getTime(), valueIs); -->
+			line2.append(new Date().getTime(), valueIs);
+		}
+		
+		if(eventOn){
+			if(dirStat == "left"){
+				line3.append(new Date().getTime(), valueIs); // 펄스파를 만들기 위한 기능 1초 이전에 신호를 보낸후 바로 0값을 보낸다.
+				line3.append(new Date().getTime()+1,0);
+				beep_A();
+			}
+			if(dirStat == "right"){
+				line4.append(new Date().getTime(), valueIs); // 펄스파를 만들기 위한 기능 1초 이전에 신호를 보낸후 바로 0값을 보낸다.
+				line4.append(new Date().getTime()+1,0);
+				beep_A();
+			}
+			if(dirStat == "both"){
+				line5.append(new Date().getTime(), valueIs); // 펄스파를 만들기 위한 기능 1초 이전에 신호를 보낸후 바로 0값을 보낸다.
+				line5.append(new Date().getTime()+1,0);
+				beep_B();
+			}
+			if(dirStat == "return"){
+				line6.append(new Date().getTime(), valueIs); // 펄스파를 만들기 위한 기능 1초 이전에 신호를 보낸후 바로 0값을 보낸다.
+				line6.append(new Date().getTime()+1,0);
+				beep_B();
+			}
+			if(dirStat == "error"){
+				line7.append(new Date().getTime(), valueIs); // 펄스파를 만들기 위한 기능 1초 이전에 신호를 보낸후 바로 0값을 보낸다.
+				line7.append(new Date().getTime()+1,0);
+				beep_C();
+			}
+			dirStatus.innerHTML = dirStat.toUpperCase()+' '+eventOn;
+		} 
+		
+		// 차트 속도가 가장 빠른 1초로 설정 되어있을때
+		// 이밴트가 발생시 일시정지 기능
+		if(slider.value < 3) { 
+			if(eventOn){
+				chart0.start();
+			} else {
+				if(eventOnWas) {
+					chart0.stop();
+				}
+			}
+		}
+		eventOnWas = eventOn
+			
+	});
+}
+
+<!-- 참고 : http://games.23inch.de/chime/doc/ -->
+var track_A = '';
+for(k = l = 11025; k--;) { track_A += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33)* Math.min((l-k)/83,k/l)*127 + 128);}
+var track_B = '';
+for(k = 11025; k--;) { track_B += String.fromCharCode(Math.sin(k/44100*2*Math.PI*659.26)*127+128); }
+var track_C = '';
+for(i=0;i<4;) { // i: 반복 횟수 8 - 2초
+  i++;
+  for(k = l = 11025; k--;) { track_C += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33) * Math.min((l-k)/83,k/l) * (i%2&&i%8-3?99:33) + 128); }
+}
+function beep_A() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\0'+track_A));
+	snd.play();  
+}
+function beep_B() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_B));
+	snd.play();
+}
+function beep_C() {
+	var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_C));
+	snd.play();
+}
+</script>
+
+<style>
+body { padding:0;margin:0;background:#404040; }
+div { float:left;padding:0;margin:4px; }
+div.smoothie-chart-tooltip { background: #444; padding: 1em; margin-top: 20px; font-family: consolas; color: white; font-size: 10px; pointer-events: none; }
+
+.dirStatus { font-size: 30pt; color:white; padding-left: 20px; position: absolute; }
+
+.slidecontainer { width: 50%; }
+.slideValue { color:white; }
+.slider { -webkit-appearance: none; width: 100%; height: 25px; background: #d3d3d3; outline: none; opacity: 0.7; -webkit-transition: .2s; transition: opacity .2s; } 
+.slider:hover { opacity: 1; }
+.slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 25px; height: 25px; background: #4CAF50; cursor: pointer; }
+.slider::-moz-range-thumb { width: 25px; height: 25px; background: #4CAF50; cursor: pointer; }
+</style>
+</head>
+<body onload="onLoad()">
+<div class="charts"><canvas id="smoothie-chart0" width="1800" height="400"></canvas></div>
+<!-- <div class="charts"><canvas id="smoothie-chart1" width="1400" height="200"></canvas></div> -->
+<!-- <div class="charts"><canvas id="smoothie-chart2" width="1400" height="200"></canvas></div> -->
+<!-- <div class="charts"><canvas id="smoothie-chart3" width="1400" height="120"></canvas></div> -->
+<!-- <div class="charts"><canvas id="smoothie-chart4" width="1000" height="120"></canvas></div> -->
+<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="5" class="slider" id="scrollSpeed">
+</div>
+<div class="slideValue" id="scrollValue"></div>
+<div><button id='toggle' autofocus>Toggle Running</button></div>
+<div class="dirStatus" id="dirStatus"></div>
+<script>
+
+</script>
+</body>
+</html>

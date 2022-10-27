@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__style_bootstrap_js__
+__style_bootstrap_css__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+var cfg = {};
+
+var refreshIntervalImage;
+
+__realtime_image__
+
+audio=new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+function beep(vol, freq, duration){
+  v=audio.createOscillator()
+  u=audio.createGain()
+  v.connect(u)
+  v.frequency.value=freq
+  v.type="square"
+  u.connect(audio.destination)
+  u.gain.value=vol*0.01
+  v.start(audio.currentTime)
+  v.stop(audio.currentTime+duration*0.001)
+} // beep(10, 520, 200)
+
+$( document ).ready(function() {
+
+	var socketio = io.connect();
+	// 부모 프로세서에 명령어 요청
+
+	$('#sensorInfo').click(function(event){
+		$('.eventTable').toggle('slow');
+	});
+
+	$('.gChkBox').click(function(event){
+		gChkBox = {};
+		gChkBox['beep'] = $('#beep').prop('checked');
+		gChkBox['adjustment'] = $('#adjustment').prop('checked');
+		gChkBox['snapshut'] = $('#snapshut').prop('checked');
+		gChkBox['showLive'] = $('#showLive').prop('checked');
+		socketio.emit('gChkBox', gChkBox);
+	});
+
+	$('#showLive').click(function(event){
+		// 	Live Image Show
+		if ($('#showLive').is(':checked')){
+			$('#liveImage').show();
+			refreshIntervalImage = setInterval(reflashImage, 250); // reflashImage는 사전에 선언됨
+		} else {
+			$('#liveImage').hide();
+			clearInterval(refreshIntervalImage);
+		}
+	});
+	// $('#showLive').click();
+	if ($('#showLive').is(':checked')){
+		refreshIntervalImage = setInterval(reflashImage, 250);
+	} else {
+		clearInterval(refreshIntervalImage);
+	}
+
+	socketio.on("event_Traffic", function(data) {
+		// console.log(data);
+		window.open(data,'eventTraffic',`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400`);
+	});
+	$('#eventTraffic').click(function(event){
+		socketio.emit('event_Traffic');
+	});
+
+	$('#eventReset').click(function(event){
+		socketio.emit('event_reset');
+	});
+
+	socketio.on("todayEventOn", function(data) {
+		console.log(data);
+	});
+	socketio.emit('today_EventOn');// 상태 업데이트 요청
+
+	$('#timerSet').click(function(event){
+		timer_set = [];
+		for(var i=0;i <8;i++){
+			timer_set[i] = parseInt($("#btnEvent_"+i).val());
+		}
+		socketio.emit('timer_set', timer_set);
+	});
+
+	socketio.on("kill_client", function(data) {
+		// console.log(data);
+		$("body").html('Call admin.');
+	});
+
+	socketio.on("eventTimer", function(data) {
+		// console.log(data);
+		for(var i=0;i < data.length;i++){
+			$("#btnEvent_"+i).val(data[i]);
+		}
+	});
+
+	// eventGroup = {trigger:[1, 0, 0, 0, 0, 0, 0, 0], newEvent:[1, 0, 0, 0, 0, 0, 0, 0], gapEvent:[-2, 0, -1, 0, -1, 0, 2, 0], sumEvent:[4, 6, 4, 5, 0, 1, 2, 0] }
+	socketio.on('eventGroup', function(data) {
+		// console.log(data);
+		// 카운트 값 테이블에 업데이트
+		for (const [key, value] of Object.entries(data)) {
+			// console.log(key, value);
+			for(var i=0;i < value.length;i++){
+				$('#'+key+'_'+i).html(value[i]);
+				// mainEvent 업데이트
+				if (key+'_'+i == 'newEvent_0') {
+					$('#f_newEvent_0').html(value[i]);
+				} else if (key+'_'+i == 'newEvent_1') {
+					$('#f_newEvent_1').html(value[i]);
+				} else if (key+'_'+i == 'gapEvent_0') {
+					$('#f_gapEvent_0').html(value[i]);
+				} else if (key+'_'+i == 'sumEvent_0') {
+					$('#f_sumEvent_0').html(value[i]);
+				} else if (key+'_'+i == 'sumEvent_1') {
+					$('#f_sumEvent_1').html(value[i]);
+				}
+			}
+		}
+		// 시간 등록
+		var d = new Date();
+		$("#dateEvent").html("@ " + d.getFullYear() + "-" + ( d.getMonth() + 1 ) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
+		// 	비프음 발생
+		if ($('#beep').is(':checked')){
+			beep(10, 100, 100)
+		} else {
+			;
+		}
+		// 	Live Image Show
+		if ($('#showLive').is(':checked')){
+			$('#liveImage').show();
+		} else {
+			$('#liveImage').hide();
+		}
+	});
+	socketio.emit('event_group');// 상태 업데이트 요청
+
+	// 부모로 부터 받은 환경값 적용
+	socketio.on('statusChkBox', function(data) {
+		cfg = data;
+		// cfg['gChkBox']['beep'] = $('#beep').prop('checked');
+		for (const [key, value] of Object.entries(data)) {
+			// console.log(key, value);
+			$('#'+key).prop('checked', value);
+		}
+	});
+	socketio.emit('status_chkBox');// 상태 업데이트 요청
+});	
+
+</script>
+
+<style>
+body {all:unset;}
+body {text-align:center;font-size:15vw;font-family:none;background-color:#1b0042;}
+
+.hide {display:none;}
+.left {text-align:left;}
+.center {text-align:center;}
+.right {text-align:right;}
+
+.gikenImage {width:100vw;}
+.liveImage {width:100vw;}
+
+.title {color:silver;display:flex;font-size:2vw;line-height:4vw;background:black;}
+.tTitle {width:24vw;text-align:end;padding-right:4vw;font-weight:bold;}
+.gTitle {width:8vw;text-align:end;}
+
+.eventTable {position:fixed; top:16vw; left:1vw;}
+.btnEvent {color:gray;display:flex;font-size:3vw;line-height:4vw;margin-top:0.1vw;}
+.tBtnEvent {width:24vw;text-align:end;padding-right:4vw;color:whitesmoke;text-shadow: 2px 2px black;}
+.gBtnEvent {width:8vw;text-align:right;padding-right:1vw;font-size:2vw;color:whitesmoke;background:#1b0042;border:1px solid #310077;}
+.gBtnSet {font-size:2vw;padding:unset;width:8vw;margin-left:2vw;line-height:normal;background-color:#3e2484;;color:silver;border:1px solid #5331b0;border-radius:0.4vw;}
+
+.trigger, .newEvent, .gapEvent, .sumEvent {color:whitesmoke;display:flex;font-size:3vw;line-height:4vw;text-shadow: 2px 2px black;}
+.tTrigger, .tNewEvent, .tGapEvent, .tSumEvent {width:24vw;text-align:end;padding-right:4vw;}
+.gTrigger, .gNewEvent, .gGapEvent, .gSumEvent {width:8vw;text-align:end;padding-right:2vw;border-bottom:1px solid gray;}
+
+.btnCmd {font-size:2vw;margin:2vw;}
+
+/* .roomID {position: fixed;top: 80vw;left: 2vw;color: #ffffffe0;font-size: 6vw;text-align: unset;text-shadow: 0.2vw 0.2vw black;} */
+.dateEvent {color:silver;font-size:2vw;text-align:end;padding-right:2vw;}
+
+.labelInOut, .labelStay, .labelSumInOut {display: contents;}
+.labelInOut, .labelSumInOut {width:40vw;}
+.labelStay {width:20vw;}
+.mainEvent {display:flex;width:100vw;font-size:2vw;color:silver;}
+.mainIn, .mainOut, .mainStay, .mainSumIn, .mainSumOut {width:14vw;font-size:6vw;color:whitesmoke;text-align:center;margin:0.6vw;padding:1vw 0;}
+.mainIn, .mainOut {border: 0.1vw solid #4a00b5;background:#5623a1;} 
+.mainStay {border: 0.1vw solid #4a00b5;background:#5a0064;} 
+.mainSumIn, .mainSumOut {border: 0.1vw solid #4a00b5;background:#360083;} 
+
+.config {margin:1vw;}
+.gInfo {float:left;font-size:2vw;color:gray;}
+.lbChkBox {float:right;font-size:2vw;color:silver;}
+.gChkBox {width:2vw;height:2vw;margin:0 1vw;}
+
+@media (max-width:280px) {
+	.gInfo, .lbChkBox, .evtLabel {display: none;}
+	.mainIn, .mainOut, .mainStay, .mainSumIn, .mainSumOut {width:20vw;}
+}
+</style>
+</head>
+
+<body>
+<div class='config'>
+	<div class="gInfo" id="sensorInfo">__roomID__</div>
+	<label class='lbChkBox' title="beep">Beep<input class="gChkBox" type="checkbox" id="beep" name="beep"></label>
+	<label class='lbChkBox' title="adjustment">Adj.<input class="gChkBox" type="checkbox" id="adjustment" name="adjustment"></label>
+	<label class='lbChkBox' title="snapshut">Snap<input class="gChkBox" type="checkbox" id="snapshut" name="snapshut"></label>
+	<label class='lbChkBox' title="showLive">Live<input class="gChkBox" type="checkbox" id="showLive" name="showLive"></label>
+</div>
+
+<div class='mainEvent'>
+	<label class="labelInOut">
+		<abc class='evtLabel' style="position: relative;left: 4vw;top: 0.6vw;">In</abc>
+		<span class="mainIn" id="f_newEvent_0">In</span>
+        <abc class='evtLabel' style="position: relative;left: 5vw;top: 0.6vw;">Out</abc>
+		<span class="mainOut" id="f_newEvent_1">Out</span>
+	</label>
+	<label class="labelSumInOut">
+		<abc class='evtLabel' style="position: relative;left: 7vw;top: 0.6vw;">Sum I</abc>
+		<span class="mainSumIn" id="f_sumEvent_0">Sum</span>
+		<abc class='evtLabel' style="position: relative;left: 8vw;top: 0.6vw;">Sum O</abc>
+		<span class="mainSumOut" id="f_sumEvent_1">Sum</span>
+	</label>
+	<label class='labelStay'>
+		<abc class='evtLabel' style="position: relative;left: 6vw;top: 0.6vw;">Stay</abc>
+		<span class='mainStay' id='f_gapEvent_0'>Stay</span>
+	</label>
+</div>
+
+<div class="gikenImage" id="gikenImage">
+	<img class="liveImage" id="liveImage">
+
+	<div class="dateEvent" id="dateEvent">dateEvent</div>
+	<div class="eventTable hide">
+		<div class="title">
+			<span class="tTitle">Events</span>
+			<span class="gTitle">D1_I</span>
+			<span class="gTitle">D1_O</span>
+			<span class="gTitle">D2_I</span>
+			<span class="gTitle">D2_O</span>
+			<span class="gTitle">D3_I</span>
+			<span class="gTitle">D3_O</span>
+			<span class="gTitle">D4_I</span>
+			<span class="gTitle">D4_O</span>
+			<span class="gTitle">Set</span>
+		</div>
+		<div class="trigger">
+			<span class="tTrigger">Trigger</span>
+			<span class="gTrigger" id="trigger_0">0</span>
+			<span class="gTrigger" id="trigger_1">0</span>
+			<span class="gTrigger" id="trigger_2">0</span>
+			<span class="gTrigger" id="trigger_3">0</span>
+			<span class="gTrigger" id="trigger_4">0</span>
+			<span class="gTrigger" id="trigger_5">0</span>
+			<span class="gTrigger" id="trigger_6">0</span>
+			<span class="gTrigger" id="trigger_7">0</span>
+			<input class="gBtnSet" id="eventTraffic" type="button" value="Traffic">
+		</div>
+		<div class="newEvent">
+			<span class="tNewEvent">Count</span>
+			<span class="gNewEvent" id="newEvent_0">0</span>
+			<span class="gNewEvent" id="newEvent_1">0</span>
+			<span class="gNewEvent" id="newEvent_2">0</span>
+			<span class="gNewEvent" id="newEvent_3">0</span>
+			<span class="gNewEvent" id="newEvent_4">0</span>
+			<span class="gNewEvent" id="newEvent_5">0</span>
+			<span class="gNewEvent" id="newEvent_6">0</span>
+			<span class="gNewEvent" id="newEvent_7">0</span>
+		</div>
+		<div class="sumEvent">
+			<span class="tSumEvent">Total</span>
+			<span class="gSumEvent" id="sumEvent_0">0</span>
+			<span class="gSumEvent" id="sumEvent_1">0</span>
+			<span class="gSumEvent" id="sumEvent_2">0</span>
+			<span class="gSumEvent" id="sumEvent_3">0</span>
+			<span class="gSumEvent" id="sumEvent_4">0</span>
+			<span class="gSumEvent" id="sumEvent_5">0</span>
+			<span class="gSumEvent" id="sumEvent_6">0</span>
+			<span class="gSumEvent" id="sumEvent_7">0</span>
+			<input class="gBtnSet" id="eventReset" type="button" value="Reset">
+		</div>
+		<div class="gapEvent">
+			<span class="tGapEvent">Diff.</span>
+			<span class="gGapEvent" id="gapEvent_0">0</span>
+			<span class="gGapEvent" id="gapEvent_1">0</span>
+			<span class="gGapEvent" id="gapEvent_2">0</span>
+			<span class="gGapEvent" id="gapEvent_3">0</span>
+			<span class="gGapEvent" id="gapEvent_4">0</span>
+			<span class="gGapEvent" id="gapEvent_5">0</span>
+			<span class="gGapEvent" id="gapEvent_6">0</span>
+			<span class="gGapEvent" id="gapEvent_7">0</span>
+		</div>
+		<div class="btnEvent">
+			<span class="tBtnEvent">Hold(m)</span>
+			<input class="gBtnEvent" id="btnEvent_0" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_1" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_2" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_3" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_4" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_5" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_6" type="text" value="0">
+			<input class="gBtnEvent" id="btnEvent_7" type="text" value="0">
+			<input class="gBtnSet" id="timerSet" type="button" value="Set">
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+{
+	"audio": {
+		"enable": 1,
+		"player": "omxplayer.bin",
+		"select": {
+			"omxplayer.bin": "omxplayer",
+			"mplayer": "mplayer"
+		}
+	},
+	"talk": {
+		"allowIP": {
+			"192.168.0.50": "테스트를 위한 기본값",
+			"192.168.0.80": "테스트를 위한 기본값"
+		},
+		"enable": 1,
+		"openingHold": 1,
+		"closingHold": 3,
+		"speaking": {
+			"volume": 100
+		},
+		"listening": {
+			"volume": 100
+		}
+	},
+	"camera": {
+		"config": {},
+		"ip:port": "",
+		"name": ""
+	},
+	"mDVR": {
+		"enable": 1
+	},
+	"file": {
+		"html_source": "/home/pi/API3/itsAPI.html",
+		"html_target": "/home/pi/API3/index.html"
+	},
+	"tcpIpPort": {
+		"portIn": 28040,
+		"portOut": 28080,
+		"staticAddress": "",
+		"staticNetMask": "",
+		"staticGateway": ""
+	},
+	"ioBoard": {
+		"set": "std",
+		"type": {
+			"std": "Standard ITS",
+			"acu": "Advanced ITS",
+			"psw": "Power Switch"
+		}
+	},
+	"screen": {
+		"logMaxLines": 99
+	},
+	"command": {
+		"io01":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"0\",\"id\":\"io09\",\"hold\":\"0.1\",\"interval\":\"1\",\"count\":\"4\"}}]}",
+		"io02":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"1\",\"id\":\"io10\",\"hold\":\"0.2\",\"interval\":\"4\"}}]}",
+		"io03":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io11\",\"hold\":\"0.4\",\"interval\":\"4\"}}]}",
+		"io04":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"0\",\"id\":\"io12\",\"hold\":\"0.6\",\"interval\":\"4\"}},{\"camera\":{\"command\":\"footprint\",\"value\":\"\"},\"server\":{\"host\":\"192.168.0.50\",\"port\":\"34001\"},\"debug\":true}]}",
+		"io05":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"custom\":{\"method\":\"http_get\", \"data\":{\"id_01\":\"name_01\",\"id_02\":\"name_02\",\"id_03\":\"name_03\",\"id_04\":\"name_04\"},\"interval\":\"2\"},\"server\":{\"url\":\"http://192.168.0.50/api.php\"}}]}",
+		"io06":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"0\",\"id\":\"io09\",\"hold\":\"1\",\"interval\":\"4\"}},{\"gpio\":{\"status\":\"1\",\"id\":\"io10\",\"hold\":\"1.2\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io11\",\"hold\":\"1.4\"}},{\"gpio\":{\"status\":\"0\",\"id\":\"io12\",\"hold\":\"1.6\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"pw01\",\"hold\":\"0.5\"}}]}",
+		"io07":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"0\",\"id\":\"io09\",\"hold\":\"1\",\"interval\":\"4\"}},{\"custom\":{\"method\":\"tcp_socket\", \"isJson\":true, \"data\":{\"host\":\"192.168.0.30\",\"port\":\"34001\",\"data\":[{\"gpio\":{\"status\":\"0\",\"id\":\"io12\",\"hold\":\"0.6\",\"interval\":\"4\"}}]}},\"server\":{\"host\":\"192.168.0.50\",\"port\":\"33001\"}},{\"gpio\":{\"status\":\"1\",\"id\":\"io10\",\"hold\":\"1.2\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io11\",\"hold\":\"1.4\"}},{\"gpio\":{\"status\":\"0\",\"id\":\"io12\",\"hold\":\"1.6\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"pw01\",\"hold\":\"0.5\"}}]}",
+		"io08":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"custom\":{\"method\":\"tcp_socket\", \"isJson\":true, \"data\":{\"id_01\":\"name_01\",\"id_02\":\"name_02\",\"id_03\":\"name_03\",\"id_04\":\"name_04\"},\"interval\":\"1\"},\"server\":{\"host\":\"192.168.0.50\",\"port\":\"33001\"}, \"debug\":true}]}",
+		"io09":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io01\",\"hold\":\"3.16\"}}]}",
+		"io10":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io02\",\"hold\":\"3.16\",\"msg\":\"\"}}]}",
+		"io11":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io03\",\"hold\":\"1\",\"msg\":\"\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io04\",\"hold\":\"2\",\"msg\":\"\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io05\",\"hold\":\"3\",\"msg\":\"\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io06\",\"hold\":\"4\",\"msg\":\"\"}}]}",
+		"io12":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"audio\":{\"source\":\"1\",\"volume\":\"20\",\"loop\":\"0\"}}]}",
+		"io13":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io07\",\"hold\":\"3.16\",\"msg\":\"\"}}]}",
+		"io14":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io08\",\"hold\":\"3.16\",\"msg\":\"\"}}]}",
+		"io15":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"io03\",\"hold\":\"1\",\"msg\":\"\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io04\",\"hold\":\"2\",\"msg\":\"\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io05\",\"hold\":\"3\",\"msg\":\"\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io06\",\"hold\":\"4\",\"msg\":\"\"}}]}",
+		"io16":"{\"host\":\"\",\"port\":\"\",\"data\":[{\"audio\":{\"source\":\"5\",\"volume\":\"20\",\"loop\":\"0\"}}]}"
+	},
+	"timerCmds": {
+		"tm01": {
+			"cmd": "{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"pw01\",\"hold\":\"0\"}}]}",
+			"time": "12",
+			"desc": "Heartbeat",
+			"enable": true
+		},
+		"tm02": {
+			"cmd": "{\"host\":\"\",\"port\":\"\",\"data\":[{\"gpio\":{\"status\":\"2\",\"id\":\"pw02\",\"hold\":\"0\"}}]}",
+			"time": "20",
+			"desc": "Timer02",
+			"enable": false
+		}
+	},
+	"alarmCmds": {
+		"am01": {
+			"cmd": "{\"host\":\"\",\"port\":\"\",\"data\":[{\"audio\":{\"source\":\"synth-telephone-ring-001-8434.mp3\",\"volume\":\"30\",\"loop\":\"0\"}},{\"gpio\":{\"status\":\"0\",\"id\":\"io09\",\"hold\":\"1\",\"interval\":\"4\"}},{\"gpio\":{\"status\":\"1\",\"id\":\"io10\",\"hold\":\"1.2\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"io11\",\"hold\":\"1.4\"}},{\"gpio\":{\"status\":\"0\",\"id\":\"io12\",\"hold\":\"1.6\"}},{\"gpio\":{\"status\":\"2\",\"id\":\"pw01\",\"hold\":\"0.5\"}}]}",
+			"time": "*/5 * * * *",
+			"desc": "am01_desc",
+			"enable": true
+		},
+		"am02": {
+			"cmd": "{\"host\": \"\",\"port\": \"\",\"data\": [{\"system\":{\"command\":\"stop_audio\",\"value\":\"\"}},{\"audio\": {\"source\": \"inspiring-cinematic-background-music-for-videos-5717.mp3\",\"volume\": \"20\",\"loop\": \"0\"}}]}",
+			"time": "15 * * * *",
+			"desc": "am02_desc",
+			"enable": true
+		},
+		"am03": {
+			"cmd": "{\"host\": \"\",\"port\": \"\",\"data\": [{\"system\":{\"command\":\"stop_audio\",\"value\":\"\"}},{\"audio\": {\"source\": \"romantic-memories-main-9490.mp3\",\"volume\": \"20\",\"loop\": \"0\"}}]}",
+			"time": "45 * * * *",
+			"desc": "am03_desc",
+			"enable": true
+		},
+		"am04": {
+			"cmd": "{\"host\": \"\",\"port\": \"\",\"data\": [{\"system\":{\"command\":\"stop_audio\",\"value\":\"\"}},{\"audio\": {\"source\": \"simple-piano-melody-9834.mp3\",\"volume\": \"20\",\"loop\": \"0\"}}]}",
+			"time": "30 * * * *",
+			"desc": "am04_desc",
+			"enable": true
+		}
+	},
+	"userCmds": {
+		"usr01" : {},
+		"usr02" : {},
+		"usr03" : {},
+		"usr04" : {}
+	},
+	"execution": {
+		"io01": 1,
+		"io02": 1,
+		"io03": 1,
+		"io04": 1,
+		"io05": 1,
+		"io06": 1,
+		"io07": 1,
+		"io08": 1,
+		"io09": 1,
+		"io10": 1,
+		"io11": 1,
+		"io12": 1,
+		"io13": 1,
+		"io14": 1,
+		"io15": 1,
+		"io16": 1,
+		"pw01": 1,
+		"pw02": 1
+	},
+	"trigger": {
+		"io01": 1,
+		"io02": 0,
+		"io03": 1,
+		"io04": 0,
+		"io05": 0,
+		"io06": 1,
+		"io07": 0,
+		"io08": 1,
+		"io09": 1,
+		"io10": 1,
+		"io11": 1,
+		"io12": 1,
+		"io13": 1,
+		"io14": 1,
+		"io15": 1,
+		"io16": 1,
+		"pw01": 1,
+		"pw02": 1
+	},
+	"description": {
+		"io01": "io01_desc",
+		"io02": "io02_desc",
+		"io03": "io03_desc",
+		"io04": "io04_desc",
+		"io05": "io05_desc",
+		"io06": "io06_desc",
+		"io07": "io07_desc",
+		"io08": "io08_desc",
+		"io09": "io09_desc",
+		"io10": "io10_desc",
+		"io11": "io11_desc",
+		"io12": "io12_desc",
+		"io13": "io13_desc",
+		"io14": "Fire Warning",
+		"io15": "Fire Alarm",
+		"io16": "Flooding",
+		"pw01": "Main Power",
+		"pw02": "Sub Power"
+	},
+	"telegram": {
+		"bot01": {
+			"name": "@daivocBot01",
+			"token": "5579880570:AAHZD3f6_6EL-qFl0PzxdRrRy6VkiYpmxqo",
+			"chatID": "80759676",
+			"run": true
+		},
+		"bot02": {
+			"name": "daivocBot02",
+			"token": "",
+			"chatID": "",
+			"run": false
+		},
+		"group01": {
+			"name": "group@daivocBot",
+			"chatID": "-1001605450419",
+			"run": false
+		},
+		"channel01": {
+			"name": "channel@daivocBot",
+			"chatID": "-1001795165646",
+			"run": false
+		}
+	},
+	"reportMail": {
+		"activation": false,
+		"sender": "doNotReply@ecos.com",
+		"receiver": "daivoc@gmail.com",
+		"subject": "ITS Log Report",
+		"signature": "/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/\n/_/  Seongmoon Song (Call 010-5062-5971)\n/_/  Optex Korea Co., Ltd. \n/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/\n",
+		"frequency": 0
+	},
+	"permission": {
+		"password": {
+			"admin": "",
+			"manager": "manager",
+			"viewer": "viewer"
+		},
+		"filterIP":{
+			"admin":"192.168.0.203",
+			"manager":"",
+			"viewer":"",
+			"allow":"",
+			"deny":""
+		},
+		"accessKey": {
+			"keySource": "",
+			"keyCode": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		}
+	},
+	"title": "ECOS ITS",
+	"location": "Location"
+}

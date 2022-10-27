@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+__svg_pan_zoom__
+
+<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script>
+
+function draw_circle(id,x,y,r) {
+	cR = id % 256;
+	cG = id % 254;
+	cB = id % 253;
+	var curContent = $('#rls_event').html();
+	<!-- var toInsert = '<g id="'+id+'"><title>X:'+x+' Y:'+y+' D:'+r+'</title><circle cx="'+x+'" cy="'+y+'" r="'+r / 2+'" fill="rgba('+cR+', '+cG+', '+cB+', 0.4)" stroke="white" stroke-width=0.4 class="the_circ" /></g>'; -->
+	var toInsert = '<circle id="'+id+'" cx="'+x+'" cy="'+y+'" r="'+r / 2+'" fill="rgba('+cR+', '+cG+', '+cB+', 0.4)" stroke="white" stroke-width=0.4 class="the_circ" />';
+	$('#rls_event').html(curContent + toInsert);	
+	<!-- $('#rls_event').html(toInsert);	 -->
+}
+
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
+// var socketio = io.connect();
+// socketio.on("message_to_client", function(data) {
+// 	var dd = new Date();
+// 	var ss = '' + dd.getFullYear() + pad((dd.getMonth()+1),2) + pad((dd.getDate()+1),2) + pad(dd.getHours(),2) + pad(dd.getMinutes(),2) + pad(dd.getSeconds(),2);
+// 	var ss = '' + pad(dd.getHours(),2) + ':' + pad(dd.getMinutes(),2) + ':' + pad(dd.getSeconds(),2);
+// 	var objInfo = data['objInfo'];
+// 	var cood_xyr = objInfo.split(',');
+// 	var id = cood_xyr[0];
+// 	var x = cood_xyr[1];
+// 	var y = cood_xyr[2];
+// 	var r = cood_xyr[3];
+// 	draw_circle(id,x,y,r);
+// 	$('#location').append('<div class=evt_log>'+ss+' ID:'+id+' X:'+parseInt(x/1000)+'m Y:'+parseInt(y/1000)+'m D:'+parseInt(r/10)+'cm</div>');
+// 	$("#location").animate({ scrollTop: $('#location').prop("scrollHeight")}, 10);
+// 	$('#location').html(ss+' ID:'+id+' X:'+x+' Y:'+y+' D:'+r+'<br>');
+// });
+
+$(document).ready(function() {
+	var dd = new Date();
+	var ss = 'Start Time ' + dd.getFullYear() + ' ' + pad((dd.getMonth()+1),2) + ' ' + pad((dd.getDate()+1),2) + ' ' + pad(dd.getHours(),2) + ' ' + pad(dd.getMinutes(),2) + ' ' + pad(dd.getSeconds(),2);
+	$( "#datetime" ).html(ss); // 시작 일자 표시
+	
+});
+
+// <!-- 일정 자료 이상은 오래된것 부터 삭제후 화면 위치 고정 -->
+// setInterval(function(){
+// 	var line_max = 30;
+// 	var line_cnt = document.getElementsByClassName('evt_log').length;
+// 	
+// 	var i = line_cnt - line_max;
+// 	if (i > 0) { // 최고값 이상의 로그는 과거 값기즌으로 삭제
+// 		while (i--) {
+// 			document.getElementsByClassName('evt_log')[i].remove();
+// 			// console.log(i);
+// 		}
+// 	}
+// 	document.getElementById('location').scrollTo(0, document.getElementById('location').scrollHeight);
+// 	
+// }, 10000); // 1000 = 1초
+
+
+<!-- 참고 : http://games.23inch.de/chime/doc/ -->
+// var track_A = '';
+// for(k = l = 11025; k--;) {
+//   track_A += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33)* Math.min((l-k)/83,k/l)*127 + 128);
+// }
+// var track_B = '';
+// for(k = 11025; k--;) {
+//   track_B += String.fromCharCode(Math.sin(k/44100*2*Math.PI*659.26)*127+128);
+// }
+// var track_C = '';
+// for(i=0;i<4;) { // i: 반복 횟수 8 - 2초
+//   i++;
+//   for(k = l = 11025; k--;) {
+//     track_C += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33) * Math.min((l-k)/83,k/l) * (i%2&&i%8-3?99:33) + 128);
+//   }
+// }
+// function beep_A() {
+//     var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\0'+track_A));
+//     snd.play();
+// }
+// function beep_B() {
+//     var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_B));
+//     snd.play();
+// }
+// function beep_C() {
+//     var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_C));
+//     snd.play();
+// }
+</script>
+
+<style>
+div { font-size: 7pt; }
+circle:hover { fill: gray; }
+.noscale .the_circ {vector-effect: non-scaling-stroke;}
+#datetime #using { font-size: 7pt; color: gray; } 
+#content { position: absolute; top: 0px; right: 0; bottom: 0; left: 0; overflow: hidden; }
+#location { height: 180px; color: gray; position: absolute; bottom: 0; left: 0; right: 0; overflow: hidden; overflow-y: auto; z-index: 0; }
+<!-- /* y 기준으로 화면을 플립한다. transform: scale(1,-1); */  -->
+<!-- /* svg { transform: scale(1,-1);} */ -->
+svg { display: inline; width: 100%; min-width: inherit; max-width: inherit; height: 100%; min-height: inherit; max-height: inherit; transform: scale(1,1);}
+</style>
+</head>
+
+<body>
+<div id='mainTitle'>OPTEX __model_and_rev__ Ver:__version__</div>
+<div id='datetime'></div>
+<div id='using'>Zoom In Out: Mouse Wheel, DblClick[Shift], Move Window: Drag, Copy Event : Ctrl_A + Ctrl_C</div>
+<div id='location'></div>
+<div id='content'>
+<svg id="svg_id" viewBox="__svg_viewBox__" class="noscale">
+<g id="rls_zone">__boundary_of_zone__</g>
+<g id="rls_mask">__boundary_of_mask__</g>
+<g id="rls_allocate">__boundary_of_allocate__</g>
+<g id="rls_grid">__boundary_of_grid__</g>
+<g id="rls_area">__boundary_of_area__</g>
+<g id="rls_frame">__boundary_of_frame__</g>
+<g id="rls_event">__boundary_of_event__</g>
+<text text-anchor="middle" x="0" y="0" style="font-size: 60pt;fill: white;font-family: monospace;">(-)<- X ->(+)</text>
+<text text-anchor="middle" x="0" y="-40" style="font-size: 60pt;fill: white;font-family: monospace;transform: scale(1,-1);">Y</text>
+<text text-anchor="middle" x="0" y="-140" style="font-size: 60pt;fill: white;font-family: monospace;transform: scale(1,-1);">(+)</text>
+</svg>
+</div>
+<script>
+// Don't use window.onLoad like this in production, because it can only listen to one function.
+window.onload = function() {
+// Expose to window namespase for testing purposes
+	var panZoom = svgPanZoom('#svg_id', {
+		viewportSelector: '.svg-pan-zoom_viewport',
+		zoomEnabled: true,
+		maxZoom: 100,
+		controlIconsEnabled: false,
+		fit: true,
+		center: true,
+		// viewportSelector: document.getElementById('demo-tiger').querySelector('#g4') // this option will make library to misbehave. Viewport should have no transform attribute
+	});
+	<!-- var window.panZoomTiger = svgPanZoom('#svg_id', { -->
+		<!-- viewportSelector: '.svg-pan-zoom_viewport', -->
+		<!-- panEnabled: true,  -->
+		<!-- controlIconsEnabled: true,  -->
+		<!-- zoomEnabled: true,  -->
+		<!-- dblClickZoomEnabled: true,  -->
+		<!-- mouseWheelZoomEnabled: true,  -->
+		<!-- preventMouseEventsDefault: true,  -->
+		<!-- zoomScaleSensitivity: 0.2,  -->
+		<!-- minZoom: 0.5,  -->
+		<!-- maxZoom: 10,  -->
+		<!-- fit: true,  -->
+		<!-- contain: false,  -->
+		<!-- center: true,  -->
+		<!-- refreshRate: 'auto',  -->
+		<!-- beforeZoom: function(){},  -->
+		<!-- onZoom: function(){},  -->
+		<!-- beforePan: function(){},  -->
+		<!-- onPan: function(){},  -->
+		<!-- onUpdatedCTM: function(){},  -->
+		<!-- customEventsHandler: {},  -->
+		<!-- eventsListenerElement: null  -->
+	<!-- }); -->
+	
+};
+
+
+
+</script>
+</body>
+</html>

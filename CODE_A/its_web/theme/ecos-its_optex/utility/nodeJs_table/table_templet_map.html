@@ -1,0 +1,291 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+<!-- __svg_pan_zoom__ -->
+__smoothiecharts__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+<!-- 참고 : http://games.23inch.de/chime/doc/ -->
+var track_A = '';
+for(k = l = 11025; k--;) {
+  track_A += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33)* Math.min((l-k)/83,k/l)*127 + 128);
+}
+var track_B = '';
+for(k = 11025; k--;) {
+  track_B += String.fromCharCode(Math.sin(k/44100*2*Math.PI*659.26)*127+128);
+}
+var track_C = '';
+for(i=0;i<4;) { // i: 반복 횟수 8 - 2초
+  i++;
+  for(k = l = 11025; k--;) {
+    track_C += String.fromCharCode(Math.sin(k/44100*2*Math.PI*587.33) * Math.min((l-k)/83,k/l) * (i%2&&i%8-3?99:33) + 128);
+  }
+}
+function beep_A() {
+    var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\0'+track_A));
+    snd.play();
+}
+function beep_B() {
+    var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_B));
+    snd.play();
+}
+function beep_C() {
+    var snd = new Audio('data:audio/wav;base64,UklGRjUrAABXQVZFZm10IBAAAAABAAEARKwAAESsAAABAAgAZGF0YREr'+btoa('\0\5'+track_C));
+    snd.play();
+}
+
+// Milliseconds
+function sleep_ms(millisecs) {
+    var initiation = new Date().getTime();
+    while ((new Date().getTime() - initiation) < millisecs);
+}
+
+function myYRangeFunction(range) {
+// TODO implement your calculation using range.min and range.max
+	var min = range.min;
+	var max = range.max;
+	return {min: min, max: max};
+}
+
+</script>
+
+<script>
+
+// Create the charts 참고 : http://smoothiecharts.org/builder/ http://jsfiddle.net/h4wcu/14/ 
+var series1 = new TimeSeries();
+var series2 = new TimeSeries();
+var series3 = new TimeSeries();
+var series4 = new TimeSeries();
+
+var socketio = io.connect();
+socketio.on("message_to_client", function(data) {
+	var id = data['id'];
+	var name = data['name'];
+	var lat_s = data['lat_s'];
+	var lng_s = data['lng_s'];
+	var lat_e = data['lat_e'];
+	var lng_e = data['lng_e'];
+	var dist = data['dist'];
+	var alarmOut = data['alarmOut'];
+	var sensorType = data['sensorType'];
+	var zone = data['zone'];
+	var length = data['length'];
+	var time = data['time'];
+	var speed = data['speed'];
+	var move = data['move'];
+	var level = data['level'];
+	var beep = data['beep'];
+	var now = new Date();
+
+	var target = "zone_"+zone;
+	var targetC = "zoneC_"+zone;
+	var nowTime = now.getFullYear() + "-" + (now.getMonth()+1) + "-" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+
+	<!-- 00000100 와 같은 릴레이 상태를 구분하여 화면 출력 함 -->
+	var alert = alarmOut.split(""),i;
+	for (i=0; i<alert.length; i++) {
+		// console.log("#relay_" + i + " = " + alert[i]);
+		if(parseInt(alert[i])) {
+			$("#relay_" + i).prop('checked', true); //
+		} else {
+			$("#relay_" + i).prop('checked', false); //
+		}
+	}
+
+	if ($("#beepToggle").prop('checked')) beep_A();
+
+	if(zone >= 0) {
+		$("#heartbit").css("fill", "crimson");
+		<!-- $("#location").html("Distent:" + dist/1000 + "m Length:" + length + " Time:" + time + " Speed:" + speed + " Move:" + move + " Level:" + level + " SType:" + sensorType); -->
+		$("#location").html("D:" + dist + " S:" + speed  + " L:" + level + " Z:" + zone);
+		$("#" + target).css("background-color", "crimson");
+		$("#" + targetC).html(parseInt($("#" + targetC).html()) + 1);
+		$("#info_dist").html(parseInt(dist/10) + "cm");
+		$("#info_level").html(level + "Lv");
+		$("#info_speed").html(parseInt(speed) + "km/h");
+	} else {
+		$("#heartbit").css("fill", "green");
+		$("#location").html("<font color='red'>❤</font> " + nowTime);
+	}
+	
+	$("#sensorTitle").html(name + " " + id);
+	// 가로막대 깜빡임
+	$("#heartbit").clearQueue();
+	$("#heartbit").effect( "pulsate", {}, 10 );
+	
+	// 실시간 차트그리기
+	if(zone >= 0) {
+		if (typeof zone != 'undefined') {
+			series1.append(new Date().getTime(), parseInt(zone));
+		}
+		if (typeof level != 'undefined') {
+			series2.append(new Date().getTime(), parseInt(level));
+		}
+		if (typeof speed != 'undefined') {
+			series3.append(new Date().getTime(), parseInt(speed));
+		}
+		series4.append(new Date().getTime(), 1);
+	} 
+	
+	sleep_ms(1);
+	series1.append(new Date().getTime(),0); // 막대그래프를 위해서 값을 초기화 함
+	series2.append(new Date().getTime(),0); // 막대그래프를 위해서 값을 초기화 함
+	series3.append(new Date().getTime(),0); // 막대그래프를 위해서 값을 초기화 함
+	series4.append(new Date().getTime(),0); // 막대그래프를 위해서 값을 초기화 함
+
+	
+	// // 감지된 이벤트
+	// $("#"+id).css("fill", "red");
+	
+	// console.log(id, name, lat_s, lng_s, lat_e, lng_e, dist, alarmOut, sensorType, zone, length, time, speed, move, level, nowTime); // 지도에 위치 표시
+
+});
+</script>
+
+<script>
+$(document).ready(function() {
+	var innerTable = "<table style='text-align: center;width:100%'><tr><td class=tableTd><ol class=groupZone>";
+	for(j=0;j<100;j++){
+		innerTable += "<li class=singleZone><div class=zone id=zone_"+j+">"+j+"</div><div class=zoneC id=zoneC_"+j+">0</div></li>";
+	}
+	innerTable += "</ol></td></tr></table>";
+	$( "#outputDiv" ).html(innerTable);
+	
+	$( ".zoneC" ).click(function() {
+		$( this ).html('0'); // 누적 카운트를 초기화
+		$( this ).prop('title',  "Reset date at " + new Date()); // 클릭한 날자를 타이틀로 지정
+	});
+
+	$( "#location" ).click(function() {
+		$("#outputDiv").toggle();
+	});
+
+	// 실시간 차트그리기
+	// Create the charts 참고 : http://smoothiecharts.org/builder/ http://jsfiddle.net/h4wcu/14/ 
+	var chart1 = new SmoothieChart({
+		millisPerPixel:60,
+		scaleSmoothing:1,
+		interpolation:'step',
+		grid:{fillStyle:'#000000',strokeStyle:'rgba(255,255,255,0.40)',millisPerLine:6000,verticalSections:0},
+		labels:{fillStyle:'silver',fontSize:11,precision:0},
+		yRangeFunction:myYRangeFunction,
+		});
+	chart1.addTimeSeries(series1, {lineWidth:0.4,strokeStyle:'#ff80ff',fillStyle:'#000000'}); // 그래프 선두께,색,채움
+	chart1.streamTo(document.getElementById('smoothie-chart1'), 0); // Delay 0 ~ 2000
+	
+	var chart2 = new SmoothieChart({
+		millisPerPixel:60,
+		scaleSmoothing:1,
+		interpolation:'step',
+		grid:{fillStyle:'#000000',strokeStyle:'rgba(255,255,255,0.40)',millisPerLine:6000,verticalSections:0},
+		labels:{fillStyle:'silver',fontSize:11,precision:0},
+		yRangeFunction:myYRangeFunction,
+		});
+	chart2.addTimeSeries(series2, {lineWidth:0.4,strokeStyle:'#ffff80',fillStyle:'#000000'}); // 그래프 선두께,색,채움
+	chart2.streamTo(document.getElementById('smoothie-chart2'), 0); // Delay 0 ~ 2000
+	
+	var chart3 = new SmoothieChart({
+		millisPerPixel:60,
+		scaleSmoothing:1,
+		interpolation:'step',
+		grid:{fillStyle:'#000000',strokeStyle:'rgba(255,255,255,0.40)',millisPerLine:6000,verticalSections:0},
+		labels:{fillStyle:'silver',fontSize:11,precision:0},
+		timestampFormatter:SmoothieChart.timeFormatter,
+		yRangeFunction:myYRangeFunction,
+		});
+	chart3.addTimeSeries(series3, {lineWidth:0.4,strokeStyle:'#80ffff',fillStyle:'#000000'}); // 그래프 선두께,색,채움
+	chart3.streamTo(document.getElementById('smoothie-chart3'), 0); // Delay 0 ~ 2000
+	
+	var chart4 = new SmoothieChart({
+		millisPerPixel:86400, // 24시간 -> 초
+		scaleSmoothing:1,
+		interpolation:'step',
+		grid:{fillStyle:'#000000',strokeStyle:'rgba(255,255,255,0.40)',millisPerLine:3600000,verticalSections:0},
+		labels:{fillStyle:'white',fontSize:11,precision:0},
+		timestampFormatter:SmoothieChart.timeFormatter,
+		tooltip:true,
+		labels:{disabled:true},
+		// yRangeFunction:myYRangeFunction,
+		// horizontalLines:[{color:'orange',lineWidth:0.5,value:0.5}], // 가로선 색, 두께, 위치
+		});
+	chart4.addTimeSeries(series4, {lineWidth:0.1,strokeStyle:'gray',fillStyle:'#000000'}); // 그래프 선두께,색,채움
+	chart4.streamTo(document.getElementById('smoothie-chart4'), 0); // Delay 0 ~ 2000
+	
+//	// Add random data periodically
+//	setInterval(function(){
+//		series3.append(new Date().getTime(), Math.random());
+//		series4.append(new Date().getTime(), Math.random());
+//		sleep(1);
+//		series4.append(new Date().getTime(),0); // 막대그래프를 위해서 값을 초기화 함
+//	}, 1000);
+	
+});
+</script>
+
+<style>
+.float_R {float: right;}
+.groupZone { list-style-type: none; color: white; margin: 0; padding: 0; width: 100%; } 
+.singleZone { display: inline-block; font-size: 8pt; text-align: center; } 
+.zone {font-size: 6pt; background-color: #1c9aaf; text-align: center; border-radius:2px; margin: 1px; width: 32px; }
+.zoneC {font-size: 6pt; background-color: #075865; text-align: center; border-radius:2px; margin: 1px; width: 32px; }
+.t_relay { width: 20px; text-align: center; font-size: 7pt; margin: 0; border-radius: 2px; padding: 2px; background-color: gray; color: white; }
+
+.hide { display:none; }
+.center { text-align: center; }
+.relative { position: relative; }
+.evtInfo { margin: 40px; font-size: 40pt; }
+.evtTitle { clear:both; }
+.charts { clear:both; }
+
+.magenta { color: magenta; }
+.cyan { color: cyan; }
+.yellow { color: yellow; }
+
+body { background: black; color: silver; }
+div { font-size: 7pt; }
+</style>
+</head> 
+
+<body>
+
+<div id='sensorTitle'>sensorTitle</div>
+<table style='width:100%;'><tr>
+<!-- # bit0：경보A 출력(감지=1) -->
+<!-- # bit1：경보B 출력(감지=1) -->
+<!-- # bit2：감시중 출력(정상=1) -->
+<!-- # bit3：탬퍼 출력(리개 개방=1) -->
+<!-- # bit4：점검 입력(쇼트=1) -->
+<!-- # bit5：예비 입력A(쇼트=1) -->
+<!-- # bit6：예비 입력B(쇼트=1) -->
+<!-- # bit7：탬퍼 입력(리개 개방=1) -->
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_0" disabled /><label for="relay_0">T_I</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_1" disabled /><label for="relay_1">R_B</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_2" disabled /><label for="relay_2">R_A</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_3" disabled /><label for="relay_3">Rly</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_4" disabled /><label for="relay_4">T_O</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_5" disabled /><label for="relay_5">WRK</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_6" disabled /><label for="relay_6">Z_B</label></td>
+<td class="t_relay"><input class="i_relay" type="checkbox" id="relay_7" disabled /><label for="relay_7">Z_A</label></td>
+<td class="t_relay float_R"><input class="i_relay" type="checkbox" id="beepToggle" /><label for="beepToggle">BP</label></td>
+</tr></table>
+<div id='location' style="cursor:pointer;">location</div>
+<svg style="width:100%;height:10px;margin-top:4px;">
+	<rect id="heartbit" width="100%" height="100%" stroke="balck" stroke-width="1px"; fill="crimson" />
+</svg>
+<div id='outputDiv' style="display:none;">outputDiv</div>
+<div class="evtTitle">Event</div><div class="charts center"><canvas id="smoothie-chart4" width="1000" height="40"></canvas></div>
+<div class="evtTitle">Zone</div><div class="charts center"><canvas id="smoothie-chart1" width="1000" height="60"></canvas></div>
+<div class="evtTitle">level</div><div class="charts center"><canvas id="smoothie-chart2" width="1000" height="60"></canvas></div>
+<div class="evtTitle">Speed</div><div class="charts center"><canvas id="smoothie-chart3" width="1000" height="60"></canvas></div>
+<div class="center"><span class="evtInfo magenta" id="info_dist">info_dist</span><span class="evtInfo yellow" id="info_level">info_level</span><span class="evtInfo cyan" id="info_speed">info_speed</span></div>
+
+</body>
+</html>

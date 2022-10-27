@@ -1,0 +1,4180 @@
+2019년12월10일 19시39분
+	- Make SD Image
+		2019-12-10_Linux4.9.41#1023.img
+
+		2019-12-09_LG_linux4.14.98#1200.img
+			- LG 납품
+		2019-12-10_8.img
+			- 8기가 시도: 실패
+			- 그누보드 기존 버전은 잘동작함
+			- 최신으로 설치후 저장이 않되고 관리자 로그인 않되는 현상
+
+		2019-12-10_Linux4.19.42#1219.img
+			///////////// 검증 완료
+			- 기무사 버전과 가장 가까운 버전
+			- GUI는 다름
+
+		2019-12-10_Linux4.19.66#1253.img
+			///////////// 검증 필요
+			- 기무사 설치 직후 OS 업그래이드 한 버전
+			- 라이센스 서버 구동
+
+2019년12월11일 09시39분
+	- Modify
+		ITS System Status
+			- ITS System OS Version
+			- Date of Last Code Update
+		its로 로그인 하면 화면 하단에 시스템 상태가 표시된다.
+			예:
+			현재시간:	Current Time: Wed Dec 11 09:58:35 KST 2019
+			OS 버전:	V #1219 SMP Tue May 14 21:20:58 BST 2019
+			수정일:	Update@ 2019-12-11 08:56:21.629900898 +0900
+			동작시간:	Running up 11 hours, 52 minutes
+			사용량:	Total_Used_Free : 15G 2.5G 12G 18%
+			온도:	CPU Temp: 57.996'C
+		
+2019년12월11일 09시55분
+	- Notepad ++
+		파이선스크립트 - 타임스템프 설정
+			- C:\Users\daivoc\AppData\Roaming\Notepad++\plugins\config\PythonScript\scripts\Time.py
+			
+2019년12월11일 10시49분
+	- Solved
+		boot error "WiFi if country not set"
+			- /etc/wpa_supplicant/wpa_supplicant.conf
+				ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+				update_config=1
+
+2019년12월11일 17시49분
+	- Manual
+		ITS를 위한 Raspbian Server 환경설정 및 프로그램 설치 방법 
+		-> G:\Development\ecos_its-OPTEX\install.txt
+		-> http://115.139.183.226/optex_web/bbs/board.php?bo_table=g100t100&wr_id=327
+		
+2019년12월11일 20시21분
+	- Solved
+		boot error "Failed to start dhcpcd on all interfaces raspberry pi"
+		disable dhpc
+				disable -> sudo systemctl disable dhcpcd.service
+
+2019년12월11일 21시27분
+	- Solved : phpmyadmin 매 페이지 마다 오류페이지 출력
+		https://medium.com/@chaloemphonthipkasorn/fix-bug-phpmyadmin-sql-lib-php-php7-2-ubuntu-16-04-836049630a40
+		/usr/share/phpmyadmin/libraries/sql.lib.php - line 601
+		|| (count($analyzed_sql_results[‘select_expr’] == 1) -> || (count($analyzed_sql_results[‘select_expr’]) == 1
+		
+2019년12월12일 04시40분
+	- GPIO : 신규 및 삭제 버튼 숨김
+			<?php if ($write_href) { ?><li><a href="<?php echo $write_href ?>" class="btn btn-sm btn-primary hide"><?php echo $SK_BO_New[ITS_Lang]?></a></li><?php } ?>
+			<?php if ($delete_href) { ?><li><a href="<?php echo $delete_href ?>" class="btn btn-sm btn-primary hide"><?php echo $SK_BO_Delete[ITS_Lang]?></a></li><?php } ?>
+	
+2019년12월12일 05시06분
+	- Modify : G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\utility\status\status_union.php
+		tail.php에서 status_union으로 이동
+
+2019년12월12일 10시13분
+	- Modify : system status
+		G:\Development\ecos_its-OPTEX\its_utility\systemStatus.py
+		G:\Development\ecos_its-OPTEX\its_web\utility\systemExec\systemStatus.php
+		G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\utility\status\status_union.php
+		
+		Current Time: 2019-12-12 10:12:33
+		Running up 1 day, 12 hours, 6 minutes
+		Disk Total:15G Used:2.5G(18%) Avail:12G
+		Memory Total:948M Used:317M Avail:631M
+		CPU Temp: 54.23'C
+		Web@ 2019-12-12 07:59:51
+		Code@ 2019-12-12 10:05:07
+		V #1219 SMP Tue May 14 21:20:58 BST 2019
+
+		Current Time: 2019-12-12 19:55:28
+		Running up 11 minutes
+		Disk Total:7.1G Used:2.4G(36%) Avail:4.4G
+		Memory Total:948M Used:574M Avail:374M
+		CPU Temp: 54.768'C
+		Web Update @2019-12-12 14:45:01
+		Code Update@ 2019-12-12 19:38:07
+		OS Linux 4.19.75-v7+ #1270 SMP Tue Sep 24 18:45:11 BST 2019
+		Python 2.7.16, PHP 7.3.11-1~deb10u1, Node v10.15.2 , DB mysql Ver 15.1 Distrib 10.3.17-MariaDB
+
+2019년12월12일 11시50분
+	- GPWIO : 신규 및 삭제 버튼 숨김
+		<?php if ($write_href) { ?><li><a href="<?php echo $write_href ?>" class="btn btn-sm btn-primary hide"><?php echo $SK_BO_New[ITS_Lang]?></a></li><?php } ?>
+		<?php if ($delete_href) { ?><li><a href="<?php echo $delete_href ?>" class="btn btn-sm btn-primary hide"><?php echo $SK_BO_Delete[ITS_Lang]?></a></li><?php } ?>
+
+2019년12월13일 05시46분
+	- 그누보드 업그레이드 준비 (Ver 5.4.1.2)
+		아마 멀고도 험란함이 ...
+		
+2019년12월13일 07시43분
+	- 그누 미러폴더 생성
+		# 설치
+			git clone https://github.com/gnuboard/gnuboard5.git newFolder
+		# 업데이트 - 새 버전 나올 때 마다...
+			git pull 
+			
+		/home/pi/ecos_its
+
+2020-02-04 13:26:26
+	레이저 스케너 차량 카운터 시작
+	프로그램 명 : optex_BIND
+
+2020-02-04 14:10:25
+	optex_BIND Masking Form에 6개의 ID 적용
+
+2020-02-07 17:09:25
+G:\Development\ecos_its-OPTEX\its_optex\optex_VEHICLE\optex_VEHICLE.py
+	try: #
+		with open(config["path"]["img"]+'/ims/'+config["file"]["rls_map"]) as content_file:
+			html_background = '<image'+content_file.read().split('<image')[1].replace('</svg>', '')
+			# print html_background
+	SVG 파일에서 이미지만 추출 하는 기능
+
+2020-02-07 18:47:49
+G:\Development\ecos_web-management\theme\management\utility\ecosCompanyList\ajax_company_list.php
+						// result_html += "<td id='" + data[i].ib_co_wr_id + "' name='ib_co_wr_id' class='td_num'>" + (i+1) + "</td>";
+						result_html += "<td id='" + data[i].co_wr_id + "' name='ib_co_wr_id' class='td_num'>" + (i+1) + "</td>";
+		
+2020-02-08 10:57:26
+	New Product
+		Vehicle Counter using VIIK Relay
+		Skin: w_optex_VHC_CNT_GPIO
+		
+2020-02-09 14:26:47
+	내용물을 접속로그로 대치함
+	$access_log = $write['wr_content'].'<br>'.$_SERVER[REMOTE_ADDR].':'.date("Y-m-d h:i:s").'-'.$title_msg.'-'.$member['mb_name'].'<br>';
+		<tr class="wr_content_tr w_hide">
+			<th scope="row"><label for="wr_content"><?php echo $SK_BO_History[ITS_Lang]?></label></th>
+			<td class="wr_content">
+				<?php /* if($write_min || $write_max) { ?>
+				<!-- 최소/최대 글자 수 사용 시 -->
+				<p id="char_count_desc">이 게시판은 최소 <strong><?php echo $write_min; ?></strong>글자 이상, 최대 <strong><?php echo $write_max; ?></strong>글자 이하까지 글을 쓰실 수 있습니다.</p>
+				<?php } ?>
+				<?php echo $editor_html; // 에디터 사용시는 에디터로, 아니면 textarea 로 노출 ?>
+				<?php if($write_min || $write_max) { ?>
+				<!-- 최소/최대 글자 수 사용 시 -->
+				<div id="char_count_wrap"><span id="char_count"></span>글자</div>
+				<?php } */ ?>
+				<textarea id="wr_content" name="wr_content" class="" maxlength="65536" style="width:100%;height:300px"><?php echo $access_log ?></textarea>
+
+			</td>
+		</tr>
+
+2020-02-09 17:27:25
+	JSON Php 생성법
+	G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\skin\board\w_optex_COUNTER_GPIO\write_update.skin.php
+
+2020-02-10 10:43:01
+	Count GPIO를 GPCIO로 이름 변경
+
+2020-02-10 17:46:27
+	command
+	넷캣(Netcat)은 TCP나 UDP 프로토콜을 사용하는 네트워크 연결에서 데이터를 읽고 쓰는 간단한 유틸리티 프로그램
+	netcat(nc 명령어)
+
+	(nc server) 192.168.10.200
+
+	[TERM1] 
+		# nc -l 7979
+		(nc client) 192.168.10.200
+
+	[TERM2] 
+		# nc 192.168.10.200 7979 (# telnet 192.168.10.200 7979)
+		hi
+		hello netcat!!!!
+		<CTRL + D>
+
+	예)
+		- 포트를 통한 데이터 읽기:
+		$ nc -l 38087
+
+		- 아이피:포트를 통한 데이터 쓰기:
+		$ echo "id=g300t100_192_168_0_102_0013,name=Relay 02,beep=1,status=9,shot=,video=,count=1,block=0,msg=Error_Event" | nc 192.168.101.81 38087
+		$ echo "id=g500t900_192_168_101_100_0002,name=Relay 02,beep=1,status=9,shot=,video=,count=1,block=0,msg=Error_Event" | nc 119.207.126.79 38087
+		$ echo "id=g400t300_192_168_0_20_0001,name=GIKENT,beep=1,status=9,shot=http://192.168.168.30/cgi-bin/trace.cgi,video=,count=1,block=0,msg=Tailing" | nc 192.168.0.4 38087
+
+		- 파일 전송 (File transfer)
+			저장할 파일 이름
+				# nc -l 19999 > filename.out
+			파일 전송
+				# nc 192_168_101_100 19999 < filename.in
+
+2020-02-10 20:24:42
+	피플 카운터 테스트
+
+		import socket
+		import sys
+
+		# Create a TCP/IP socket
+		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+		# Connect the socket to the port on the server given by the caller
+		server_address = ('192.168.0.249', 30001)
+		sock.connect(server_address)
+		try:
+			message = '502000030373900000016BUFFERCLEAR00200'
+			print >>sys.stderr, 'sending "%s"' % message
+			sock.sendall(message)
+			while True:
+				data = sock.recv(1024)
+				print data.decode()
+				break
+		finally:
+			sock.close()
+
+
+
+
+		import socket
+		import sys
+
+		# Create a TCP/IP socket
+		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+		# Connect the socket to the port on the server given by the caller
+		server_address = ('192.168.0.249', 30001)
+		sock.connect(server_address)
+		try:
+			message = '50201003037390000003200000000000099999999999911110000'
+			print >>sys.stderr, 'sending "%s"' % message
+			sock.sendall(message)
+			while True:
+				data = sock.recv(1024)
+				print data.decode()
+				break
+		finally:
+			sock.close()
+
+2020-02-11 21:37:00
+확인요 G:\Development\ecos_its-OPTEX\its_optex\optex_RLS_R\optex_RLS_R.py
+	try:
+		with open(ITS_img_data + 'ims/'+ITS_rls_map_file) as content_file:
+			html_background = content_file.read()
+	except EnvironmentError:
+		print('Open error %s' % ITS_rls_map_file) #config["file"]["rls_map"])
+		html_background = ''
+
+
+2020-02-12 06:54:01
+기존 RLS 
+
+2020-02-13 07:25:31
+	princetax@naver.com - 투윈 세금 이메일
+
+2020-02-14 09:18:13
+	GIKENP - 카메라를 이용한 사람 카운터
+	VEHICLE 레이저센서를 이용한 차량 카운터
+	GPCIO - 릴레이센서를 이용한 자동차나 사람 카운터
+
+2020-02-18 17:03:34
+	기켄 센서 코멘드라인 프로그램 완성
+	G:\Development\ecos_its-OPTEX\its_partner\its_GIKENP\giken_test_01.py
+
+2020-02-19 07:51:30
+	버전 2
+		라즈베리 4
+			Current Time: 2020-02-19 07:52:05
+			Running up 4 weeks, 4 days, 16 hours, 47 minutes
+			Disk Total:15G Used:2.3G(17%) Avail:12G
+			Memory Total:3999M Used:572M Avail:3427M
+			CPU Temp: 48.199'C
+			Web Update @2020-02-18 18:46:36
+			Code Update@ 2020-02-18 18:46:33
+			OS Linux 4.19.75-v7l+ #1270 SMP Tue Sep 24 18:51:41 BST 2019
+			Python 2.7.16, PHP 7.3.11-1~deb10u1, Node v10.15.2 , DB mysql Ver 15.1 Distrib 10.3.17-MariaDB , GNU 5.4.1.2
+			Copyright © ECOS Co., Ltd. All rights reserved.
+
+		라즈베리 3
+			Current Time: 2020-02-19 07:52:32
+			Running up 12 hours, 59 minutes
+			Disk Total:15G Used:2.6G(19%) Avail:12G
+			Memory Total:948M Used:408M Avail:540M
+			CPU Temp: 46.16'C
+			Web Update @2020-02-18 17:38:38
+			Code Update@ 2020-02-18 17:38:24
+			OS Linux 4.19.42-v7+ #1219 SMP Tue May 14 21:20:58 BST 2019
+			Python 2.7.13, PHP 7.0.33-0+deb9u3, Node v8.11.1 , DB mysql Ver 15.1 Distrib 10.1.38-MariaDB , GNU 5.1.16
+			Copyright © ECOS Co., Ltd. All rights reserved.
+
+			참고: 
+				176K /tmp/2020-02-19_db.sql
+				60M 2020-02-19_its.tar
+				143M 2020-02-19_web.tar
+
+2020-02-19 08:36:40
+	- Make SD Image : 완성버전
+		# $ lsblk 명령을 이용해서 데이터 이미지 크기를 확인후 용량을 넘을 시점에 파일 생성을 Ctrl+C로 중지 한다.
+		SD -> File 
+		sudo dd if=/dev/sdc of=~/update/sd_images/ITS_4G_20210228.img bs=4M status=progress
+
+		File -> SD
+		sudo dd if=~/update/sd_images/ITS_4G_20210228.img of=/dev/sdc bs=4M status=progress
+
+		scp pi@115.139.183.226:/home/pi/update/sd_images/rpi4_ITS_20210223.img .
+
+		# https://raspberrypi.stackexchange.com/questions/7177/image-of-a-16gb-card-containing-unpartitioned-space-at-the-end-truncating-possi
+		# 생성된 이미지중 실제 용량 크기를 알아낸다. 
+		$ fdisk -lu ITS_4G_20210228.img
+			Disk ITS_4G_20210228.img: 9.4 GiB, 10095689728 bytes, 19718144 sectors
+			Units: sectors of 1 * 512 = 512 bytes
+			Sector size (logical/physical): 512 bytes / 512 bytes
+			I/O size (minimum/optimal): 512 bytes / 512 bytes
+			Disklabel type: dos
+			Disk identifier: 0xf81ef550
+
+			Device                 Boot  Start     End Sectors  Size Id Type
+			ITS_4G_20210228.img1        8192  532479  524288  256M  c W95 FAT32 (LBA)
+			ITS_4G_20210228.img2      532480 7679999 7147520  3.4G 83 Linux
+
+		# 데이터의 마지막 섹터이후 이미지를 제거한다.
+		$ sudo truncate --size=$[(7679999+1)*512] ITS_4G_20210228.img
+
+2020-02-19 09:11:55
+	타이틀 변경 - ITS -> ECOS
+		<a class="navbar-brand" href="/">ECOS Security</a>
+
+2020-02-20 19:30:37
+	G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\skin\board\w_optex_BRAST\write.skin.php
+	신규 등록시 - 내용을 입력하세요. 오류 수정
+
+2020-02-20 19:32:09
+	현쟁테스트 2일차 저녁 스타벅스 카페에 있음
+
+2020-02-21 19:18:03
+	3일간 현장테스트 완료
+
+	라즈베리 3 B+ 를 이용한 프로그램 종료
+	과거 버전의 닉네임은 버전 에플임
+	라즈베리 4 를 사용하는 버전의 닉네임은 바나나
+		- OS Linux 4.19.75-v7l+ #1270 SMP Tue Sep 24 18:51:41 BST 2019
+		- Python 2.7.16, 
+		- PHP 7.3.11-1~deb10u1, 
+		- Node v10.15.2 , 
+		- DB mysql Ver 15.1 Distrib 10.3.17-MariaDB , 
+		- GNU 5.4.1.2 : 그누보드
+
+		- 제품관련 일반명을 ITS에서 ECOS(이코스)로 바꿈
+		- 옵택스란 이름은 이코스로 버꾸는 과정임
+
+2020-02-22 08:25:25
+	Bookmarks - https://vscode.tistory.com/entry/Bookmarks	
+
+2020-02-22 08:43:58
+	RLS_R 기능중 사용자 영역설정값은
+	- 4개(0,1,2,3)까지 가능하며
+	- 각각에 따른 오디오와 
+	- 디비시스 카메라 연동에 사용됨
+	- IMS에는 적용않됨
+
+	출력 예: Area_3 인경우)
+	- audio : 		Audio Out. gunshot_S1.mp3 0.813781 vol:400 ID:3
+	- event log: 	Host_01 192.168.0.103 38087 RLS-2020I g200t210_192_168_0_202_0004 A0(3)
+
+2020-02-22 18:02:04
+	릴레이 접점을 통한 방향성 카운터
+	G:\Development\ecos_its-OPTEX\its_GPCIO\GPCIO.js
+	- 물체가 시작과 종료 센서로 진행시 두 센서의 중첩이 된후 마무리 되어야 한다.
+	- 물체의 길이가 두 센서간격 보다 작은 경우
+		- 물체의 이동방향을 알기 위해 시작 지점에 방향성을 확인하기 위한 두개의 센서가 필요 하다.
+		- 양방향인 경우 총4개의 센서가 필요로 한다.
+
+2020-02-23 05:33:24
+	G:\Development\ecos_its-OPTEX\its_GPCIO\GPCIO.js
+	1km = 1000m = 100000cm
+	1 cm to km = 길이 값을 100000(으)로 나눕니다.
+
+	1h = 60m = 3600s = 3600000 ms
+	1 ms to hours = 시간 값을 3.6e+6(으)로 나눕니다.
+
+	ex: https://www.inchcalculator.com/convert/centimeter-per-second-to-kilometer-per-hour/
+		https://www.checkyourmath.com/convert/speed/per_millisecond_hour/cm_per_millisecond_km_per_hour.php
+
+		5 cm/s = (5 × 0.036) = 0.18 km/h
+		5 cm/ms = (5 × 36 / 1) = 0.18 km/h
+		Formula:
+			cm/ms x 36 = km/h
+
+		Calculations:
+			25 cm/ms x 36 = 900 km/h
+
+		Result:
+			25 cm/ms is equal to 900 km/h
+
+		Cm와 mSec를 속도km/h로 변환 - cm / ms  x 36
+		var mSec = stamp - oldStamp;
+		console.log('4:XX:>>>', mSec, cfg.sensor.speed.distance / mSec * 36);
+
+2020-02-24 18:03:51
+	Spotter RF Setup
+	정상동작 버전: pi@OKITS:~/SRF $ rcp 192.168.0.5:/home/pi/ecos_its-OPTEX_20190427_국립중앙_Demo/its_SRF/* .
+
+	- Apache 서버의 DocumentRoot 설정 
+		/etc/apache2/sites-available - http://192.168.0.5/optex_web/bbs/board.php?bo_table=g100t100&wr_id=249&sfl=wr_subject%7C%7Cwr_content&stx=apache+its_web&sop=and
+	- Network Connect to Sensor Class 
+	- ITS IP : 102.168.0.128
+	- sudo ifconfig eth1 169.254.254.1 up
+	- ping 169.254.254.254 -> Sensor IP
+
+
+2020-02-24 18:42:12
+	G:\Development\ecos_its-OPTEX\its_optex\optex_RLS_R\run_optex.py
+	한대 이상의 RLS 가 실행시
+
+2020-02-26 08:25:45
+	LiST:
+		cats = ['Tom', 'Snappy', 'Kitty', 'Jessie', 'Chester']
+		- List append() vs extend()
+		- Merging multiple lists using + operator
+
+	Tuples:
+		months = ('January','February','March','April','May','June','July','August','September','October','November','  December')
+
+	Dictionary:
+		phonebook = {'Andrew Parson':8806336, 'Emily Everett':6784346, 'Peter Power':7658344, 'Lewis Lame':1122345}
+		- Copy : newDict = wordsDict.copy()
+		- Append a new key value pair in dictionary : 
+			wordFreqDic.update( {'before' : 23} )
+			wordFreqDic.update([ ('where', 4) , ('who', 5) , ('why', 6) , ('before' , 20)] )
+
+2020-02-27 07:47:42
+	GPWIO 접점 오류 수정
+		G:\Development\ecos_its-OPTEX\its_GPWIO\GPWIO.js
+		// var id = linkID[obj['id']]; // 변경 전
+		var id = portID[obj['id']]; // 변경 후
+
+2020-02-27 13:21:19
+	RLS_R의 optex_RLS_alarm.py(G:\Development\ecos_its-OPTEX\its_optex\optex_RLS_R\optex_RLS_alarm.py)은 
+	포트 50001번이 아닌 포트 4000으로 부터 센서가 보내는 정보로 동작 한다.
+
+
+2020-02-27 18:58:23
+	G:\Development\ecos_its-OPTEX\its_optex\optex_RLS_R\optex_RLS_R.py
+	RLS 의 영역을 0에서 3까지 나누는 경우 
+	관련 영역의 이벤트와 GPWIO를 통해 릴레이 출력 실행
+
+		if db_gpwioV and db_gpwioG: # 알람 길이(시간)과 포트 번호가 존재 하면 
+			if setZoneTime:
+				pass
+			else:
+				logger.info("Zone Alert ..")
+				setZoneTime = datetime.datetime.now()
+				Process(target=alertOut, args=(db_gpwioR,db_gpwioV)).start()
+
+2020-02-28 06:53:51
+	ARP(Address Resolution Protocol)
+	$ arp : 접근가능한 아이피 목록 보기
+	$ nmap : 기본명령 아님
+
+
+2020-02-28 08:15:03
+	ACU
+	G:\Development\ecos_its-OPTEX\its_web\theme\ecos-its_optex\skin\board\w_include_acu\acuWrite.php
+	ITS_ACU Oneway Protocol(Relay Out)
+		- IP, Port, ID, Hold Time
+			- IP, Port: ITS_ACU Network IP and Port
+			- ID: Relay Port ID ( 1 - 16 )
+			- Hold Tile(HT) : Toggle Cycle, 
+				0: No Cycle
+				0 < : Float(Cycle)
+		- Ex:
+			- 192.168.0.40||3200||12||1.24
+			- 192.168.0.40||3200||12||0
+
+	# 사용자 영역 설정이 정의되면 실행된다.
+	# 필요에 따라 Zone 1에서 Zone4 영역 구분에 따라 원격 릴레이를 정의할수 있다.
+	
+
+	# 원격 릴레이 컨트롤 (ACU)
+	G:\Development\ecos_its-OPTEX\its_optex\optex_RLS_R\optex_RLS_R.py
+
+		setAlertTimeACU = 0 ##  원격알람 발생시 타이머 적용
+		.........
+		#  원격알람 발생시 타이머 적용
+		if db_itsACU:
+			if itsACU_Time and setAlertTimeACU:
+				if (datetime.datetime.now() - setAlertTimeACU).total_seconds() > itsACU_Time:
+					setAlertTimeACU = 0
+		
+		..............
+		# 원격 릴레이 컨트롤
+		db_itsACU = row["wr_10"] ## 
+		if db_itsACU:
+			itsACU_IP, itsACU_Port, itsACU_ID, itsACU_Zone, itsACU_Time, itsACU_Enc = db_itsACU.split('||') 
+			itsACU_Time = float(itsACU_Time)
+			# print itsACU_IP, itsACU_Port, itsACU_ID, itsACU_Zone, itsACU_Time, itsACU_Enc
+		.....................
+
+		####### 실시간 원격(ACU) 알람신호 전송 #######
+		if eventID:
+			# print setAlertTimeACU, itsACU_IP, itsACU_Port, itsACU_ID, itsACU_Zone, itsACU_Time, itsACU_Enc
+			if itsACU_IP and itsACU_Port and itsACU_ID and itsACU_Time: # 출력지속시간:초( itsACU_Time:)
+				if setAlertTimeACU:
+					## 경보발생 시간 이내에 발생하는 이벤트는 그 시간이 끝날떄 까지 무시 한다.
+					pass
+				else:
+					# if eventID == itsACU_Zone: 값에 따라 릴레이 ID를 설정가능 하다.
+					logger.info("Remote ACU Alert IP:%s, Port:%s, ID:%s, Zone:%s, Time:%s"%(itsACU_IP, itsACU_Port, itsACU_ID, itsACU_Zone, itsACU_Time))
+					setAlertTimeACU = datetime.datetime.now()
+					# Process(target=alertOutACU, args=(itsACU_IP, itsACU_Port, itsACU_ID, itsACU_Time, itsACU_Enc)).start()
+					Process(target=alertOutACU, args=(itsACU_IP, itsACU_Port, 25, itsACU_Time, itsACU_Enc)).start()
+
+	G:\Development\ecos_its-OPTEX\its_optex\optex_RLS_R\module.py
+		def alertOutACU(ip, port, id, dueTime, enc): # GPIO Port No. , Action Due
+			# print ip, port, id, dueTime, enc
+			insert_ACU_GPWIO(ip=ip, port=port, id=id, status=0, msg='', enc=enc)
+			time.sleep(dueTime)
+			insert_ACU_GPWIO(ip=ip, port=port, id=id, status=1, msg='', enc=enc)
+			# print "Done: %s"%dueTime
+		......................
+		def insert_ACU_GPWIO(ip, port, id, status, msg, enc): 
+			node = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			try: 
+				node.connect((ip,int(port)))
+				# node.connect(('localhost', 8040))
+				msg_data = ('id=%s,status=%s,msg=%s,enc=%s' % (id, status, msg, enc))
+				return node.send(msg_data) 
+			except socket.error:
+				return 0
+			except socket.timeout:
+				return 0
+			finally:
+				node.close() 
+
+2020-03-14 02:49:44
+	기켄 모니터리 포트 디바이스 아이디 - 192.168.[168].30 
+	php : G5_CU_GIKEN_PORT_OUT + explode(".", $view['w_device_id'])[2]; 
+	python : port_out = share["port"]["gikenp"]["portOut"] + int(row['w_device_id'].split('.')[-2])
+
+2020-03-27 17:57:27
+	기켄 아이피는 RLS 나 BSS 와 같이 192.168.168.30 형식으로 설정 되어야 한다.
+		owner['sensor']['ip'] = '.'.join(owner['interface']['ip'].split('.')[:-1]+["30"])
+
+2020-04-05 05:49:52
+	기켄 실시간 모니터링
+	분, 시, 일, 주, 월 간 데이타 수집
+
+	if dateS[0:10] > saveDate[0:10]: # 분단위 시간이 바뀌면
+		print "Check Hour :", read_hourly_sum()
+
+		if dateS[0:8] > saveDate[0:8]: # 날짜가 바뀌면
+			print "Check Day :", read_daily_sum()
+
+			if dateS[0:6] > saveDate[0:6]: # 월이 바뀌면
+				print "Check Month :", read_monthly_sum()
+
+			if int(dateS) and int(saveDate): # 요일이 바뀌면
+				dS = datetime.date(int(dateS[0:4]), int(dateS[4:6]), int(dateS[6:8]))
+				dE = datetime.date(int(saveDate[0:4]), int(saveDate[4:6]), int(saveDate[6:8]))
+				if dS.weekday() < dE.weekday(): # 요일이 바뀌면
+					print "Check Week :", read_weekly_sum()
+
+2020-04-10 06:10:43
+	노드JS에서 데이터 베이스 접속 오류에 따른 오류 대응
+	Error: Connection lost: The server closed the connection.
+	at Protocol.end (/home/pi/GIKENP/node_modules/mysql/lib/protocol/Protocol.js:113:13)
+
+	해결:
+	function queryTodaySum() {
+		var con = mysql.createConnection({host:cfg["mysql"]["host"], user:cfg["mysql"]["user"], password:cfg["mysql"]["pass"], database:cfg["mysql"]["name"]});
+		con.on('error', function (err) {
+			console.log('queryTodaySum()' + err.toString());
+			if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+				queryTodaySum(); // 접속 재시도
+			}		
+		});	
+	....
+
+
+2020-04-10 17:22:17
+	OpenCV
+	설치가이드: https://docs.opencv.org/3.4/d2/de6/tutorial_py_setup_in_ubuntu.html
+		sudo apt update -y
+		sudo apt upgrade -y
+		sudo apt install python-opencv -y
+		test:
+			import cv2 as cv
+			print(cv.__version__)
+	아래는 차선책
+	https://github.com/dltpdn/opencv-for-rpi
+		apt update
+			$ sudo apt update -y
+			$ sudo apt upgrade -y
+			$ sudo apt-get -y install git
+
+		Download
+			~ $ git clone https://github.com/dltpdn/opencv-for-rpi.git
+			~ $ cd opencv-for-rpi
+			~/opencv-for-rpi $ cd <rasbian_version>/<opencv_version> #cd stretch/3.4.0
+
+		Installation
+			~/opencv-for-rpi/stretch/3.4.0 $ sudo apt-get install -y ./OpenCV*.deb
+		
+		Check the result
+			~ $ dpkg -l | grep opencv
+
+
+		VideoStream Install
+			sudo pip install imutils
+			설치오류시
+			$ pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <package_name>
+
+
+		Example
+			https://github.com/ageitgey/face_recognition
+				- 연관: https://github.com/jeffskinnerbox/ts_dweepy
+			https://github.com/jeffskinnerbox/people-counter
+			https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/py_video_display/py_video_display.html
+			https://blog.naver.com/chandong83/220829044388
+
+2020-04-10 19:49:47
+	그레픽 지원 - GUI
+		Raspberry Pi Lite 환경에 설치함
+		xwindow : 설치결과 가볍고 빠름 좋음 !!!
+			sudo apt-get install --no-install-recommends xserver-xorg
+			sudo apt-get install --no-install-recommends xinit
+			sudo apt-get install xfce4 xfce4-terminal
+
+	테스트 결과 가벼움(브라우져는 따로 깔아야 함) - 
+		sudo apt-get update
+		sudo apt-get install raspberrypi-ui-mods
+		sudo apt-get install chromium-browser --yes
+
+2020-04-10 20:35:39
+	RPI Camera
+		https://www.raspberrypi.org/documentation/configuration/camera.md
+
+
+2020-04-19 21:52:41
+	셀프타이머 예제 1
+		#!/usr/bin/env python
+		# -*- coding: utf-8 -*-  
+
+		# https://exceptionshub.com/cancellable-threading-timer-in-python.html
+		import threading
+		import time
+
+		class TimerClass(threading.Thread):
+			def __init__(self):
+				threading.Thread.__init__(self)
+				self.event = threading.Event()
+				self.count = 10
+
+			def run(self):
+				while self.count > 0 and not self.event.is_set():
+					print self.count
+					self.count -= 1
+					self.event.wait(1)
+				print "Bye"
+
+			def stop(self):
+				self.event.set()
+
+		tmr = TimerClass()
+		tmr.start()
+		time.sleep(3)
+		tmr.stop()
+
+		tmr = TimerClass()
+		tmr.start()
+		time.sleep(5)
+		tmr.stop()
+
+
+	셀프타이머 예제 2
+		#!/usr/bin/env python
+		# -*- coding: utf-8 -*-  
+		# https://stackoverrun.com/ko/q/13017770
+		import time
+		import threading
+
+		class Check(threading.Thread):
+			def __init__(self):
+				threading.Thread.__init__(self)
+				# An event can be useful here, though a simple boolean works too since
+				# assignment is atomic in Python.
+				self.stop_event = threading.Event()
+
+			def run(self):
+				i = 0
+				while not self.stop_event.is_set():
+					time.sleep(1)
+					i = i + 1
+					print(i)
+					if(i==5):
+						self.stopped = True
+
+			def stop(self):
+				# Tell the thread to stop...
+				self.stop_event.set()
+				# Wait for the thread to stop
+				self.join()
+
+		inst = Check()
+		inst.start()
+		# Do stuff...
+		time.sleep(4)
+		inst.stop()
+
+		inst = Check()
+		inst.start()
+		time.sleep(6)
+		inst.stop()
+
+		# Thread has stopped, but the main thread is still running...
+		print("I'm still here!")
+
+2020-04-27 06:36:28
+	에니메이션 CSS, 깜빡임
+
+	https://jsfiddle.net/hajtwbot/
+
+	<span class="blinking">Am I blinking?</span>
+
+	.blinking{
+		animation:blinkingText 1s infinite;
+	}
+	@keyframes blinkingText{
+		0%{	color: #0ff;font-size:20pt;	}
+		49%{ color: #f00; }
+		50%{ color: #0f0; }
+		99%{ color:#00f; }
+		100%{ color: #ff0;font-size:10pt; }
+	}
+
+2020-04-29 06:34:48
+	nodejs 설치
+		sudo apt-get install nodejs -y
+	npm 설치
+		sudo apt-get install npm -y
+
+	NodeJS 기본 package
+		$ npm install socket.io
+		$ npm install node-mysql
+	선택 package
+		$ npm install onoff // 자바용 GPIO 제어 모듈
+		$ npm install -s node-onvif // http://192.168.0.5/optex_web/bbs/board.php?bo_table=g100t100&wr_id=265
+
+2020-04-29 06:58:21
+	특허 
+	Patent App. No. : 10-2018-0055444 (1020180055444)
+
+2020-05-06 06:55:49
+	GPIO
+		GPIO.setmode(GPIO.BOARD) - 핀 번호를 라즈베리파이 보드(BOARD) 번호로 참조
+		GPIO.setmode(GPIO.BCM) - BCM(Broadcom chip-specific pin numbers)모드
+		GPIO.setup(pin, GPIO.IN) - 핀을 입력으로 설정
+		GPIO.setup(pin, GPIO.OUT) - 핀을 출력으로 설정
+		GPIO.output(pin, GPIO.HIGH) - 디지털 출력을 HIGH로 설정
+		GPIO.output(pin, GPIO.LOW) - 디지털 출력을 LOW로 설정
+		GPIO.input(pin) - 디지털 값을 읽음.
+		GPIO.cleanup() - GPIO 모듈의 점유 리소스를 해제
+		GPIO.VERSION - RPi.GPIO 모듈의 버전값을 갖는 변수
+		출처: https://studymake.tistory.com/498 [스터디메이크]	
+
+2020-05-07 09:10:40
+	텐서플로어, 케라스 설치
+	https://github.com/hsekia/learning-keras/wiki/How-to-install-Keras-to-Ubuntu-18.04
+
+
+	Installing Latest Tensor flow and Keras on RASPBERRY PI
+	https://medium.com/@abhizcc/installing-latest-tensor-flow-and-keras-on-raspberry-pi-aac7dbf95f2
+
+	Tensor flow
+		python version 2.7
+		wget https://github.com/lhelontra/tensorflow-on-arm/releases/download/v1.8.0/tensorflow-1.8.0-cp27-none-linux_armv7l.whl
+		sudo pip install tensorflow-1.8.0-cp27-none-linux_armv7l.whl
+		sudo pip uninstall mock
+		sudo pip install mock
+
+	Keras
+		sudo apt-get install python-numpy
+		sudo apt-get install python-opencv -y
+		sudo apt-get install libblas-dev
+		sudo apt-get install liblapack-dev
+		sudo apt-get install python-dev 
+		sudo apt-get install libatlas-base-dev
+		sudo apt-get install gfortran
+		sudo apt-get install python-setuptools
+		sudo apt-get install python-scipy
+		sudo apt-get update
+		sudo apt-get install python-h5py
+		sudo pip install keras 
+
+2020-05-11 08:24:58
+	소켓 스레드
+
+	#####################################
+	## 외부명령 실행을 위한 소켓 
+	## https://stackoverflow.com/questions/47562879/server-loop-using-python-sockets-and-threading-module
+	class Server:
+		def __init__(self, host, port):
+			self.host = host
+			self.port = port
+			self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self.server.bind((self.host, self.port))
+			self.server.listen(5)
+
+		def listen_for_clients(self):
+			print('\tListening...')
+			while True:
+				client, addr = self.server.accept()
+				print('Accepted Connection from: ' + str(addr[0]) + ':' + str(addr[1]))
+				Thread(target=self.handle_client, args=(client, addr)).start()
+
+		def handle_client(self, client_socket, address):
+			size = 1024
+			while True:
+				try:
+					# send getting after receiving from client
+					client_socket.sendall('Welcome to server'.encode())
+					print('Received: ' + data.decode() + ' from: ' + str(address[0]) + ':' + str(address[1]))
+					break
+				except socket.error:
+					client_socket.close()
+					return False
+
+			client_socket.sendall('Received request for exit. Deleted from server threads'.encode())
+			# send quit message to client too
+			client_socket.close()
+
+	if __name__ == '__main__':
+		## Server Loop Using Python Sockets and Threading module
+		exCmd = Server('localhost', 9999)
+		## start listening for clients
+		exCmd.listen_for_clients()	
+
+
+	## https://stackoverflow.com/questions/11865685/handling-a-timeout-error-in-python-sockets
+	# client.py
+	import socket
+	from socket import AF_INET, SOCK_DGRAM
+
+	def main():
+		client_socket = socket.socket(AF_INET, SOCK_DGRAM)
+		client_socket.settimeout(1)
+		server_host = 'localhost'
+		server_port = 1234
+		while(True):
+			client_socket.sendto('Message', (server_host, server_port))
+			try:
+				reply, server_address_info = client_socket.recvfrom(1024)
+				print reply
+				print server_address_info
+			except socket.timeout:
+				#more code
+
+
+	## python multiprocessing socket server example
+	## https://gist.github.com/berendiwema/1816201#file-server-py-L4
+
+	# client.py
+	import socket
+	if __name__ == "__main__":
+		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		sock.connect(("localhost", 9000))
+		data = "some data"
+		sock.sendall(data)
+		result = sock.recv(1024)
+		print result
+		sock.close()
+
+	# server.py
+	import multiprocessing
+	import socket
+	def handle(connection, address):
+		try:
+			print("Connected %r at %r"%(connection, address))
+			while True:
+				data = connection.recv(1024)
+				if data == "":
+					print("Socket closed remotely")
+					break
+				print("Received data %r"%data)
+				connection.sendall(data)
+				print("Sent data")
+		except:
+			print("Problem handling request")
+		finally:
+			print("Closing socket")
+			connection.close()
+
+	class Server(object):
+		def __init__(self, hostname, port):
+			self.hostname = hostname
+			self.port = port
+
+		def start(self):
+			self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self.socket.bind((self.hostname, self.port))
+			self.socket.listen(1)
+
+			while True:
+				conn, address = self.socket.accept()
+				process = multiprocessing.Process(target=handle, args=(conn, address))
+				process.daemon = True
+				process.start()
+				print("Started process %r"%process)
+
+	if __name__ == "__main__":
+		server = Server("0.0.0.0", 9000)
+		try:
+			print("Listening")
+			server.start()
+		except:
+			logging.exception("Unexpected exception")
+		finally:
+			lprint("Shutting down")
+			for process in multiprocessing.active_children():
+				print("Shutting down process %r"%process)
+				process.terminate()
+				process.join()
+		print("All done")
+
+
+2020-05-11 21:49:10
+	https://qastack.kr/raspberrypi/23182/how-to-stream-video-from-raspberry-pi-camera-and-watch-it-live
+	비디오 스트리밍
+	sudo apt-get install vlc
+	sudo modprobe bcm2835-v4l2
+	cvlc v4l2:///dev/video0 --v4l2-width 1920 --v4l2-height 1080 --v4l2-chroma h264 --sout '#standard{access=http,mux=ts,dst=0.0.0.0:12345}'
+
+
+2020-05-12 15:20:02
+	마스커레이드, 포트 포워딩
+	sudo sysctl -w net.ipv4.ip_forward=1 ## 포트포워딩 허용
+
+	# 차단 아이피 FORWARD
+	sudo iptables -D FORWARD -i eth0 -j ACCEPT
+	sudo iptables -t nat -D POSTROUTING -o eth1 -j MASQUERADE
+	sudo iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 8080 -j DNAT --to-destination 192.168.168.30:80
+
+	# 연결 아이피 FORWARD
+	MASQUERADE 
+	## eth0 -> eth1
+	sysctl -w net.ipv4.ip_forward=1 ## 포트포워딩 허용
+	sudo sysctl -w net.ipv4.ip_forward=1 ## 포트포워딩 허용
+	sudo iptables -A FORWARD -i eth0 -j ACCEPT
+	sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 8080 -j DNAT --to-destination 192.168.168.30:80
+
+2020-05-13 09:28:35
+	MP3 to Base64 Converter
+	https://codepen.io/xewl/pen/NjyRJx
+
+2020-05-13 10:28:14
+	## 백그라운드 포트 감지
+	## https://stackoverflow.com/questions/22648765/how-to-run-a-background-procedure-while-constantly-checking-for-input-threadin
+
+		import socket
+		import threading
+
+		def process():
+			sock = socket.socket()
+			sock.bind(("127.0.0.1",9000))
+			sock.listen(3)
+			print "Waiting on connection"
+			conn = sock.accept()
+			print "Client connected"
+
+			while True:
+				m = conn[0].recv(4096)
+				conn[0].send(m[::-1])
+				print m
+			sock.shutdown(socket.SHUT_RDWR)
+			sock.close()
+
+		thread = threading.Thread(target=process)
+		thread.daemon = True
+		thread.start()
+
+2020-05-13 17:55:54
+	## 디비 -> 테이블 백업 mysql table backup
+		mysql -uits -pGXnLRNT9H50yKQ3G its_web -B -e "select * from \`w_log_sensor_g200t100_192_168_0_202_0016\`;" | sed 's/\t/","/g;s/^/"/;s/$/"/;s/\n//g' > `hostname -I | cut -d' ' -f1`.csv
+
+
+2020-05-14 08:03:24
+	기켄 Anti Denial & Tailing 
+	run(GIKENT)	->	GIKENT.py	<->	GIKEN.js	<->	GIKEN.html	<->	User 
+					^
+					- Sensor
+					- Relay
+
+2020-05-19 05:39:11
+
+	# 사용중인 Port 차단 및 허용
+	# https://www.thegeekdiary.com/centos-rhel-how-to-block-incoming-and-outgoing-ports-using-iptables/
+	$ sudo iptables -A INPUT -p tcp --destination-port [port number] -j DROP
+
+	사용중인 Port List
+	$ sudo netstat -tlnp
+		Active Internet connections (only servers)
+		Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+		tcp        1      0 127.0.0.1:35169         0.0.0.0:*               LISTEN      883/python
+
+	$ sudo lsof -i -P -n | grep LISTEN
+		systemd      1        root   55u  IPv6  11611      0t0  TCP [::1]:2947 (LISTEN)
+		systemd      1        root   56u  IPv4  12585      0t0  TCP 127.0.0.1:2947 (LISTEN)
+		shellinab  591 shellinabox    4u  IPv4  15757      0t0  TCP *:4200 (LISTEN)
+
+2020-05-21 14:29:03
+	라이센스 서버 아이피 변경
+	G:\Development\ecos_its-OPTEX\its_common\licenseSrv.py
+
+
+2020-05-24 15:19:56
+	비트토랜트 파이선프로그램
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-  
+
+'''
+설치: 비트 토랜드 다운로드 코드
+	$ sudo apt-get install python-libtorrent
+
+	$ python tt.py
+	tt.py:1: RuntimeWarning: to-Python converter for boost::shared_ptr<libtorrent::alert> already registered; second conversion method ignored.
+	import libtorrent as lt
+	starting ubuntu-14.04.3-desktop-amd64.iso
+	99.98% complete (down: 192.0 kb/s up: 7.0 kB/s peers: 19) downloading             ubuntu-14.04.3-desktop-amd64.iso complete
+	'''
+
+	import libtorrent as lt
+	import urllib2
+	import sys
+	import time
+
+	# public_torrent = 'http://releases.ubuntu.com/14.04.3/ubuntu-14.04.3-desktop-amd64.iso.torrent'
+	public_torrent = 'https://torrent.vet/data/file/torrent_movie_eng/15700652944728.torrent'
+
+	def downloadTorrent(torrent_url):
+		"""
+		Download torrent using libtorrent library.
+		Torrent will be stored at the current directory.
+		"""
+		ses = lt.session()
+		ses.listen_on(6881, 6891)
+
+		hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11','Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8','Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3','Accept-Encoding': 'none','Accept-Language': 'en-US,en;q=0.8','Connection': 'keep-alive'}
+
+		req = urllib2.Request(public_torrent, headers=hdr)
+
+		# read torrent file as bytes
+		# torrent = lt.bdecode(urllib2.urlopen(torrent_url, 'rb').read())
+		torrent = lt.bdecode(urllib2.urlopen(req).read())
+
+		info = lt.torrent_info(torrent)
+		h = ses.add_torrent({'ti': info, 'save_path': './'})
+		ses.start_dht()
+		print 'starting', h.name()
+
+		while (not h.is_seed()):
+			s = h.status()
+
+			state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating', 'checking fastresume']
+			print '\r%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s            ' % (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, s.num_peers, state_str[s.state]),
+			sys.stdout.flush()
+
+			time.sleep(1)
+
+		print h.name(), 'complete'
+
+	downloadTorrent(public_torrent)
+
+
+2020-05-25 16:17:38
+	TTS 구글 음성 만들기
+	wget -q -U Mozilla -O output.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q='목표물을 확인하였습니다.'&tl=ko-kr"
+
+2020-06-06 05:44:22
+	OpenCV Set Option
+	0. CV_CAP_PROP_POS_MSEC Current position of the video file in milliseconds.
+	1. CV_CAP_PROP_POS_FRAMES 0-based index of the frame to be decoded/captured next.
+	2. CV_CAP_PROP_POS_AVI_RATIO Relative position of the video file
+	3. CV_CAP_PROP_FRAME_WIDTH Width of the frames in the video stream.
+	4. CV_CAP_PROP_FRAME_HEIGHT Height of the frames in the video stream.
+	5. CV_CAP_PROP_FPS Frame rate.
+	6. CV_CAP_PROP_FOURCC 4-character code of codec.
+	7. CV_CAP_PROP_FRAME_COUNT Number of frames in the video file.
+	8. CV_CAP_PROP_FORMAT Format of the Mat objects returned by retrieve() .
+	9. CV_CAP_PROP_MODE Backend-specific value indicating the current capture mode.
+	10. CV_CAP_PROP_BRIGHTNESS Brightness of the image (only for cameras).
+	11. CV_CAP_PROP_CONTRAST Contrast of the image (only for cameras).
+	12. CV_CAP_PROP_SATURATION Saturation of the image (only for cameras).
+	13. CV_CAP_PROP_HUE Hue of the image (only for cameras).
+	14. CV_CAP_PROP_GAIN Gain of the image (only for cameras).
+	15. CV_CAP_PROP_EXPOSURE Exposure (only for cameras).
+	16. CV_CAP_PROP_CONVERT_RGB Boolean flags indicating whether images should be converted to RGB.
+	17. CV_CAP_PROP_WHITE_BALANCE Currently unsupported
+	18. CV_CAP_PROP_RECTIFICATION Rectification flag for stereo cameras (note: only supported by DC1394 v 2.x backend currently)
+
+
+2020-06-14 10:30:26
+	$ vncserver -geometry 1600x900
+
+	신규 버철 스크린- [해상도] [:아이디]
+	$ vncserver-virtual -geometry 1600x900 :5
+
+	프로세서 삭제 :아이디
+	$ vncserver-virtual -kill :5
+
+	$ sudo vi /etc/rc.localhost
+		su pi -c 'vncserver-virtual -geometry 1600x900 :1 > /tmp/vnc_log'
+
+	https://www.raspberrypi.org/documentation/remote-access/vnc/
+
+	Installing VNC
+	VNC is already installed on the full Raspberry Pi OS image.
+	Enabling VNC Server raspi-config:
+	$ sudo raspi-config
+		Navigate to Interfacing Options -> select VNC > Yes.	
+
+2020-06-14 13:15:50
+	Boot Up Screen: Boot Log And Logo Remove
+	https://scribles.net/customizing-boot-up-screen-on-raspberry-pi/
+
+	https://retropie.org.uk/forum/topic/14299/tutorial-remove-boot-text-on-the-raspberry-pi-for-noobs
+
+	Remove Rainbow Screen:
+		$ sudo vi /boot/config.txt
+		# Then add below line at the end of the file.
+			disable_splash=1
+		# Disable under-voltage warning - 번개표시
+			avoid_warnings=1
+	Remove Boot Messages:
+	$ sudo vi /boot/cmdline.txt
+		# 변경 “console=tty1” 을 “console=tty3” 으로. This redirects boot messages to tty3.
+		# 추가 loglevel=3 logo.nologo
+		예)
+		console=serial0,115200 console=tty3 root=PARTUUID=78d050ac-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet loglevel=0 logo.nologo vt.global_cursor_default=0 plymouth.ignore-serial-consoles
+
+	Replace Splash Image:
+		wget http://192.168.0.102/theme/ecos-its_optex/img/logo.png
+		sudo cp ./logo.png /usr/share/plymouth/themes/pix/splash.png
+
+	# Disable:
+	# 	그레픽 모드에서 설정
+	# 	Preferences -> raspi-config -> Display -> Disabla ALL
+
+	# Remove text message under splash image:
+	# $ sudo vi /usr/share/plymouth/themes/pix/pix.script
+	# 	Then, remove (or comment out) four lines below:
+	# 		message_sprite = Sprite();
+	# 		message_sprite.SetPosition(screen_width * 0.1, screen_height * 0.9, 10000);
+	# 		my_image = Image.Text(text, 1, 1, 1);
+	# 		message_sprite.SetImage(my_image);
+
+
+2020-06-15 08:05:35
+	한글 깨짐 설치
+	sudo apt-get install fonts-unfonts-core
+
+
+2020-06-19 11:11:15
+	Raspberry USB Canera, Webcamera 설치
+	로지택 예:
+		https://webnautes.tistory.com/909
+
+	pi@raspberrypi:~ $ ls /dev/video*
+		/dev/video0
+	
+	>> cv2.VideoCapture(0) 으로 접속
+
+2020-06-21 05:23:00
+	sudo apt-get install python-pip
+	sudo apt-get install python3-pip
+
+	pip3 install opencv-python
+
+
+2020-06-25 09:22:00
+	kiosk 설치 키오스크
+
+	중간내용(https://blockdev.io/raspberry-pi-2-and-3-chromium-in-kiosk-mode/)
+
+	라이트 버전
+	이 접근 방식은 축소 된 Raspbian Lite 이미지에서 시작하여 기본적인 Chromium 기반 키오스크 작동에 필요한 종속성을 추가합니다. 
+	LXDE를 설치 한 후 터치 스크린도 지원합니다. 이미지는 약 2Gb에 들어옵니다.
+
+	1 단계 : Raspbian Lite SD 카드
+		Raspbian Lite를 다운로드 하십시오 .
+
+	2 단계 : 콘솔 액세스
+		sudo raspi-config.
+		옵션 3 (부팅 옵션)을 선택하십시오.
+		B2 (부트시 네트워크 대기)를 선택하십시오.
+
+	3 단계 : 모든 것이 최신 상태인지 확인
+		sudo apt-get update
+		sudo apt-get upgrade
+		sudo apt-get dist-upgrade
+
+	4 단계 : Chrome 등 설치
+		chromium-browser뿐만 아니라 unclutter과 (커서 숨길) lxde과 데스크탑 환경으로의 종속성을.
+		sudo apt-get install chromium-browser unclutter lxde
+
+	5 단계 : GUI 부팅 및 자동 로그인 활성화
+		sudo raspi-config.
+		옵션 3 (부팅 옵션)을 선택하십시오.
+		B1 선택 (데스크탑 / CLI)
+		B4 선택 (데스크톱 / 자동 로그인)
+
+	6 단계 : Chrome 자동 시작
+		# vi ~/.config/lxsession/LXDE/autostart 다음을 편집 하십시오.
+		sudo vi /etc/xdg/lxsession/LXDE-pi/autostart - root 개정
+		vi ~/.config/lxsession/LXDE/autostart - user 개정
+		
+		처음 3 줄은 화면 블랭킹을 방지합니다. 
+		한 프로젝트의 경우 터치 스크린을 사용하므로 수명을 유지하고 터치하여 깨울 수 있습니다.
+
+		@xset s off
+		@xset -dpms
+		@xset s noblank
+		@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
+		@chromium-browser --noerrdialogs --kiosk http://localhost --incognito --disable-translate
+
+		재부팅하면 완료됩니다!	
+
+2020-06-25 10:17:39
+	LAMP 설치 Apache Mysql PHP
+		#Update system
+		sudo apt-get update
+		sudo apt-get upgrade -y
+
+		#Install Apache2
+		sudo apt-get install apache2 -y
+		sudo a2enmod rewrite
+		sudo service apache2 restart
+
+		#Install PHP
+		sudo apt-get install php libapache2-mod-php -y
+
+		#Install MySQL
+		sudo apt-get install mariadb-server php-mysql -y
+		sudo service apache2 restart
+
+		#Install PhpMyAdmin
+		sudo apt-get install phpmyadmin -y	
+
+			# sudo /etc/init.d/mysql stop
+			# mysqld_safe --skip-grant-tables &
+			# mysql -u root -p
+			> use mysql;
+			> UPDATE mysql.user SET Grant_priv='Y', Super_priv='Y' WHERE User='phpmyadmin';
+			> FLUSH PRIVILEGES;
+			> quit
+			# sudo /etc/init.d/mysql start
+
+
+	한글 깨짐 설치
+	sudo apt-get install fonts-unfonts-core
+
+
+
+2020-06-25 10:51:07
+	RTSP stream and OpenCV (Python) - Stack Overflow
+
+	vcap = cv.VideoCapture("rtsp://192.168.0.110:8080/out.h264")
+	while(1):
+		ret, frame = vcap.read()
+		cv.imshow('VIDEO', frame)
+		cv.waitKey(1)
+
+2020-06-26 05:22:57
+	마우스 커서 감추기
+	$ sudo apt-get install unclutter
+	마우스 아이콘 바꾸기
+	$ lxappearance 
+
+
+2020-06-26 15:32:45
+	CHANGING THE MAXIMUM UPLOAD FILE SIZE
+	By default, the maximum upload file size for PHP scripts is set to 128 megabytes. However, you may want to change these limits. For example, you can set a lower limit to prevent users from uploading large files to your site. To do this, change the upload_max_filesize and post_max_size directives.
+
+	To ensure that file uploads work correctly, the post_max_size directive should be a little larger than the upload_max_filesize. For example, the following settings demonstrate how to set a file upload limit to 20 megabytes:
+
+	sudo vi /etc/php/7.3/apache2/php.ini
+
+	upload_max_filesize = 200M
+	post_max_size = 200M
+
+2020-06-29 09:25:15
+	mysql 30 days 한달(30일) 자료만 유지
+
+	delete_older_days(owner['log_table']['tbl_live'],owner['log_table']['tbl_life']) # owner['log_table']['tbl_life'] 일 이후 자려 삭제
+
+	PYTHON:
+		def delete_older_days(table, days): 
+			## 일정 기간 이후의 자료를 모두 삭제 한다.
+			# SELECT * FROM `w_log_gikenT_live_00303739` WHERE `w_stamp` < NOW() -INTERVAL 1 DAY
+			try:
+				conn = MySQLdb.connect(host=share['mysql']['host'], user=share['mysql']['user'], passwd=share['mysql']['pass'], db=share['mysql']['name'], charset='utf8', use_unicode=True) 
+				cursor = conn.cursor()
+				query = "DELETE FROM %s WHERE `w_stamp` < NOW() -INTERVAL %s DAY " % (table,days)
+				cursor.execute(query) # create table
+				conn.commit()
+				return cursor.lastrowid
+			except MySQLdb.Error as error:
+				print(error)
+			except MySQLdb.Warning, warning:
+				pass
+			finally:
+				cursor.close()
+				conn.close()	
+
+	NODEJS
+		// 특정일 이후 자료 삭제
+		function deleteOlderDays(days='30') {
+			con.connect(function(err) {
+				var sql = "DELETE FROM "+cfg.table.imsData+" WHERE `w_stamp` < NOW() -INTERVAL "+days+" DAY ";
+				con.query(sql, function (err, result) {
+					// if (err) throw err;
+					if (err) logger('Function deleteOlderDays error:',err); //  throw err;
+					console.log(sql,result);
+				});
+			});
+		}
+		deleteOlderDays();
+
+2020-07-05 13:18:12
+	telegram cli Install 
+	텔레그램 설치 - 성공
+	http://www.jt360.net/home/tech-articles/install-and-configure-the-telegram-client-on-raspberry-pi  
+
+	git clone --recursive https://github.com/vysheng/tg.git && cd tg
+	git가 없는 경우 있는 장비에서 다운로드후 복제해온다. 
+
+		///////////////////////////////////////
+		텔레그램 봇 
+		https://github.com/vysheng/tg   이안에 다 있음
+		http://tech.whatap.io/2015/09/25/telegram-cli/
+
+		# sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson-dev libpython-dev make
+		# apt install git -y
+		// 원하는 폴더에서 한다.
+		# git clone --recursive https://github.com/vysheng/tg.git && cd tg
+		./configure
+		make
+
+		인증
+		# ./bin/telegram-cli -k tg-server.pub
+		비번요구시 가입비번이 아닌 숫자 비번 사용 : 1218
+		핸드폰 번호를 입력하고, 핸드폰으로 온 인증코드를 입력합니다.
+		CLI를 통해서 Telegram 에 로그인이 되면, Telegram 의 CLI 상태에 진입합니다.
+
+		# 중요: 프로그램을 데몬으로 띄우고 포트 쓰기 방식이 면리 함
+		$ cd /home/pi/tg/ && bin/telegram-cli -vvvvRC -k tg-server.pub -W -d -P 60000 &
+		$ cd /home/pi/tg/ && bin/telegram-cli -vvvvRC -k tg-server.pub -W -dL tg_log.txt -P 60000 &
+		su pi -c "(cd /home/pi/tg/ && bin/telegram-cli -vvvvRC -k tg-server.pub -W -d -P 60000)&"
+
+		# 위 명령을 /etc/rc.local 에 넣으면 편리 - 근데 자동 실행이 않된다.
+		# systemctl enable rc-local
+
+		쉘프로그램 - tg.sh
+		#!/bin/sh
+		# Send msg/photo/text etc. using Telegram message service => (https://github.com/vysheng/tg/blob/master/README.md#supported-commands)
+		(echo "$@" | nc 127.0.0.1 60000)&
+		$ ./tg.sh msg daivoc test test test타임라인
+
+		$ mkdir HOME/bin
+		$ ln -s /home/ecos/tg/tg.sh .
+		$  tg.sh -> /home/ecos/tg/tg.sh*
+
+		예:
+		echo "msg daivoc 연습계임" | nc 127.0.0.1 60000 -q 1
+		echo "msg @ntserver 연습계임" | nc localhost 60000 -q 1
+		echo "send_file daivoc /etc/passwd" | nc 127.0.0.1 60000 -q 1
+		echo "send_photo @ntserver /usr/share/phpmyadmin/themes/pmahomme/img/sprites.png" | nc 127.0.0.1 60000 -q 1
+		echo "send_photo @ntserver /home/pi/img.jpg" | nc 127.0.0.1 60000 -q 1
+		echo "send_photo daivoc /home/pi/img.jpg" | nc 127.0.0.1 60000 -q 1
+
+		CLI 명령어는 아래 문서에서 찾을수 있습니다.
+		https://github.com/vysheng/tg/wiki/Telegram-CLI-Commands
+		다른 사람에게 메시지 보내기:
+		> msg @ntserver 연습계임
+		> msg daivoc 연습계임
+		> quit
+		halt
+
+2020-07-24 23:41:19
+	IMS -> its_acu 관련
+		"acu":{
+			"ip":"192.168.0.128",
+			"port":12345,
+			"id":23,
+			"time":2
+
+2020-07-25 12:04:05
+	ITS Program backup
+	- 관련폴더 및 파일리스트 데이터베이스와 설치목록은 파이선 모둘 목록 보기 명령임
+		- 파일
+			/etc/rc.local
+			/etc/network/interfaces 
+			/etc/sudoers 
+		- 폴더
+			/home/pi
+			/var/www/html/its_web
+		- 관련 데이터 베이스
+			- mysql 명령
+		- 설치된 모듈 목록
+			$ pip list
+
+	- 순서대로 실행하는 명령 및 복사방법
+		- pi로 로그인한 후 임시 폴더(backup)를 만든후 관련 파일 및 폴더를 복사한다.
+		- 복사가 완료되면 차일질라로 피씨에 복사한후 백업된 폴더는 삭제 한다.(용량이 충분하면 그냥 뇌둬도 됨)
+			# 임시방으로 이동
+				cd /tmp
+			# 폴더 생성	
+				mkdir /tmp/backup 
+			# 파일 복사	
+				cp /etc/rc.local /tmp/backup 
+			# 파일 복사	
+				cp /etc/network/interfaces /tmp/backup 
+			# 폴더 복사	(-R:서브폴더 포함 복사)
+				cp -R /home/pi /tmp/backup 
+			# 폴더 복사	
+				cp -R /var/www/html/its_web /tmp/backup 
+			# 모듈 목록 
+				pip list > /tmp/backup/pip_list.txt 
+			# 디비 백업	( 비번 : GXnLRNT9H50yKQ3G )
+				mysqldump -u its -p its_web > /tmp/backup/its-$(date +%F).sql 
+			# 목록 보기	
+				ls /tmp/backup
+			# 임시 백업 완료
+			# 압축 복사시간 단축
+				tar -cvf backup.tar /tmp/backup
+			# 파일질라로 backup(또는 backup.tar) 폴더(파일)를 피씨로 복사함
+			# 필요에 따라 backup 폴거 삭제
+				rm -rf backup
+
+	- 그외 유용한 명령어
+		- 디스크 사용량 보기
+			df
+		- CPU, Memory 사용량 보기
+			top
+
+2020-08-31 17:53:08
+	- 프로그램 업데이트 방법
+		서버 확인
+		$ ping 115.139.183.226
+
+		IP 네트워크
+		$ sudo ifconfig eth0 192.168.0.123 metmask 255.255.255.0 up
+
+		게이트웨이 확인 또는 추가, 삭제
+		$ route
+		$ sudo route add default gw 192.168.0.1
+		$ sudo route del default gw 192.168.0.1
+
+		원본 백업
+		$ cd ~ && ls && cp -R [프로그램명] 
+		cur_dir=${PWD##*/}
+
+		cp -R /home/bpacheco/Test1 "/home/bpacheco/Test2-$(date +"%m-%d-%y-%r")"
+
+		원격복사
+		$ scp -r -P 22 pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_MON_TBL/MON_TBL /home/pi
+		$ scp -r -P 22 pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_MON_TBL/MON_TBL .
+
+2020-09-02 09:37:36
+	- 유틸리티
+		G:\Development\ecos_its-OPTEX\its_utility\download_ITS.py
+
+	- 코드 다운로드
+		$ scp -r -P 22 pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_utility/utility/download_ITS.pyc ~/utility/
+		
+	- sd_images 다운로드
+		$ scp pi@115.139.183.226:/optex/pi/update/sd_images/20201112.img /mnt/c/Downloads/
+
+	- 기능
+		다운로드 서버로부터 업데이트된 프로그램을 다운로드 한다.
+		다운로드 서버로부터 신규 프로그램을 다운로드 한다.
+		기존 프로그램이 있을시 다운로드 전에 백업을 수행 한다.
+		백업은 프로그램 폴더명에 날짜를 추가한다.
+
+	- 방법
+		사전정보: 서버IP, 프로그램명, 접속암호
+		프로그램은 utility 내에 상주 한다.
+		실행: $ python download_ITS.pyc 서버IP 프로그램명
+		실행시 아이피가 접속가능 한지 확인 한다.
+		실행시 관련 프로그램이 있는지 확인 한다.
+		다운로드시 서버접속 권한절차에 따른 비밀번호를 요청 한다.
+
+
+2020-09-02 10:25:50
+	잉크스케이브를 통한 IMS 배경 백터이미지 생성
+	도움말: https://inkscape.org/ko/doc/keys092.html
+	- 순서
+		- 배경 이미지 부르기: Ctrl + O
+		- 요소 그리기
+		- 사용가능한 요소
+		- 원(F5), 타원(F5), 사각형(F4), 다각형(*), 윤곽선(Shift + F6) : circle, path, polygon, rect, ellipse
+		- 가장 많이 사용하는 요소 다각형 그리기
+		- Shift + F6
+		- 모든 요소는 직선으로 그린다.
+		- 곡선이 필요한 부분은 객체편집(F2)을 통해 원하는 변(두 꼭지점 사이)을 드레깅 한후 
+		- 미세한 커브는 컨트롤 포인트를 조정해서 마춘다.
+		http://tavmjong.free.fr/INKSCAPE/MANUAL/html/Paths-Bezier-Curves.html
+
+	- 요소 편집
+		- Shift+Ctrl+F : 
+		http://tavmjong.free.fr/INKSCAPE/MANUAL/html/Attributes-Fill-Stroke.html
+		- 색 채우기(Fill)를 한후 이후 투명도는 알파값으로만 할 것
+		http://tavmjong.free.fr/INKSCAPE/MANUAL/html/Attributes-Fill-Stroke.html#Attributes-Color 
+		- 윤곽선 칠하기는 정의하지않음[?]으로 선택
+		- 흐림(0)과 불투명도(100)는 기본값 사용
+
+	- XML 편집 
+		- Shift_Ctrl_X:
+		http://tavmjong.free.fr/INKSCAPE/MANUAL/html/XML-Basic.html 
+		- XML 속성중 ID는 IMS에서 키값으로 사용된다.(수정가능)
+		- id, label, style은 필요시 수정
+
+		복사열 감지
+
+2020-09-22 09:21:13
+	Jquery HTML 태그 파싱
+		var ids = $("svg > g > g").map(function() {
+			return this.id;
+		}).get();
+		console.log(ids);
+	또는
+		var svgGroup = '';
+		$("svg > g > g").each(function() {
+			svgGroup += '<input type="button" class="subBtn objectFit" value="'+this.id+'">';
+		});
+		$("#svgGroup").html(svgGroup);
+		console.log(svgGroup);
+
+2020-09-23 09:06:19
+	IMS 그룹 모아보기 기능 추가
+		목적: 다층 및 대형 구조를 직관적 인지를 향상시키는 기능을 제공 한다. 
+		방법: SVG(인크스케이프) 생성시 그룹태그인 <g>를 사용한다.
+			- 기본적으로 두번째 그룹(svg -> g -> g)에 해당하는 테그의 id값을 기준으로 정의된다.
+			- SVG 내에 해당 그룹이 존재하면 IMS설정에서 [Map Manager] -> [Set Group]를 통해 확인 가능 하며
+			- IMS 실행시 우측상단 [화면제어] -> [Set Group]를 통해 확인 가능하다.
+			- 단 SVG 내에 그룹이 존재하지 않으면 기능은 비활성화 된다.
+			- 활성화된후 표시되는 정열순서와 버튼명은 SVG 생성시 그룹순서와 그룹 ID명을 따른다.
+			- ID명은 영문,숫자의 한 단어로 표기 해야 하며 중복되어서는 않된다. 
+
+2020-09-23 09:57:58
+	SVG 요소를 IMS 바탕화면으로 사용하기
+		목적: 기존의 이미지만을 바탕으로 사용하던 방법에서 정밀도가 높은 백터요소를 사용하기 위함.
+			기존에 Zone, Box, Camera 화면 표시에 적용하던 SVG요소를 사용하면 
+			마우스 이동이나 클릭에 반응을 해서 사용상에 불편함이 따른다.
+			(마우스 이동에 따은 요소 주변 깜빡임, 마우스 화살표가 손으로 바뀜 등..)
+			이런 불완전한 기능을 제거하기 위한 기능을 제공 한다.
+		방법: 
+			- 사전에 바탕으로 사용할 SVG를 업로드 한다.
+			- IMS설정에서 [Map Manager]
+				+ 원하는 요소를 클릭하여 정보창에 id가 표시된다.
+				+ 우측 드롭다운메뉴의 [None] -> [Map] -> [Update]
+				+ 이 작업은 요소를 선택 할때마다 [Update]를 해야 한다.
+				+ 마지막으로 [Upload]를 하면 맵에 적용된다.
+			- IMS 재 실행
+
+2020-09-23 10:15:01
+	요소의 아이디 정열 기능
+		목적: 잉크스케이브에서 자동 생성되는 요소의 ID명을 계층 구조로 
+			복사 작업시 중복을 피하려고 아이디명의 직관성을 떨어 트린다.
+			이러한 아이디를 요소특성에 맞게 재정열하는 기능
+		방법: SVG(인크스케이프) 생성시 그룹태그인 <g>를 사용한다.
+			- 바탕용 SVG를 업로드 한다.
+			- IMS설정에서 [Map Manager]
+			- [Reset ID] -> [Upload]
+		특징: 필요한 요소에만 적용된다.
+			- circle, ellipse, rect, polygon, path
+			- 순서에 따라 10000부터 번호가 증가 하며
+			- 번호 앞에는 요소명이 _로 결합된다.
+				예: circle_10239
+
+2020-09-24 20:50:20
+	/* 전체화면 블링킹 */
+	div#content {
+		animation:unset;
+		/* animation:blinker 0.5s linear infinite;*/
+	}
+	@keyframes blinker { 30% { box-shadow:inset 0em 0em 6em 1.5em red; } }
+
+	.blink_me { animation: blink_me 2s linear infinite; }
+	@keyframes blink_me { 50% { opacity: 0; } }
+
+2020-10-03 08:42:38
+	//////////////////////////////////////////////////////////
+	// 외부에서 port_JS_in을 통해 정보를 받아 관련작업 수행(파싱) / port_JS_out 으로 전달한다.
+	// 예: id=ID : relay 번호, status=STATUS 0:off 1:on, msg=MSG
+	//////////////////////////////////////////////////////////
+	require('net').createServer(function (socket) {
+		socket.on('data', function (data) { // 외부 port_JS_in 으로 부터 받은 정보를 data 변수에 저장
+			var json;
+			try {
+				json = JSON.parse(data);
+				for(key in json){
+					// console.log(key, json[key]);
+					io.sockets.emit(key, json[key]); // 오늘합계
+				}
+			} catch(e) {
+				return console.error(e, "Error : JSON.parse");
+				// console.log(e, "Error : JSON.parse"); // error in the above string (in this case, yes)!
+			}
+		});
+	}).listen(port_JS_in); // Receive server
+	console.log('\tReceive server running at http://localhost:'+port_JS_in+'/');
+
+2020-10-04 10:22:08
+
+	On linux, the easiest solution is probably to use the external ps command:
+
+	>>> import os
+	>>> data = [(int(p), c) for p, c in [x.rstrip('\n').split(' ', 1) \
+	...        for x in os.popen('ps h -eo pid:1,command')]]
+	On other systems you might have to change the options to ps.
+
+	Still, you might want to run man on pgrep and pkill.
+
+2020-10-05 18:13:01
+	ffmpeg  -i rtsp://whatever -f mpeg1video -b 800k -r 30 http://localhost:8082/yourpassword/640/480/
+
+2020-10-09 09:02:31
+	우분투 18.04 Mysql DB 원격 접속 설정방법
+	MYSQL Remote Connect 
+	https://www.thepythoncode.com/article/connect-to-a-remote-mysql-server-in-python
+	https://4urdev.tistory.com/82
+
+	$ sudo su
+	# mysql -u root
+		// 외부에서 접근 가능한 사용자 권한 부여
+		// GRANT ALL PRIVILEGES ON *.* TO '아이디'@'192.168.0.%' IDENTIFIED BY '패스워드'; 
+
+		> GRANT ALL PRIVILEGES ON *.* TO 'its'@'%' IDENTIFIED BY 'GXnLRNT9H50yKQ3G';
+		> quit
+	# cd /etc/mysql/mariadb.conf.d
+	# vi 50-server.cnf
+		// 외부 클라이언트 아이피 접속 제한 풀기
+		> # bind-address          = 127.0.0.1
+		> bind-address            = 0.0.0.0
+	# service mysql restart
+
+	$ testRemoteDB.py
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+############################################################
+# Simple script to connect to a remote mysql database      #
+# Install MySQLdb package by running:                      #
+#                       pip install MySQL-python           #
+############################################################
+
+import MySQLdb as db
+
+HOST = "192.168.0.4"
+PORT = 3306
+USER = "its"
+PASSWORD = "GXnLRNT9H50yKQ3G"
+DB = "its_web"
+
+try:
+	connection = db.Connection(host=HOST, port=PORT, user=USER, passwd=PASSWORD, db=DB)
+	dbhandler = connection.cursor()
+	dbhandler.execute("SELECT * FROM `g5_config`")
+	result = dbhandler.fetchall()
+	for item in result:
+		print item
+
+except Exception as e:
+	print e
+
+finally:
+	connection.close()
+
+2020-10-10 07:13:21
+	본 프로그램은 
+	- 프로그램은 common 방내에 watchdog.pyc
+	- 부팅시 rc.local에 의해 자동 실행되는 systemConfig.pyc에 의해 구동 된다.
+	- 진단 내역은 아래 참고
+	- 자체 진단 내역은 /tmp/watchdog.json으로 10초 간격으로 전달 된다.
+	- 통합 진단 모니터링이 필요한 경우 
+		로그인 [manager] -> [정보수정] -> [watchdog IP]를 통해 서버 아이피 등록 가능 하다.
+	- 등록된 아이피에 따라 주기에 따른 정보를 서버로 전송 한다.
+	- 서버접근포트는 53000 고정이다.
+
+		진단 내역
+		{
+			"cpuPcent": {   -----------------------> CPU 사용내역
+				"idle": "46.3",
+				"system": "49.3",
+				"user": "4.5"
+			},
+			"cpuTemp": 70.114,   -----------------------> ITS내 최고점 온도
+			"dateTime": "2020-10-10 07:13:58.564053",   -----------------------> ITS 시간
+			"diskGb": {   -----------------------> 디스크 사용 내역
+				"avail": "11G",
+				"pcent": "22%",
+				"size": "15G",
+				"used": "3.0G"
+			},
+			"execTime": "0:00:00.210648",
+			"ipAddr": "192.168.0.20",   -----------------------> 자신의 아이피
+			"liveTime": "up 2 days, 1 hour, 36 minutes",   -----------------------> 부팅후 지금까지 지속시간
+			"memUseKb": {   -----------------------> 메모리 사용 내역
+				"free": "3154.2",
+				"total": "3827.9"
+			},
+			"procCont": {   -----------------------> 프로세서 실행 내역
+				"running": "3",
+				"sleeping": "132",
+				"stopped": "0",
+				"total": "136",
+				"zombie": "1"
+			},
+			"swapUseKb": {   -----------------------> 스와 스페이스 내역
+				"free": "100.0",
+				"total": "100.0"
+			},
+			"usePort": {   -----------------------> 어플리케이션 실행 내역
+				"giken_R": 1,
+				"giken_S": 1,
+				"gpio_1": 0,
+				"gpio_2": 0,
+				"gpio_3": 0,
+				"gpio_4": 0,
+				"gpio_5": 0,
+				"gpio_6": 0,
+				"gpio_7": 0,
+				"gpio_8": 0,
+				"gpwio": 1,
+				"health": 0,
+				"ims_R": 0,
+				"ims_S": 0,
+				"shell": 1,
+				"union_R": 1,
+				"union_S": 1
+			}
+		}
+
+2020-10-12 07:16:02
+작업중..
+
+	목적
+		- 관리지역내 모든 티일게이트 데이타의 통합관리를 위함
+		- 통합서버는 기본적으로 IMS서버와 공유 하지만
+		- 데이터의 독립성 필요시 전용 데이터 서버로 사용가능 하다. 
+
+	클라이언트 측
+		- 이벤트 데이터 베이스 서버 항목 추가됨
+		- 총 두대의 서버에 내용을 전송 할수 있다.
+			[IP Address] [DB Port]
+		- 항목을 입력하후 재 실행 해야 작동 한다.
+		- 매 분, 시, 일, 월 집계시 서버에 접속 결과 값을 전송 등록 된다.
+
+	서버 측
+		- 서버에 데이터베이스 테이블 생성은 별도의 프로그램으로 만들어 진다.
+			/common/gikenEventServerTable_DB.pyc
+		- 실행시 특이 점이 없으면 아무 내용 없이 종료 된다.
+		- 한번만의 실행으로 테이블 생성한후 재실행은 무의미 하다.
+		- 일단 생성된 테이블은 삭제가 불가능 하다.
+
+2020-10-12 09:00:32
+	깜빡임 효과
+		$("#"+data['ipAddr']+" .title").effect("pulsate", {times: 5}, 1000); // https://www.tutorialspoint.com/jquery/effect-pulsate.htm
+		$("#"+data['ipAddr']+" .times").effect("highlight", {color: 'crimson'}, 1000); // 화면 효과 
+
+		$("#"+data['ipAddr']+" .title").effect("pulsate", {times: 5}, 500); // https://www.tutorialspoint.com/jquery/effect-pulsate.htm
+		$("#"+data['ipAddr']+" .title").effect("highlight", {color: 'orange'}, 1000); // 화면 효과 https://api.jqueryui.com/1.8/highlight-effect/
+
+2020-10-16 11:29:39
+	GPWIO API (General Purpose Web Input Output)
+
+	원격 전원 제어
+	원격 릴레이 제어
+	원격 센서 정보
+	릴레이 시그널 홀드
+	센서의 신호 조합
+	신호에 따른 이벤트 전송
+	신호에 따른 오디오 출력
+	신호에 따른 스넵샷 생성
+	고속 상태 정보 및 디테일 메시징
+	웹기반의 직관적 상태 모니터링 (Port : 8080, 9311 ~ 9318)
+
+	센서 - GPWIO - 네트워크 - 서버
+
+	센서 Input 포트 8개, 릴레이 Output 포트 4개, 전원제어 포트 
+
+	본 제품은 다양한 개발언어에 
+
+	목적:
+		- GPWIO 외부 접속을 통한 4개의 릴레이 제어/상태 확인
+		- GPWIO 외부 접속을 통한 8개의 센서 상태 확인
+
+	방식:
+		- TCP/IP Port 통신
+			Port 8080: 모니터링 예) http://[ITS_IP]:8080
+			Port 8040: 제어/상태 확인
+
+	데이터 형식:
+		- JSON 또는 평문의 CSV 형식으로 필드 구분은 쿰마(,)로 하며 각각의 필드명과 값은 등호(=)로 구분 한다.
+
+		- JSON 
+			Request:
+			{ 
+				"id": "id 참조", 
+				"status": "status 참조", 
+				"hold": "지속시간 Float (0:무한)" 
+				"msg": "메세지" 
+			}
+
+			Return:
+			{ 
+				id: 'id 참조', 
+				value: status, 
+				msg: '메세지' 
+			}
+
+		- CSV
+			Request:
+				id=id, status=status, hold=0, msg=message
+
+			Return:
+			{ 
+				id: 'id 참조', 
+				value: status, 
+				msg: '메세지' 
+			}
+
+			ip: 
+				Target ITS IP Address
+			port: 
+				8040 (고정)
+			id:
+				P01 -> Power 01
+				S01 -> Sensor 01
+				S02 -> Sensor 02
+				S03 -> Sensor 03
+				S04 -> Sensor 04
+				S05 -> Sensor 05
+				S06 -> Sensor 06
+				S07 -> Sensor 07
+				S08 -> Sensor 08
+				R01 -> Relay 01
+				R02 -> Relay 02
+				R03 -> Relay 03
+				R04 -> Relay 04
+			status:
+				# Set
+					0 -> Set to Off
+						Return: { id: 'R01', value: [ 0 ], msg: 'Set by ID' }
+					1 -> Set to On
+						Return: { id: 'R01', value: [ 1 ], msg: 'Set by ID' }
+				# Get
+					3 -> Read status by id 
+						Return: { id: 'R01', value: [ 0 ], msg: 'Get by ID' }
+					6 -> Power status
+						Return: [P01]
+					7 -> Relay status
+						Return: [R01,R02,R03,R04]
+					8 -> Sensor status
+						Return: [S01,S02,S03,S04,S05,S06,S07,S08]
+					9 -> All status
+						Return: [P01,S01,S02,S03,S04,S05,S06,S07,S08,R01,R02,R03,R04]
+			hold:
+				status값이 1일때 유효하며 그외의 경우는 기본값 0(초) 설정 한다.
+				0 -> Float(초)
+				status 값이 1이고 hold 값을 0초 이상으로 설정하면 
+					시간 만큼의 On 상태를 유지한 후 자동으로 회복(Off)된다.
+					릴레이가 회복(Off)되기 전까지 같은 요청은 무시된다.
+					단 On 상태 동안에도 회복(Off) 요청은 즉각적으로 적용된다.
+				0초 설정은
+					기본값이며 사용자가 직접 On/Off를 관리해야 한다.
+			msg:
+				simple message
+
+	메세지 반환:
+		JSON Format
+		{ 
+			id: '', 
+			value: [], 
+			msg: 'Comment' 
+		}
+
+		오류 메세지:
+			Error Unknown Status(0/1/3/6/7/8/9):
+				목록에 없는 Status
+			Error GPIO writeSync:
+				Relay Write Error
+			Error Readonly id :
+				S01 ~ S08 : Readonly
+				R01 ~ R04, P01 : Read / Write
+			Error Unknown id :
+				목록에 없는 id 
+			Error Format Data:
+				변수 목록 또는 값 오류
+
+	예제: 
+		# nc 명령을 통해 테스트 가능 하다.
+
+		$ nc 192.168.0.80 8040
+			# CSV
+				# 켜기
+				id=R01,status=1,hold=0.5,msg=test 
+					Return: { id: 'R01', value: [ 1 ], msg: 'Set by id ' }
+				# 끄기
+				id=R01,status=0,hold=0,msg=test 
+					Return: { id: 'R01', value: [ 0 ], msg: 'Set by id ' }
+				# 상태
+				id=R01,status=3,hold=0,msg=test 
+					Return: { id: 'R01', value: [ 1 ], msg: 'Get by id ' }
+
+			# JSON
+				Request: { "id": "R01", "status": "1", "hold": "3", "msg": "" }
+					Return: { id: 'R01', value: [ 1 ], msg: 'Set by id ' }
+
+				Request: { "id": "R01", "status": "0", "hold": "0", "msg": "" }
+					Return: { id: 'R01', value: [ 0 ], msg: 'Set by id ' }
+
+				Request: { "id": "R01", "status": "3", "hold": "0", "msg": "" }
+					Return: { id: 'R01', value: [ 1 ], msg: 'Get by id ' }
+
+				Request: { "id": "", "status": "6", "hold": "0", "msg": "" }
+					Return: { id: 'power', value: [ 0 ], msg: 'Get Power' }
+
+				Request: { "id": "", "status": "7", "hold": "0", "msg": "" }
+					Return: { id: 'relay', value: [ 0, 0, 0, 0 ], msg: 'Get Output' }
+
+				Request: { "id": "", "status": "8", "hold": "0", "msg": "" }
+					Return: { id: 'sensor', value: [ 1, 1, 1, 1, 1, 1, 1, 1 ], msg: 'Get Input' }
+
+				Request: { "id": "", "status": "9", "hold": "0", "msg": "" }
+					Return: { id: 'All', value: [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ], msg: 'Get Input' }
+
+				{ "id": "P01", "status": "1", "hold": "0", "msg": "" }
+				{ "id": "P01", "status": "0", "hold": "0", "msg": "" }
+
+				{ "id": "P01", "status": "1", "hold": "0", "msg": "" }
+			<CTRL + C>
+2020-11-08 07:01:12 
+	### JSON ###
+	# 테스트 - 상태값 읽기
+		# By ID
+		echo '{ "id": "R01", "status": "3", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+		# Power
+		echo '{ "id": "", "status": "6", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+		# Relay
+		echo '{ "id": "", "status": "7", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+		# Sensor
+		echo '{ "id": "", "status": "8", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+		# All
+		echo '{ "id": "", "status": "9", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+
+	# 테스트 - 릴레이 켜기
+	echo '{ "id": "R01", "status": "1", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R02", "status": "1", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R03", "status": "1", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R04", "status": "1", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+
+	# 테스트 - 릴레이 끄기
+	echo '{ "id": "R01", "status": "0", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R02", "status": "0", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R03", "status": "0", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R04", "status": "0", "hold": "0", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+
+	# 테스트 - 릴레이 켜기 - Hold
+	echo '{ "id": "R01", "status": "1", "hold": "1.2", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R02", "status": "1", "hold": "1.4", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R03", "status": "1", "hold": "1.6", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+	echo '{ "id": "R04", "status": "1", "hold": "1.8", "msg": "" }' | nc 192.168.0.80 8040 -q 0
+
+
+	### CSV ###
+	# 테스트 - 상태값 읽기
+		# By ID
+		echo 'id=R01,status=3,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+		# Power
+		echo 'id=,status=6,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+		# Relay
+		echo 'id=,status=7,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+		# Sensor
+		echo 'id=,status=8,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+		# All
+		echo 'id=,status=9,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+
+	# 테스트 - 릴레이 켜기
+	echo 'id=R01,status=1,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R02,status=1,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R03,status=1,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R04,status=1,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+
+	# 테스트 - 릴레이 끄기
+	echo 'id=R01,status=0,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R02,status=0,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R03,status=0,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R04,status=0,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+
+	# 테스트 - 릴레이 켜기 - Hold
+	echo 'id=R01,status=1,hold=1.2,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R02,status=1,hold=1.4,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R03,status=1,hold=1.6,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R04,status=1,hold=1.8,msg=' | nc 192.168.0.80 8040 -q 0
+
+	# 오류 테스트
+	echo 'id=R01,status=3,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=,status=1,hold=1.2,msg' | nc 192.168.0.80 8040 -q 0
+	echo 'id=,status=1,hold=1.2,' | nc 192.168.0.80 8040 -q 0
+	echo 'id=S01,status=1,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=,status=1,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+	echo 'id=R01,status=,hold=0,msg=' | nc 192.168.0.80 8040 -q 0
+
+		Return:
+		{ id: '', value: 1, msg: 'Error ID Value' }
+		{ id: '',
+		value: 'id=,status=1,hold=1.2,msg\n',
+		msg: 'Error Format Data' }
+		{ id: '',
+		value: 'id=,status=1,hold=1.2,\n',
+		msg: 'Error Format Data' }
+		{ id: 'S01', value: 1, msg: 'Error Readonly ID' }
+		{ id: '', value: 1, msg: 'Error ID Value' }
+		{ id: 'R01',
+		value: NaN,
+		msg: 'Error Unknown Status(0/1/5/6/7/8/9)' }
+
+2020-11-08 18:17:20
+	Sample Code (Python)
+
+	#!/usr/bin/env python
+	# -*- coding: utf-8 -*-  
+	import socket 
+	client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
+	client_socket.connect(('192.168.0.80', 8040)) 
+	client_socket.send('id=R01,status=1,hold=2,msg=MSG') 
+	print client_socket.recv(1024) 
+	client_socket.close() 
+
+
+2020-10-16 16:42:25
+	- GPWIO 외부 접속 오류 예외 처리
+		G:\Development\ecos_its-OPTEX\its_GPWIO\GPWIO.js
+		try {
+			return o[arr[0].trim()] = arr[1].trim(), o; // comma operator
+		} catch (e) {
+			console.log("data format error");
+			return 0;
+		}	
+
+2020-10-18 20:55:56
+	IMS SVG 구조
+		<svg>
+			<image></image>
+			<g id=id_A>
+				<rect></rect>
+				<path></path>
+				<circle></circle>
+				<polygon></polygon>
+				<ellipse></ellipse>
+			</g>
+			<g id=id_B>
+				<rect></rect>
+				<path></path>
+				<circle></circle>
+				<polygon></polygon>
+				<ellipse></ellipse>
+			</g>
+			<g id=id_C>
+				<rect></rect>
+				<path></path>
+				<circle></circle>
+				<polygon></polygon>
+				<ellipse></ellipse>
+			</g>
+		</svg>
+
+2020-10-19 11:59:13
+	다운로드 파일 변경
+	function getFormattedTime() {
+		var today = new Date();
+		var y = today.getFullYear();
+		// JavaScript months are 0-based.
+		var m = today.getMonth() + 1;
+		var d = today.getDate();
+		var h = today.getHours();
+		var mi = today.getMinutes();
+		var s = today.getSeconds();
+		return y + "-" + m + "-" + d + "_" + h + ":" + mi + ":" + s;
+	}
+
+	<a href="/data/image/ims/ims_map.svg" download="imsMap_.svg" onclick="this.download='imsMap_' + getFormattedTime() + '.svg'"><button>Save</button></a>
+
+
+2020-10-22 18:08:13
+	와이파이 오류 관련
+	https://medium.com/@kimiyukiyukawa/installing-rtl8821ce-network-controller-on-ubuntu-335d8ccb8a92
+	위 작업 수행후 
+	시스템 어프리리케이션에서 디바이스 추가 실행후
+	리부팅시 Enroll 실행
+
+
+2020-10-23 09:42:46
+	우분투에서 SSHFS 설치 및 세팅
+	1. sshfs 설치
+		$ sudo apt install sshfs 명령어로 sshfs 설치한다.   sshfs 관련 deb 파일도 자동으로 설치된다.
+		# 로컬 PC에 sshfs 설치
+		$ sudo apt install sshfs  
+	2. 마운트 폴더를 생성 
+		원격 드라이브를 /mnt 나 /media로 마운트 가능하지만,  홈 폴더 하위의 폴더로 마운트 지점을 잡는다.   ~/remote라는 폴더를 생성한다.
+		$ mkdir -p ~/remote
+	3. 원격 서버 마운트 
+		sshfs 명령어를 사용해서 로컬 PC에서 원격 서버 특정 폴더를 마운트 한다.  원격 서버의 ID, IP, 폴더 위치를 지정해서 로컬 폴더로 마운트 시킨다. 원격 폴더의 경로는 반드시 절대 경로로 작성해야 한다. 상대 경로로 작성하면 에러가 발생한다.  
+		$ sshfs  kibua@100.200.300.200:/home/kibua/git /home/kibua/remte
+	4. sshfs에서 /etc/fstab
+		부팅할 때마다 sshfs로 원격 서버의 폴더를 마운트 하기 위해서 /etc/fstab 에 sshfs를 추가해야 한다.  User ID, 원격 서버 주소, 폴더, UID, GID는 는 각 우분투 설치 환경에 맞게 작성해야 한다. 
+		/etc/fstab 작성 시 주의해야 할 점은 options이다.  IdentifyFile은 ssh 인증을 해 놓은 public key 파일을 설정하여 패스 워드 입력 없이 인증되도록 한다. IdentityFile을 작성하지 않으면 부팅할 때마다 패스워드를 입력해야 한다. 또한 fstab 은 root 권한으로 실행하기 때문 allow_other 옵션 없으면  root 권한으로 마운트 하기 때문에 일반 user는 permission이 없어 접근할 수 없다. 그래서 allow_other 옵션을 사용해야 하고, 실제 사용자 계정의 uid와 gid를 설정해야 한다. 
+		$sudo vi /etc/fstab
+			# fstab 은 아래와 같이 추가한다. 
+			kibua20@100.502.100.227:/home/kibua/git /home/remote fuse.sshfs defaults,IdentityFile=/home/kibua/.ssh/id_rsa,_netdev,delay_connect,allow_other,uid=1000,gid=1000 0 0
+
+2020-10-27 18:22:11
+	오프라인 설치를 위한 다운로드/설치 방법
+	sudo apt-get download omxplayer
+	sudo apt install ./omxplayer_20190723+gitf543a0d-1_armhf.deb
+
+2020-10-27 19:05:26
+	원격 페키지 전송 / 설치
+	$ rcp omxplayer_20190723+gitf543a0d-1_armhf.deb pi@192.168.168.10:~
+	$ ssh pi@192.168.168.10
+	$ sudo apt-get install ./omxplayer_20190723+gitf543a0d-1_armhf.deb -y
+
+2020-11-02 10:15:25
+	삭제대상
+	/var/www/html/its_web/data/cache
+	/var/www/html/its_web/data/file
+	/var/www/html/its_web/data/image
+	/var/www/html/its_web/data/log
+	/var/www/html/its_web/data/session
+
+2020-11-02 19:05:41
+	음성 통화, 녹음
+	# https://unix.stackexchange.com/questions/116919/redirect-sound-microphone-via-ssh-how-to-telephone-via-ssh
+	
+	요구사항: sshpass, mplayer, omxplayer, oggenc
+		mplayer인 경우 stdin을 수용 하지만 omxplayer는 stdin을 이용할수 없다.
+
+	# 서버단(IMS)
+		$ sudo apt-get install sshpass 
+		ex:
+			$ sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.102
+	Ubuntu:
+		$ sudo apt-get install mplayer 
+	RPI:
+		$ sudo apt-get install omxplayer
+
+
+	## 로컬 마이크 스트림을 원격 컴퓨터로 전달하는 방법입니다.
+
+	ITS - 성공 못함
+		arecord -f S16_LE -r 60000 -D hw:1,0 -d 5 test.wav
+		arecord -f S16_LE -D hw:1,0 -t raw | oggenc - -r | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 'cat - | mplayer -cache 1024 -volume 100 -'
+		arecord -f S16_LE -D hw:1,0 -t raw | oggenc - -r | mplayer -cache 1024 -volume 100 -
+		arecord -f S16_LE -D hw:1,0 -t raw | mplayer -cache 1024 -volume 100 -
+
+	노트북
+		(압축을 위해 ogg 인코더가있는 로컬 컴퓨터의 Linux에서는 ALSA 레코더를 사용하고 원격 컴퓨터에서는 mplayer 사용).
+			$ arecord -f cd -t raw | oggenc - -r | ssh <user>@<remotehost> 'cat - | mplayer -'
+			$ arecord -f cd -t raw | oggenc - -r | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 'cat - | mplayer -cache 1024 -'
+		## 로컬 오디오 파일의 재생을 원격 컴퓨터로 전달하는 방법입니다.
+		(캐시 설정을 사용하면 mplayer가 스트림을 축적 할 수 있습니다. 그렇지 않으면 한 번에 너무 많은 데이터가 들어 오면 실패합니다) :
+			$ cat <audiofile> | ssh <user>@<remotehost> 'cat - | mplayer -cache 8192 -'
+			$ cat A_museum.mp3 | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 'cat - | mplayer -cache 2048 -'
+
+
+	## 로컬 오디오를 로컬 스피커로
+		# mplayer가 실행중이면 명령 무시하고 없으면 실행 한다.
+		$ if ! pidof mplayer &>/dev/null; then mplayer /var/www/html/its_web/data/audio/A_museum.mp3; fi
+
+	## 원격 오디오를 로컬 스피커로
+		# 원격에서
+			# SSH를 통해 미디어파일을 가지고 온다.
+		# 로컬에서
+			# 현재 실행되는 스트리밍이 없으면 전송받은 스트리밍을 출력한다.
+		
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /var/www/html/its_web/data/audio/A_museum.mp3" | if ! pidof mplayer &>/dev/null; then cat - | mplayer -cache 1024 -volume 100 - &>/dev/null; fi &
+
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /var/www/html/its_web/data/audio/A_museum.mp3" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/freedesktop/stereo/*" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/ubuntu/stereo/*" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/ubuntu/ringtones/*" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/ubuntu/notifications/*" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/speech-dispatcher/*" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/Yaru/stereo/*" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/sound-icons/xylofon.wav" | mplayer -cache 1024 -volume 100 -
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.101 "cat /usr/share/sounds/alsa/Front_Right.wav" | mplayer -cache 1024 -volume 100 -
+
+	## 로컬 오디오 파일을 원격 스피커로 
+		# 로컬에서
+			# 자신에게 있는 오디오 파일을 열고 SSH를 통해 원격으로 전송한다
+		# 원격에서
+			# 현재 실행되는 스트리밍이 없으면 전송받은 스트리밍을 출력한다.
+		
+		cat /var/www/html/its_web/data/audio/A_museum.mp3 | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'if ! pidof mplayer &>/dev/null; then cat - | mplayer -cache 1024 -volume 100 - &>/dev/null; fi' &
+
+		cat /var/www/html/its_web/data/audio/A_museum.mp3 | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/freedesktop/stereo/* | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/ubuntu/stereo/* | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/ubuntu/ringtones/* | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/ubuntu/notifications/* | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/speech-dispatcher/* | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/Yaru/stereo/* | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/sound-icons/xylofon.wav | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+		cat /usr/share/sounds/alsa/Front_Right.wav | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+
+	## 원격 마이크를 로컬 스피커로 - 아직 테스트 않됨
+		sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.8 'arecord -f cd -t raw | oggenc - -r ' | mplayer -cache 1024 -volume -
+
+	## 로컬 마이크을 원격 스피커로
+		arecord -f cd -t raw | oggenc - -r | sshpass -pits_iot ssh -o StrictHostKeyChecking=no pi@192.168.0.20 'cat - | mplayer -cache 1024 -volume 100 -'
+
+2020-11-13 08:28:02
+	This document is copyright protected and is the property of ECOS and may not be copied, reproduced or distributed in any way without the prior written consent of ECOS.
+	Distributor Optex Korea Co., Ltd., Developer ECOS.
+
+
+2020-11-15 10:55:06
+	ECOS_Frame
+	- Event Log
+		발생하는 모든 이벤트 로그를 파일 및 데이터 베이스 기반으로 저장 한다.
+	- User Event Design
+		사용자가 현장 상황에 맞는 이벤트 조건을 설정 한다.
+	- Action Schedule
+		이벤트 처리를 필요한 시간대에 따라 설정 가능 하다. 
+	- Relay Alert
+		발생 이벤트 조건에 따라 필요에 맞는 릴레이를 조작 한다.
+	- Event Snapshot
+		발생 이벤트 조건에 따라 스넵샷을 저장 한다.
+	- Audio Warning
+		발생 이벤트 조건에 따라 오디오 경고를 한다.
+	- Get/Post Request
+		발생 이벤트 조건에 따라 HTTP Request Method를 한다.
+		예: 들어 프리셋 값에 따른 PTZ Camera를 조작한다.
+	- Tcp/IP Socket
+		발생 이벤트 조건에 따라 Tcp/IP Socket 통신를 한다.
+		예: 관제서버에 요구하는 프로토클의 상태값 전송을 한다.
+	- Realtime Action/Status view
+		자체의 실시간 모니터링 기능이 있다.
+	- Realtime Log view
+		자체의 실시간 로그뷰 기능이 있다.
+	- IMS Service
+		IMS와 연계 및 이에 따른 다양한 기능이 제공된다.
+		예: Health Checker, Audio Broadcasting, Control GPIO ..
+
+2020-11-23 10:49:30
+	example rcp GPIO code and GUI
+		디랙토리 생성
+			$ mkdir GPIO GPIO_UI
+		코드 다운로드	
+			$ scp pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_GPIO/GPIO/* GPIO
+		GUI 다운로드	
+			$ scp pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_web/theme/ecos-its_optex/skin/board/w_optex_GPIO/* GPIO_UI
+
+		코드 업로드
+			$ scp GPIO/* pi@192.168.0.XXX:/home/pi/GPIO/
+		GIU 업로드	
+			$ scp RLS_UI/* pi@192.168.0.XXX:/var/www/html/its_web/theme/ecos-its_optex/skin/board/w_optex_GPIO/
+
+	example scp RLS code and GUI
+		mkdir RLS RLS_UI
+		$ scp pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_RLS_R/optex_RLS_R/* RLS
+		$ scp pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_web/theme/ecos-its_optex/skin/board/w_optex_REDSCAN_R/* RLS_UI
+
+		$ scp RLS/* pi@192.168.0.XXX:/home/pi/optex_RLS_R/
+		$ scp RLS_UI/* pi@192.168.0.XXX:/var/www/html/its_web/theme/ecos-its_optex/skin/board/w_optex_REDSCAN_R/
+
+	example scp common
+		mkdir common
+		$ scp pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_common/common/* common
+		$ scp common/* pi@192.168.0.XXX:/home/pi/common/
+
+2020-11-23 19:30:36
+	nc command
+		client $ cat /bin/ls | nc localhost 8181 -q 0
+		server $ nc -l localhost 8181 | od -x
+
+		client $ echo -e '\x80' | nc localhost 8181 -q 0
+		server $ nc -l localhost 8181 | od -x
+				0000000 0a80
+				0000002
+
+		client $ cat /bin/ls | nc 192.168.0.20 50002 -q 0
+
+2020-11-26 15:13:58
+	FSI TEST
+	echo '<CommandMessage MessageType="Request"><DeviceIdentification><DeviceName></DeviceName></DeviceIdentification><Command><SimpleCommand>Ping</SimpleCommand></Command></CommandMessage>' | nc 192.168.168.30 10001 | tee -a /tmp/10001.log
+
+2020-11-27 18:58:43
+	ITS-API TEST
+echo '[{ "gpio": { "status": "1", "id": "R01", "hold": "0.0", "msg": "n/a"} }]' | nc 192.168.0.60 54001 -q 0
+echo '[{ "gpio": { "status": "0", "id": "R01", "hold": "n/a", "msg": "n/a"} }]' | nc 192.168.0.60 54001 -q 0
+echo '[{ "gpio": { "status": "1", "id": "R01", "hold": "2.0", "msg": "n/a"} }]' | nc 192.168.0.60 54001 -q 0
+echo '[{ "gpio": { "status": "0", "id": "R01", "hold": "n/a", "msg": "n/a"} }]' | nc 192.168.0.60 54001 -q 0
+echo '[{ "gpio": { "status": "1", "id": "P01", "hold": "2.0", "msg": "n/a"} }]' | nc 192.168.0.60 54001 -q 0
+
+
+2020-11-30 15:36:58
+	파이썬으로 localhost 서버 생성
+	파이썬 3:
+	python -m http.server
+	Address already in use 이라는 에러가 난다면, 다른 포트번호를 입력
+	python -m http.server 8080
+	
+
+	파이선 2:
+	python -m SimpleHTTPServer
+	localhost:8000 으로 접속.
+
+2020-12-01 05:50:31
+	Patch Update Report
+
+	ITS STD/ACU Board 설정:
+		- its로 로그인시 [정보수정][IO Board] 선택 기능이 추가됨
+		- 이는 ACU 보드를 위한 기능 추가임
+		- 기본값은 ITS 임
+
+	GPIO:
+		- ACU Board 호완을 위해 프로그램을 대폭 수정 하였음
+			GUI는 거의 안바뀜
+		- 새로운 GPIO 에서는 ITS STD(Standard) Board와 ITS ACU(Alarm Control Unit) Board를 동시에 사용 가능 함
+		- 위의 [정보수정][IO Board] 선택에 따라 GPIO의 디바이스 선택구분이 변경 됨
+		- 가변적인 IO Port 설정 기능 을 위해 변수 형식을 PHP 에서 JSON으로 바꿈
+			내부적으로 매우 큰 변화로 GPIO의 모든 기능 테스트 필요
+			(오류 리포트 수시로 공유 부탁)
+
+	ITS STD Board:
+		- Sensor Port : 8개 고정
+		- Relay Port : 4개 고정
+
+	ITS ACU Board:
+		- Sensor / Relay : 16 가변
+		- IO Port의 설정은 
+			1. its로 login
+			2. 정보 수정
+			3. IO Board -> ACU 선택후 Logout
+			4. manager로 login -> GPIO 선택
+		- 설정이 완료 되면 그 내용은 내부적으로 ~/common/config.json 에 저장 됨
+		- 저장된 설정 파일 config.json 파일을 다른 프로그램(GPIO/GPACU/Its API)에서 공유 함
+		- 참고로 ~/common/config.json은 읽기/쓰기가 모두에게 혀용 되어야 함
+			명령 : $ sudo chmod 777  ~/common/config.json
+
+	GPACU:
+		- 새로운 환경 설정에 따른 프로그램을 수정 하였음
+			(테스트후 오류 리포트 수시로 공유 부탁)
+		- monitoring access 
+			http://its.ip.address:18080
+		- GPACU는 GPWIO와 같은 성격의 프로그램으로 설계 되었음
+		- 아직 GPWIO의 모든 기능을 포함하지 못한 상테임
+		- 본 프로그램의 실행은 GPWIO와 마찬가지로 GPIO 실행시 환경(IO Board)에 따라 실행되는 부가적인 프로그램임
+		- 기본 기능은 동작하지만 오류(?)의 여지가 있음
+		
+2020-12-01 22:16:19
+	Patch Update Report
+		RLS MASQUERADE 기능 추가:
+			- ITS에 하나 이상의 센서 설치가 기능 하여
+			- 접속포트 번호는 센서에 따라 달리 설정 된다.
+			- 접속은 http://its.ip:Port
+
+			- RLS UI -> MASQUERADE -> Check
+			- RLS 실행 예시(MASQUERADE On):
+					...
+					node killed (pid 5793)
+					sh killed (pid 5866)
+					*** PASS ***
+							Database connected.
+					*** PASS ***
+							Sensor [LSD] ID:g200t210_192_168_0_20_0001 IP:192.168.168.30.
+			Port ->	MASQUERADE On, Access Port:6001
+					SensorID: g200t210_192_168_0_20_0001
+					Accept Size: ['0:5000']
+					Allow Area: []
+					...
+
+			- RLS 실행 예시(MASQUERADE Off):
+					...
+					*** PASS ***
+							Database connected.
+					*** PASS ***
+							Sensor [LSD] ID:g200t210_192_168_0_20_0001 IP:192.168.168.30.
+			Port ->	MASQUERADE Off
+					SensorID: g200t210_192_168_0_20_0001
+					Accept Size: ['0:5000']
+2020-12-02 06:52:28
+	three.js
+	- sudo apt-get install git
+	- git clone https://github.com/mrdoob/three.js.git
+	- python -m SimpleHTTPServer
+
+2020-12-02 13:36:29
+	/////// UPDATE ///////
+
+	CODE Copy
+		GPIO
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_GPIO/GPIO .
+		GPWIO
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_GPWIO/GPWIO .
+		API
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_API/API .
+		FSI
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_partner/its_FSI/FSI .
+		GPACU	
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_GPACU/GPACU .
+		GIKENT
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_partner/its_GIKENT/GIKENT .
+		optex_BSS
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_BSS/optex_BSS .
+		optex_RLS_R
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_RLS_R/optex_RLS_R .
+		MONITOR
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_MONITOR/MONITOR .
+		utility
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_utility/utility .
+		common
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_common/common .
+
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_BSS_R/optex_BSS_R .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_RLS/optex_RLS .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_GPCIO/GPCIO .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_BIGDATA/BIGDATA .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_partner/its_SRF/SRF .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_partner/its_GIKENP/GIKENP .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_BIND/optex_BIND .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_VEHICLE/optex_VEHICLE .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_SPEED/optex_SPEED .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_COUNTER/COUNTER .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_optex/optex_PARKING/optex_PARKING .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_USONIC/USONIC .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_CAM/CAM .
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_MON_TBL/MON_TBL .
+
+	Restore:
+		scp -r XXX/* pi@XXX.XXX.XXX.XXX:/home/pi/XXX
+
+	GUI:
+		GUI Sensor Skin Copy:
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_web/theme/ecos-its_optex/skin/board/w_* .
+		Restore:
+			scp -r w_XXX pi@XXX.XXX.XXX.XXX:/var/www/html/its_web/theme/ecos-its_optex/skin/board/w_XXX
+
+		GUI Member Skin Copy:
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_web/theme/ecos-its_optex/skin/member/basic .
+		Restore:
+			scp -r basic pi@XXX.XXX.XXX.XXX:/var/www/html/its_web/theme/ecos-its_optex/skin/board/member/basic
+
+		GUI Utility Skin Copy:
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/ecos_its-OPTEX/its_web/theme/ecos-its_optex/utility .
+		Restore:
+			scp -r utility pi@XXX.XXX.XXX.XXX:/var/www/html/its_web/theme/ecos-its_optex/utility
+
+	Bulk Update
+		// 최신 목록 확인
+			ssh pi@115.139.183.226 ls /home/pi/update/ECOS/
+		// 최신 목록 다운로드
+			rsync -avzr --delete pi@115.139.183.226:/home/pi/update/ECOS/2020-12-03_192.168.0.20* /tmp
+		// 최신 웹 설치
+			cp /tmp/XXX_web.tar /var/www/html/its_web/ 
+			cd /var/www/html/its_web
+			tar -zxvf XXX_web.tar
+		// 최신 코드 설치
+			cp /tmp/XXX_its.tar /home/pi/
+			cd /home/pi
+			tar -zxvf XXX_its.tar
+		// 최신 DB 업데이트
+			mysql -u its -pGXnLRNT9H50yKQ3G its_web < /tmp/XXX_db.sql
+
+2020-12-03 04:28:21
+	Patch Update Report(RLS)
+		- RLS IP MASQ 바로가기 Button 추가
+		- RLS 이밴트 픽업 시간 기능 추가 : 주기가 없는 알람은 픽업시간에 종속됨
+			주기가 없는 알람 : 
+				- Host/IMS 1/2 전송
+				- Request 1/2, API(json) 1/2
+			주기가 있는 알람 :
+				- Audio Out(음길이)
+				- Self/GPACU Relay Out(시간설정)
+				- Snapshot(대기시간종속)
+			
+
+		- 스케줄러 기능 추가
+			목록보기를 통해 일간/주간 설정 가능
+			설정시 저장버튼 없이 즉각 적용
+			일반/주간 설정중 주간이 우선
+		- 스케줄러에 종속 되는 알람 및 기능은 : 기본 발생 이벤트 수가 많음
+			- Audio Out
+			- 이벤트 데이터베이스 추가 삭제
+			- 로컬 모니터링 뷰 업데이트
+			- 로컬 테이블 뷰 업데이트
+			- Host/IMS 1/2 전송
+			- Request 1/2(카메라 프리셋)
+			- API(json) 1/2
+			- Snapshot(대기시간종속)
+
+	Patch Update Report(GPIO)
+		- 스케줄러 기능 추가
+			목록보기를 통해 일간/주간 설정이 가능
+			설정시 저장버튼 없이 즉각 적용 된다.
+			일반/주간 설정중 주간이 우선이다.
+		- 스케줄러에 종속 되는 기능은 : 기본 발생 이벤트 수가 적음
+			- Audio Out에만 적용된다.
+
+2020-12-04 14:41:38
+	S1 FSI Interface 개발 착수
+
+2020-12-05 02:31:35 : 일지
+	- 인천공항 설치 오류 발생
+		문제: 테일게이트에서 GPWIO로 릴레이 전송시 오류후 종료
+		GPWIO 10월달 버전으로 복귀
+		GPACU 개발시 GPWIO도 같이 수정한것이 문제 됨
+
+2020-12-05 07:21:47 : 일지
+	- 개발 프로그램 홈 이름 변경
+	ecos_its-OPTEX -> ecos_ITS 
+
+2020-12-06 11:10:51
+	FSI 시작 프로그램에 아이피라우팅 기능 추가됨
+	내부 환경변수에 따라 생성 및 삭제가 된다.
+
+2020-12-06 12:33:07
+	전역변수 사용자 폴더 생성 G:\Development\ecos_ITS\its_common\config.json
+	"path":{
+		"user":{
+			"audio":"/theme/ecos-its_optex/user/audio",
+			"code":"/theme/ecos-its_optex/user/code",
+			"image":"/theme/ecos-its_optex/user/image",
+			"note":"/theme/ecos-its_optex/user/note",
+			"video":"/theme/ecos-its_optex/user/video"
+		}
+	}
+
+2020-12-06 15:17:39
+	[GUI]->[이벤트]
+	G:\Development\ecos_ITS\its_web\theme\ecos-its_optex\utility\systemExec\realtime_tail.php
+	타이머 실행에서 이벤트 발생시 실행으로 변경
+
+2020-12-06 16:20:12
+	# 파이선 CGI 및 Root Path 설정
+	# https://www.server-world.info/en/note?os=Ubuntu_18.04&p=httpd&f=5
+	# python script enable
+		$ sudo a2enmod cgid
+
+		$ sudo vi /usr/lob/cgi-bin/pytest.py
+			#!/usr/bin/python
+			import cgi
+			import cgitb
+			cgitb.enable()
+			cgi.test()
+			print 'Content-type: text/html\n\n'
+			print '<h1>Python Script Test</h1>'
+		테스트
+			http://localhost/cgi-bin/pytest.py
+
+	# 파이선 사용자 CGI 및 Root Path 설정
+	$ sudo vi /home/pi/API/api-ecos.conf
+		# https://www.server-world.info/en/note?os=Ubuntu_18.04&p=httpd&f=5
+		# processes .cgi and .py as CGI scripts
+
+		Alias /ecos /home/pi/API/client
+
+		<Directory /home/pi/API/client>
+			Require all granted
+			DirectoryIndex index.py
+			Options +ExecCGI
+			AddHandler cgi-script .cgi .py
+		</Directory>
+
+	$ cd /etc/apache2/conf-available
+	$ sudo ln -s ../../../home/pi/API/api-ecos.conf ./ecos.conf
+	$ sudo a2enmod cgid
+	$ sudo a2enconf ecos
+	# $ sudo a2disconf ecos
+	$ sudo systemctl restart apache2
+
+	$ vi /home/pi/API/index.py
+		#!/usr/bin/python
+		print "Content-type: text/html\n\n"
+		print "<html>\n<body>"
+		print "<div style=\"width: 100%; font-size: 40px; font-weight: bold; text-align: center;\">"
+		print "Welcome to ECOS API"
+		print "</div>\n</body>\n</html>"
+	$ chmod 755 /home/pi/API/index.py
+
+	# test 
+		http://local.host/ecos
+
+
+2020-12-10 02:39:32
+	* GPACU / GPWIO
+
+	* 동시에 두 프로그램이 동작하면 않된다.
+		+ 프로세서 중복 회피
+			- 실행시 동시에 두 프로세서를 죽인후 재실행 
+	
+	* GUI 메인페이지에 GPIO 상태 표시 구분
+		+ U:its mb_4 값에 따른 표시 구분(8080 또는 18080) 
+
+2020-12-10 12:36:14
+	* 기켄 프로그램 라이센스 기능 삭제
+
+2020-12-11 07:26:30
+	* 시작 프로그램 등록파일 /etc/rc.local 사용중단.
+		- 고정으로 하나의 프로그램을 실행함
+		- 예: systemConfig.pyc
+			su pi -c 'cd /home/pi/common/ && /usr/bin/python systemConfig.pyc > /tmp/systemConfig.log'
+
+	* 모든 프로그램은 ~/common/config.json에 종속된다.
+		+ 기존의 /etc/rc.local에서 실행하던 프로그램은 
+		+ ~/common/config.json 내의 "run":{}이 대신 한다.
+		+ 예:
+			- "run":{
+				"table":{
+					"path":"/home/pi/common",
+					"command":"run_table.pyc"
+				},
+				"fsi":{
+					"path":"/home/pi/FSI",
+					"command":"run_FSI.pyc"
+				}
+			},
+
+	* 라이센스에 관해
+		+ 모든 프로그램은 라이센스 없이도 실행 가능 하다.
+		+ 단 라이센스 등록 없이 
+
+
+2020-12-12 07:26:52
+	* JSON Editor 크롬 익스텐더
+		+ https://chrome.google.com/webstore/detail/json-handle/iahnhfdhidomcpggpaimmmahffihkfnj/related?utm_source=chrome-ntp-icon
+
+
+2020-12-12 08:08:31
+	[임시] FSI 프로그램 사용 설명서 
+	* 센서 접속
+	* 핑 전송
+	* 응답(전송)데이터 파싱
+	* 핑 회신대응
+	* 감지 이벤트 대응
+		+ 조건에 따른 데이터전송(원격)
+	* 로그저장
+
+
+	* 센서측 설정(고정)
+		+ Local
+			- ip: 192.168.168.30
+			- port: 10001
+		+ Remote
+			- ip: 192.168.168.10
+			- port: 52001
+
+	* ITS 설정
+		+ USB-EtherNet 설치 후 센서와 연결
+
+		+ 사전 지식
+			- 전송 되는 이벤트에는 발생 위치의 고유 아이디명을 포함한다.
+			- 이 아이디명을 디바이스명이라고 한다.
+				이벤트 발생시 디바이스명의 형식은 점[.]과 데시[-]로 구분 된다.
+					디바이스명-번호.하이퍼존명-번호.존-번호
+					500시리즈인 경우 : 최대 25
+						FD525R-[번호].HZONE-[번호].ZONE-[번호]
+						예: <DeviceName>FD525R-109561.HZONE-1.ZONE-002</DeviceName>
+					300시리즈인 경우 : 최대 2
+						FD322R-[번호].ZONE-[번호]
+						예: 테스트 해봐야 함
+				핑 발생시 디바이스명 형식은 
+					디바이스명-번호
+
+	* 설정 미리보기
+		$ cat ~/FSI/config.json
+		{
+			"debug":true,
+			"masquerade":{
+				"active":true,
+				"addr":"192.168.168.30",
+				"port":10001
+			},
+			"server":{
+				"1st":{
+					"url":"http://192.168.0.80:9991",
+					"addr":"",
+					"port":0
+				},
+				"2nd":{
+					"url":"http://192.168.105.43:8022/SVMS/Event/optexfd",
+					"addr":"",
+					"port":0
+				}
+			},
+			"convert":{
+				"name":{
+					"FD525R-109561":0,
+					"FD525R-109561.HZONE-1.ZONE-001":1,
+					"FD525R-109561.HZONE-1.ZONE-002":2,
+					"FD525R-109561.HZONE-1.ZONE-003":3,
+					...
+					"FD525R-109561.HZONE-1.ZONE-024":24,
+					"FD525R-109561.HZONE-1.ZONE-025":25,
+					"id":"id"
+				},
+				"value":{
+					"Intrusion":1700,
+					"Fault":1700,
+					"Temper":1700,
+					"Other":1700,
+					"OK":1700,
+					"value":"value"
+				}
+			}
+		}
+
+	* 환경 설정 대상
+		+ debug, masquerade:active, server:1st:url, convert:name, convert:value
+
+		+ debug : true / false
+			- 시작과 동시에 모든 로그는 로그파일에 저장된다.
+			- 설정값(true/false)은 로그파일의 출력 내용에 자세함을 결정한다.
+
+			- 로그파일명은 FSI.log이고 위치는 /var/www/html/its_web/data/log/FSI.log 이다.
+			- 실시간 모니터링 방법은 (필요시 추가 터미널에서 실행)
+				$ tail -f /var/www/html/its_web/data/log/FSI.log
+
+			- 설정과 무관하게 실행과 동시에 접속 완료시점까지 진행사항이 출력된다.
+			- 실행시 로그 출력 예:
+				Running Mode: ACU API
+				Local Binding OK 192.168.168.10:52001
+				Listening from 192.168.168.30:10001 ...
+				Connection address:('192.168.168.30', 10001)
+				Device name is FD525R-109561
+				Parser Error, Retry After 5s(15) ...
+				Connection address:('192.168.168.30', 10001)
+				Device name is FD525R-109561
+				Handshake with FD525R-109561
+
+		+ masquerade : true / false
+			- 변수중 addr과 port는 고정이다.
+			- true인 경우 외부에서 센서로 웹접속이 가능 하다.
+			- 예:
+				http://its.ip.address:10001
+
+		+ server:1st:url
+			- 본 URL은 
+			- 발생하는 이벤트가 아래의 convert기능을 수행한 결과값을 수신하는 원격서버주소 이다.
+			- 모니터링서버나 이벤트취합서버 주소를 의미 한다.
+			- url은 http request용이고
+			- addr, port는 tcp 소캣통신용이다.
+			- 현재 2nd:, addr, port는 예약이다.
+
+		+ convert:name
+			- 디바이스 이벤트 아이디명를 사용자 이벤트 아이디명 형식으로 변환 하는 기능.
+
+			- FD525R-[번호]는 위의 
+				debug -> 실행시 출력 예: -> Device name is FD525R-109561 과 이름이 같아야 한다.
+			- 예1:
+				"FD525R-109561.HZONE-1.ZONE-001":1, 란
+				센서 아이디명 "FD525R-109561.HZONE-1.ZONE-001" 을 
+				사용자 아이디명 1(숫자)로 변환함을 뜻한다.
+			- 예2:
+				"FD322R-109561.ZONE-002":"정문1", 란
+				센서 아이디명 "FD322R-109561.ZONE-002" 을 
+				사용자 아이디명 "정문1"(문자)로 변환함을 뜻한다.
+
+		+ convert:value
+			- 디바이스 이벤트 형태(Intrusion, Fault, Temper, Other...) 사용자 이벤트 형태로 변환 하는 기능.
+			- 예1:
+				"Intrusion":1700, 란
+				이벤트 형태 "Intrusion"을 숫자 1700으로 반환
+			- 예2:
+				"Temper":"뚜껑열림", 란
+				이벤트 형태 "Temper"을 문자 "뚜껑열림"으로 반환
+
+	* ITS가 모니터링 서버로 데이터를 정확히 보내는지 검증 하는 방법
+		+ 디버그 상태에서 로그 리스트를 참조 한다.($ tail -f /var/www/html/its_web/data/log/FSI.log)
+			- 오류인 경우
+				>>>>> CommandMessage <<<<<  (u'FD525R-109561', u'OK', 'Request Error http://192.168.0.80:9991')
+			- 정상인 경우
+				>>>>> CommandMessage <<<<<  (u'FD525R-109561', u'OK', <Response [200]>)
+
+		+ server:1st:url을 내부 테스트 프로그램에 연결한후 확인하는 방법
+			- server:1st:url -> "url":"http://test.remote.server:9991" 인경우
+				its IP test.remote.server 에서 아레 명령어 실행후 확인가능
+				$ python3 /home/pi/API/client/getPostServer.py 9991
+				getPostServer.py 출력확인 또는 로그 리스트를 확인
+
+			- 여분의 ITS가 없을 경우 자신의 아이피를 server:1st:url에 선언한후 확인도 가능 하다.
+				server:1st:url -> "url":"http://myself.ip:12345
+				$ python3 /home/pi/API/client/getPostServer.py 12345
+				getPostServer.py 출력확인 또는 로그 리스트를 확인
+
+			- 참고로 getPostServer.py는 python3로 실행해야 한다.
+
+	* config.json의 편집 관련하여
+		+ 현재는 임시로 사용자 pi로 로그인 후
+		+ 텍스트 에디터(nano 또는 vi)를 이용해서 수정 해야 한다.
+		
+		+ (보안상 pi로 로그인 하지 않고)
+		+ 사용자 편의에 따른 간편하고 편리한 GUI config 편집기능은
+		+ 전체 GUI 구성과 상호 보완적이어야 함으로 추후 개발 계획함.
+
+2020-12-13 03:43:52
+	* FSI Message Example
+		+ <--- handshake --|192|Required ITS License. Call Administrator.|-->
+							|	+---   라이센스 불일치시 정보 출력
+							+---   센서에서 받은 응답코드
+
+		+ <--- received raw data (1) --|<CommandMessage MessageType="Response" Status="OK">|-->
+								|		+---   센서에서 받은 XML Code
+								+---   수신데이터 조각수 : 1부터 많게는 8까지 증가 한다.
+
+		+ <--- cooked data (2/3) --| XML |-->
+			- 수신된 조각 데이터를 묶은후 완전한 그룹을 파싱한 개별 XML, (현/총개)
+
+		+ <--- json data --| JSON |-->
+			- 개별 XML을 JSON으로 변환한 데이터
+
+		+ >>>>> DeviceDetectionReport <<<<<
+			- 센서가 보낸 감지 이벤트 
+
+		+ >>>>> DeviceStatusReport <<<<<
+			- 센서가 보낸 디바이스 상테 리포트 
+			
+		+ >>>>> DeviceConfiguration <<<<<
+			- 센서가 보낸 디바이스 설정 상테 
+			
+		+ >>>>> PlatformStatusReport <<<<<
+			- 센서가 보낸 전체 상테 리포트 
+			
+		+ >>>>> Unknown <<<<<
+			- 센서가 보낸 분석 안된 정보 
+			
+2020-12-14 08:02:11
+	* 라이센스 관련
+		+ 키생성의 소스는 타이틀과 CPU Serial(Raspbian) 또는 Mac Address(Ubuntu)
+			- 메인 타이틀은 GUI Title : its(optex) -> 정보수정 -> Title ITS 
+			- 상황에 따라 요소를 추가 할수 있음
+		+ 타이틀이 없어도 키는 생성 된다.
+			- 단 타이틀을 새롭게 바꾸면 키를 새롭게 적용 해야 한다.
+
+	* 라이센스 키를 확인하는 방법은 2가지이다.
+		+ 온라인 상태
+			- GUI 상단 좌측 [Required ITS License.] 클릭
+			- 팝업창 상단 [SUBMIT] 클릭후 KMS 확인
+		+ 오프라인 상태
+			- pi로 로그인후
+			- 키 요청 프로그램 실행
+				$ cd utility
+				$ python licenseKey.pyc
+					Type Admin Keycode
+					Password: [타이틀 명 입력]
+					Just Enter for Current ITS or Type Other ITS Serial No.
+					Serial No: [엔터 / 시리얼 번호 입력 후 엔터]
+						ITS License:    >>>> 6df4f7cf15d38e2fcd919f5ed0c2ed6f8501d5374de0b93e10bbefb81d2a182e <<<<
+		+ 사용자 요청 방법
+			- GUI 상단 좌측 [Required ITS License.] 클릭
+			- 팝업 창 내용을 메일로 요청
+
+	* 온라인 등록은 오프라인과 달리 KMS에 다음과 같은 정보를 취합할수 있다.
+		+ GUI에 등록된 회사명
+		+ 실행중인 프로그램 목록
+		+ CPU ID / Mac Address
+		+ ITS 종류 (ACU Boardoare / Standard Board)
+		+ 라이센스 번호
+		+ 접속자 원격 아이피와 ITS 설정 아이피
+		+ 등록일자
+		+ 무상보증 말료일(25개월 후)
+		+ http://115.139.183.226:8000/optex_web/ecosLicense/licenseSrvList.php?customer=&cpuID=&dueFrom=2020-11-01%2000:00:00&dueTo=2020-12-15%2023:59:59
+
+	* 여러번 중복등록이 가능 하다.
+		+ 특이사항(회사명/CPU ID)에 변화가 없으면 라이센스 키는 불변한다.
+		+ 그외 변화한 내용은 새롭게 업데이트 된다.
+
+	* 라이센스가 등록 안된 상태에서는 
+		+ GUI 상단 좌측에 [Required ITS License.]란 메세지가 항상 보이게 된다.
+		+ 이 메세지가 보이는 무등록 상태로 한달간 사용할때는
+			- ITS System Locking 후 리부팅 되며
+			- 이후 프로그램은 동작 하지 않는다.
+			- 담당 엔지니어 지원
+		+ [Required ITS License.] 클리후 팝업 윈도 내 
+			[SUBMIT] 버튼은 온라인 상태일때만 활성화 된다.
+
+2020-12-15 05:39:31
+	PHP Online Test(온라인 테스트)
+	// 온라인 테스트 후 전송 버튼 유무 결정
+	$host = $license[0]; 
+	$port = (int)$license[1]; 
+	$waitTimeoutInSeconds = 1;
+	if($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)){
+		$licenseServer = $share["server_url"]."/licenseSrvAdd2.php";
+		$submitBtn = "<input class='submit' type='submit' value='Submit'>";
+	} else {
+		$licenseServer = "";
+		$submitBtn = "";
+	} 
+	fclose($fp);
+
+2020-12-18 09:06:48
+	* 경로 
+		+ /var/www/html/its_web/theme/ecos-its_optex/user/code/add_viewer.sql
+	* 설치 (ITS Database Password)
+		+ mysql -u its -p its_web < add_viewer.sql
+
+	* 보드 레벨 체인지
+	UPDATE g5_board SET bo_list_level = 5, bo_read_level = 5;
+
+	* Viewer User 생성
+	INSERT INTO `g5_member` (`mb_no`, `mb_id`, `mb_password`, `mb_name`, `mb_nick`, `mb_nick_date`, `mb_email`, `mb_homepage`, `mb_level`, `mb_sex`, `mb_birth`, `mb_tel`, `mb_hp`, `mb_certify`, `mb_adult`, `mb_dupinfo`, `mb_zip1`, `mb_zip2`, `mb_addr1`, `mb_addr2`, `mb_addr3`, `mb_addr_jibeon`, `mb_signature`, `mb_recommend`, `mb_point`, `mb_today_login`, `mb_login_ip`, `mb_datetime`, `mb_ip`, `mb_leave_date`, `mb_intercept_date`, `mb_email_certify`, `mb_email_certify2`, `mb_memo`, `mb_lost_certify`, `mb_mailling`, `mb_sms`, `mb_open`, `mb_open_date`, `mb_profile`, `mb_memo_call`, `mb_memo_cnt`, `mb_scrap_cnt`, `mb_1`, `mb_2`, `mb_3`, `mb_4`, `mb_5`, `mb_6`, `mb_7`, `mb_8`, `mb_9`, `mb_10`) VALUES
+	(4, 'viewer', 'sha256:12000:y+f8p1pil7PyycyABPQbZJ1uosIWsFdf:W7sfNkQg5mCvMMzpFDxVtkhFSFQQQLDQ', '담당자', '담당자', '0000-00-00', 'viewer@its.com', '', 5, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', 0, '2020-12-18 01:30:34', '192.168.0.2', '2020-12-17 14:00:42', '192.168.0.2', '', '', '2020-12-17 14:00:42', '', '', '', 0, 0, 0, '2020-12-17', '', '', 0, 0, '', '', '', '', '', '', '', '', '', '');
+
+2020-12-19 02:33:52
+	* 신규 이벤트 사용자 마감없이 전체 삭제 기능 버튼 추가
+		$ nano ~/MONITOR/its_M_map_templet.html
+		- 1500번 라인 그처에서 "__restart__" 란 단어를 검색한다.
+		- 검색된 라인위에 아래 코드를 삽입 한다.
+			<input type="button" onclick="(function(){ $('#lastEvent').empty();})()" class="subBtn" value="Clear All">
+
+2020-12-22 23:35:22
+	* tcpdump : 자신의 아이피를 기준으로
+
+		+ 사용가능한 인터페이스
+			$ sudo tcpdump -D
+
+		+ 모든 페킷 10개 출력
+			$ sudo tcpdump -i any -c 10
+
+		+ p.pcap 저장, 모든 페킷 10개 출력
+			$ sudo tcpdump -i any -c 10 -w p.pcap
+
+		+ p.pcap 읽기
+			$ sudo tcpdump -r p.pcap
+
+		+ 모든 페킷 10개 출력, Hex 보기 : -x / -X, Ascii 보기 :  -a / -A
+			$ sudo tcpdump -i any -c 10 -x
+
+		+ 인터페이스 eth0로, 192.168.0.20 오는 페킷, Ascii 문자 출력
+			$ sudo tcpdump -i eth0 src 192.168.0.20 -A
+
+		+ 인터페이스 기본으로, 192.168.0.20에서 오는 페킷, 문자 출력, 내용 크기가 1024 이상, 3 개만 출력
+			$ sudo tcpdump src 192.168.0.20 -A and greater 1024 -c 3
+
+		+ 인터페이스 첫번째로, 192.168.0.101로 보내는 페킷, 포트 53000
+			$ sudo tcpdump -i 1 dst 192.168.0.101 and port 53000
+
+		+ 그외
+			$ sudo tcpdump less 32
+			$ sudo tcpdump greater 64
+			$ sudo tcpdump <= 128
+			$ sudo tcpdump -vvAls0 | grep 'GET'
+			$ sudo tcpdump -vvAls0 | grep 'User-Agent:'
+			$ sudo tcpdump -vvAls0 | grep 'Host:'
+			$ sudo tcpdump -vvAs0 port 53000
+			$ sudo tcpdump -nnvvS src 192.168.0.101 and port 53000
+
+
+			-A: 패킷의 내용을 화면에 ASCII로 보여준다
+			-B: 운영 체제가 캡처하는 버퍼 크기를 buffer_size로 바꾼다.
+			-c: 주어진 수의 패킷을 받은 후 종료한다.
+			-C: 방금 받은 패킷을 저장파일로 만들기 전에 파일이 file_size보다 큰지 체크한다. 만약 그렇다면, 현재 저장파일을 닫고 새로 하나를 연다. 저장된 파일의 이름은 -w 기호를 이용해 1부터 시작해 하나씩 늘어난다.(1,048,576 바이트가 아니라 1,000,000바이트이다)
+			-d: 컴파일된 packet-matching code를 사람이 읽을 수 있는 표준형으로 바꾼후 멈춘다.
+			-dd: packet-matching 코드를 C 프로그램의 일부로 표현한다.
+			-ddd: packet-matching 코드를 십진수로 표현한다.
+			-D: tcpdump가 패킷을 잡을 수 있는 시스템 상에 가능한 네트워크 인터페이스 목록을 출력한다. 각각의 네트워크 인터페이스에는 번호와 인터페이스 이름이 매겨져 있어야 하고 그에 해당하는 설명이 덧붙여져 있어야 한다. 이 기능은 tcpdump가 오래된 버전일 경우에 지원되지 않을 수 있다.
+			-e: 링크 레벨 헤더를 각각 덤프라인에 출력한다.
+			-f: 외부 IPv4 주소를 되도록 심볼(상징적)이 아닌 숫자로서 표현한다.
+			-F: 파일을 필터식(filter expression)으로 입력한다. 추가적으로 명령창에 입력된 식은 무시된다.
+			-G: 이 옵션을 지정하면 덤프 파일을 -w 옵션으로 매 초마다 회전해 회전된 덤프파일을 저장한다. 저장된 파일은 -w 옵션으로 strftime으로 시간 정보가 정의 되어 이름에 포함되어야 한다. 만약 시간 형식이 저장되지 않으면 매번 새로운 파일은 원래 있던 파일에 덮어 씌워 진다. 만약 -C 옵션과 함께 쓰인다면 이름은 'file<count>'형식으로 저장된다.
+			-i: 인터페이스를 정한다. 정해지지 않았으면 tcpdump는 시스템 인터페이스 목록에서 가장 낮은 숫자를 고른다.
+			-I: 인터페이스를 "monitor mode"로 놓는다. 이는 IEEE 802.11 와이파이 인터페이스에서만 작동되고 몇몇 운영 체제에서만 지원된다.
+			-l: 라인 판독 가능 출력 (저장하면서 보거나 다른 명령으로 보내기)
+			-q: 프로토콜 정보를 간략히 표시합니다.
+			-s: 스냅 길이 캡처 (크기)를 바이트 단위로 정의합니다. 의도적으로 덜 캡처하지 않는 한 모든 것을 얻으려면 -s0 사용하십시오.
+			-S: 절대 시퀀스 번호를 인쇄합니다.
+			-t: 사람이 읽을 수있는 타임 스탬프 출력을 제공합니다.
+			-tttt: 사람이 읽을 수있는 최대한의 타임 스탬프 출력을 제공합니다.
+			-vv: 자세한 출력 (v가 많을수록 더 많은 출력이 제공됨).
+			-X: 패킷의 내용 을 16 진수 와 ASCII로 표시 합니다.
+			-XX:-X와 동일 하지만 이더넷 헤더도 표시합니다.
+
+			AND
+				and or &&
+			OR
+				or or ||
+			EXCEPT
+				not or !
+
+2020-12-30 00:13:05
+	20201228 소스 백업
+
+2020-12-30 00:13:42
+	인천공항 릴레이 신호 뜀현상 발생
+	과거에도 문제 되서 GIKENT.py내에 릴레이 초기화에서 
+	bounceTime으로 해결함
+	- 실제 릴레이의 노화도 확인이 필요할듣함
+
+2021-01-03 00:58:04
+	* GPIO Python vs Shell
+	Python
+		RPi.GPIO
+
+		The RPi.GPIO module is installed by default in Raspbian.
+
+		RPi.GPIO script may need to be run as root, but versions above 0.6.0 should run fine as `pi`.
+
+			import RPi.GPIO as GPIO
+
+			# use P1 header pin numbering convention
+			GPIO.setmode(GPIO.BOARD)
+
+			# Set up the GPIO channels - one input and one output
+			GPIO.setup(11, GPIO.IN)
+			GPIO.setup(12, GPIO.OUT)
+
+			# Input from pin 11
+			input_value = GPIO.input(11)
+
+			# Output to pin 12
+			GPIO.output(12, GPIO.HIGH)
+
+			# The same script as above but using BCM GPIO 00..nn numbers
+			GPIO.setmode(GPIO.BCM)
+			GPIO.setup(17, GPIO.IN)
+			GPIO.setup(18, GPIO.OUT)
+			input_value = GPIO.input(17)
+			GPIO.output(18, GPIO.HIGH)
+
+
+
+	Shell
+		sysfs, part of the raspbian operating system
+
+		For operating system versions prior to the raspbian Jessie release, the export and unexport of pins must be done as root. Since the raspbian Jessie release the pi user is a member of the group "gpio" and so control of the GPIO no longer requires a change to the root user. With Jessie, if using a script as in the code below, you'll need to put a 'sleep 1' command in between your 'export' and 'direction' commands to allow time for the operating system to set up the GPIO number specific direction file.
+
+			#!/bin/sh
+
+			# GPIO numbers should be from this list
+			# 0, 1, 4, 7, 8, 9, 10, 11, 14, 15, 17, 18, 21, 22, 23, 24, 25
+
+			# Note that the GPIO numbers that you program here refer to the pins
+			# of the BCM2835 and *not* the numbers on the pin header. 
+			# So, if you want to activate GPIO7 on the header you should be 
+			# using GPIO4 in this script. Likewise if you want to activate GPIO0
+			# on the header you should be using GPIO17 here.
+
+			# Set up GPIO 4 and set to output
+			echo "4" > /sys/class/gpio/export
+			echo "out" > /sys/class/gpio/gpio4/direction
+
+			# Set up GPIO 7 and set to input
+			echo "7" > /sys/class/gpio/export
+			echo "in" > /sys/class/gpio/gpio7/direction
+
+			# Write output
+			echo "1" > /sys/class/gpio/gpio4/value
+
+			# Read from input
+			cat /sys/class/gpio/gpio7/value 
+
+			# Clean up
+			echo "4" > /sys/class/gpio/unexport
+			echo "7" > /sys/class/gpio/unexport
+
+
+2021-01-12 15:08:30
+	Database Repair and Optimaze
+	$ mysqlcheck -u its -p --repair --all-databases
+	$ mysqlcheck -u its -p -o --all-databases
+	$ mysqlcheck -u its -p --check its_web
+
+2021-01-18 01:01:15
+	STX: 0x02
+	ADDR: 0x01
+	CMD: 0x31
+	CHECKSUM: STZ xor Addr xor CMD add 0x20
+	ETX: 0x03
+	
+	* 위의 내용을 다음과 같이 이해합니다.
+		+ STX: 시작바이트 (1 Byte)
+		+ ADDR: ID (1 Byte)
+		+ CMD: 명령문 (1 Byte)
+		+ CHECKSUM: 검증바이트 (1 Byte)
+		+ ETX: 종료바이트 (1 Byte)
+
+		+ 데이터는 바이너리 형태이다.
+		+ 총 데이터 크기 5 Byte로 고정이다.
+		+ Serial 통신을 한다.
+	
+	* 질문
+		+ CMD가 명령문이면 그에 따른 ITS 작업
+			- 값 0x31의 의미
+			- 그외 어떤 명령이 있는지
+
+		+ 데이터는 이벤트 발생시 한번만 보내지는지
+		+ 아니면 특정 주기를 가지고 지속적으로 보내지는지
+		
+		+ 데이터 형식에 체크섬에 오류가 있으면
+			- 데이터 요청을 다시 할수 있는지 아니면 무시 해야 하는지
+			- 있다면 재요청을 위한 CTS 디바이스의 수신 프로토클은
+
+		+ 마자막으로 TCP/IP 통신도 가능 한지
+
+2021-01-18 15:16:52
+	* Serial RS232/485
+		+ https://jcdgods.tistory.com/351
+
+2021-01-19 08:06:22
+	######################################
+	## 목적 : 브라우저 터미날 cockpit 
+	## 설명 : https://cockpit-project.org/running
+	## 접속 포트 설정(기본값:9090)
+	######################################
+		$ sudo apt-get install cockpit
+
+2021-01-20 23:35:37
+	Disable Wifi and Blurtooth
+
+	disable dhpc - $ sudo systemctl disable bluetooth.service
+	disable dhpc - $ sudo systemctl disable dhcpcd.service 
+
+	아래방법은 신뢰성 의심
+
+	## https://raspberrypi.stackexchange.com/questions/100543/how-to-disable-wifi-in-raspberry-pi-4/100549
+	##     $ cat /boot/overlays/README
+	##     $ sudo vi /boot/config.txt
+	##         # Add the following line
+	##         # disable bluetooth and wifi.
+	##         dtoverlay=disable-bt
+	##         dtoverlay=disable-wifi
+	## Status
+	##     $ sudo vcdbg log msg
+
+2021-01-21 00:15:34
+	Disabling IPv6
+	https://www.leowkahman.com/2016/03/19/disable-ipv6-raspberry-raspbian/
+		$ sudo vi /etc/sysctl.conf
+			# Add the following line
+			net.ipv6.conf.all.disable_ipv6 = 1
+
+		$ ifconfig
+		eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+				inet 192.168.0.20  netmask 255.255.255.0  broadcast 192.168.0.255
+				inet6 fe80::dea6:32ff:fe30:734  prefixlen 64  scopeid 0x20<link>
+				ether dc:a6:32:30:07:34  txqueuelen 1000  (Ethernet)
+				RX packets 1418  bytes 118121 (115.3 KiB)
+				RX errors 0  dropped 0  overruns 0  frame 0
+				TX packets 2071  bytes 920460 (898.8 KiB)
+				TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+		$ ifconfig
+		eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+				inet 192.168.0.20  netmask 255.255.255.0  broadcast 192.168.0.255
+				ether dc:a6:32:30:07:34  txqueuelen 1000  (Ethernet)
+				RX packets 1986  bytes 162083 (158.2 KiB)
+				RX errors 0  dropped 0  overruns 0  frame 0
+				TX packets 2609  bytes 1027596 (1003.5 KiB)
+				TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+2021-02-01 11:35:47
+	데이터베이스 필드 추가 방법
+		$ mysql -u its -p;
+			enter mysql password -> GXnLRNT9H50yKQ3G
+
+		> use its_web;
+		> ALTER TABLE `g5_write_g400t300` ADD `w_opencv_grayLv` float NOT NULL DEFAULT '0' AFTER `w_opencv_object_p`;
+		> quit;
+
+2021-02-07 05:04:42
+	RPi 4-연결된 모니터없이 VNC 사용방법
+	RPi 4 - no VNC without connected monitor
+	1. /boot/config.txt 수정
+		After setting the DMT mode 82 1920x1020 60 Hz 16:9 (I use VNC through a 1080p monitor) and restarting RPi, 
+	2. 부팅시 기본 해상도
+		after connecting VNC the resolution was set to 1024x768, 
+	3. screen configuration으로 해상도 변경
+		
+		manual change in the screen configuration to 1920x1080 helped.
+
+	$ sudo vi /boot/config.txt
+		# uncomment to force a specific HDMI mode (this will force VGA)
+		hdmi_group=2
+		hdmi_mode=82
+
+		# uncomment to force a HDMI mode rather than DVI. This can make audio work in
+		# DMT (computer monitor) modes
+		hdmi_drive=2
+
+2021-02-11 06:18:45
+	* OpenCV를 통해 카메라 스넵샷 요청시 주의 사항
+	def cv_image_from_url(bufferClear=5):
+		# Camera Info : $ v4l2-ctl -d /dev/video0 --all
+
+		# https://answers.opencv.org/question/98947/read-latest-live-image-from-webcam-not-from-queue/?sort=latest
+		# 요청한 이미지는 카메라 프레임 메모리(버퍼) 특성상 직전에 저장된 이미지로 
+		# 최신 이라고 할수 없음 (버퍼 프레임 수는 제조사나 모델마다 다름)
+		# 방법은 케싱된 버퍼를 밀어내는 무식한 방법을 사용해야만 가능함
+		# cap.grab()은 기존 버퍼를 밀어내기 위한 편법임(테스트중 아직까지는 가장 신뢰할만 함)
+		# 버퍼의 갯수는 테스트에 의해서 결정함(5)
+		for i in range(bufferClear): # tailingShot()인경우 bufferClear=0
+			cap.grab()
+
+		return cap.read()[1]
+
+
+2021-02-21 10:42:07
+***********************
+	SD Card Headless WIFI Setup
+	RPI Zero는 5G 지원 않함
+	disable dhpc - $ sudo systemctl disable dhcpcd.service
+	disable dhpc - $ sudo systemctl disable bluetooth.service
+	
+	Cmd: lsblk, iwconfig, 
+
+		$ sudo lsblk
+		NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+		sda           8:0    1  3.7G  0 disk
+		├─sda1        8:1    1  256M  0 part
+		└─sda2        8:2    1  3.4G  0 part
+		mmcblk0     179:0    0 14.9G  0 disk
+		├─mmcblk0p1 179:1    0  256M  0 part /boot
+		└─mmcblk0p2 179:2    0 14.6G  0 part /
+
+		$ sudo mount /dev/sda2 /mnt
+
+		$ cd /mnt/boot
+
+		$ sudo vi /mnt/etc/wpa_supplicant/wpa_supplicant.conf
+			# RPI Zero는 5G 지원 않함
+			ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+			update_config=1
+			country=US
+			network={
+					ssid="ITS-2.4G"
+					psk="itss5971"
+					key_mgmt=WPA-PSK
+			}
+
+		$ sudo vi /mnt/etc/network/interfaces
+			# interfaces(5) file used by ifup(8) and ifdown(8)
+
+			# Please note that this file is written to be used with dhcpcd
+			# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+			# Include files from /etc/network/interfaces.d:
+			source-directory /etc/network/interfaces.d
+
+			auto lo
+			iface lo inet loopback
+
+			allow-hotplug wlan0
+			iface wlan0 inet static
+				wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+				address 192.168.0.30
+				netmask 255.255.255.0
+				gateway 192.168.0.1
+				network 192.168.0.0
+				broadcast 192.168.0.255
+
+		$ iwconfig
+
+		# disable dhpc
+		$ sudo systemctl disable dhcpcd.service
+
+		$ cd
+		$ sudo umount /mnt
+
+	* 이미지 파일 마운트
+	# https://linuxconfig.org/how-to-mount-rasberry-pi-filesystem-image
+		$ sudo fdisk -l rpi4_ITS_20210223.img
+			Disk rpi4_ITS_20210223.img: 3.7 GiB, 3932160000 bytes, 7680000 sectors
+			Units: sectors of 1 * 512 = 512 bytes
+			Sector size (logical/physical): 512 bytes / 512 bytes
+			I/O size (minimum/optimal): 512 bytes / 512 bytes
+			Disklabel type: dos
+			Disk identifier: 0xf81ef550
+
+			Device                 Boot  Start     End Sectors  Size Id Type
+			rpi4_ITS_20210223.img1        8192  532479  524288  256M  c W95 FAT32 (LBA)
+			rpi4_ITS_20210223.img2      532480 7679999 7147520  3.4G 83 Linux
+
+		$ sudo mount rpi4_ITS_20210223.img -o loop,offset=$((512 * 532480)) /mnt
+		$ sudo umount /mnt
+
+2021-02-23 08:39:18
+	* ITS Wifi 설정 및 상태 확인 방법
+	CMD: ifconfig, iwconfig, sudo iwlist scan
+
+	# 와이피이 디바이스 활성
+		$ sudo ifconfig wlan0 up
+		$ sudo ifconfig wlan0 down
+		$ ifconfig
+
+	# 와이파이 접속포인트 확인
+		$ sudo iwlist scan
+
+		Info:
+			-30 dBm	Amazing	    Max achievable signal strength. The client can only be a few feet from the AP to achieve this. Not typical or desirable in the real world.	N/A
+			-67 dBm	Very Good	Minimum signal strength for applications that require very reliable, timely delivery of data packets.	VoIP/VoWiFi, streaming video
+			-70 dBm	Okay	    Minimum signal strength for reliable packet delivery.	Email, web
+			-80 dBm	Not Good	Minimum signal strength for basic connectivity. Packet delivery may be unreliable.	N/A
+			-90 dBm	Unusable	Approaching or drowning in the noise floor. Any functionality is highly unlikely.	N/A
+
+2021-02-24 12:53:56
+	Manually resizing the SD card on Raspberry Pi
+	You can also resize the partitions of the SD card that your Pi is running on.
+
+	First you need to change the partition table with fdisk. You need to remove the existing partition entries and then create a single new partition than takes the whole free space of the disk. This will only change the partition table, not the partitions data on disk. The start of the new partition needs to be aligned with the old partition!
+
+	Start fdisk:
+
+	$ sudo fdisk /dev/mmcblk0
+		Then delete partitions with d and create a new with n. You can view the existing table with p.
+
+	p to see the current start of the main partition
+	d, 3 to delete the swap partition
+	d, 2 to delete the main partition
+	n p 2 to create a new primary partition, next you need to enter the start of the old main partition and then the size (enter for complete SD card). The main partition on the Debian image from 2012-04-19 starts at 157696, but the start of your partition might be different. Check the p output!
+	w write the new partition table
+	Now you need to reboot:
+
+	$ sudo shutdown -r now
+		After the reboot you need to resize the filesystem on the partition. The resize2fs command will resize your filesystem to the new size from the changed partition table.
+
+	$ sudo resize2fs /dev/mmcblk0p2
+		This will take a few minutes, depending on the size and speed of your SD card.
+		When it is done, you can check the new size with:
+
+	$ df -h
+
+2021-02-24 20:51:23
+	RPI Info
+		https://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
+		$ cat /proc/device-tree/model
+		$ cat /proc/cpuinfo
+		$ pinout
+		,------------------------------------.
+		| oooooooooooooooooooo      J8  +======
+		| 1ooooooooooooooooooo  PoE     |   Net
+		|  Wi                    oo     +======
+		|  Fi  Pi Model 4B  V1.1 oo          |
+		|        ,----.                   +====
+		| |D|    |SoC |                   |USB3
+		| |S|    |    |                   +====
+		| |I|    `----'                      |
+		|                   |C|           +====
+		|                   |S|           |USB2
+		| pwr   |HD|   |HD| |I||A|        +====
+		`-| |---|MI|---|MI|----|V|-----------'
+
+		Revision           : c03111
+		SoC                : BCM2711
+		RAM                : 4096Mb
+		Storage            : MicroSD
+		USB ports          : 4 (excluding power)
+		Ethernet ports     : 1
+		Wi-fi              : True
+		Bluetooth          : True
+		Camera ports (CSI) : 1
+		Display ports (DSI): 1
+
+
+		3V3      (1)(2)      5V
+		GPIO2    (3)(4)      5V
+		GPIO3    (5)(6)      GND
+		GPIO4    (7)(8)      GPIO14
+		GND      (9)(10)     GPIO15
+		GPIO17   (11)(12)    GPIO18
+		GPIO27   (13)(14)    GND
+		GPIO22   (15)(16)    GPIO23
+		3V3      (17)(18)    GPIO24
+		GPIO10   (19)(20)    GND
+		GPIO9    (21)(22)    GPIO25
+		GPIO11   (23)(24)    GPIO8
+		GND      (25)(26)    GPIO7
+		GPIO0    (27)(28)    GPIO1
+		GPIO5    (29)(30)    GND
+		GPIO6    (31)(32)    GPIO12
+		GPIO13   (33)(34)    GND
+		GPIO19   (35)(36)    GPIO16
+		GPIO26   (37)(38)    GPIO20
+		GND      (39)(40)    GPIO21
+
+2021-02-25 11:52:04
+	* RPI 자동 업데이트 금지 방법
+	* 설명 : 부팅후 새로운 업데이트가 있는지 윕서버 접속 시도를 방지한다.
+		$ sudo systemctl mask apt-daily-upgrade
+		$ sudo systemctl mask apt-daily
+		$ sudo systemctl disable apt-daily-upgrade.timer
+		$ sudo systemctl disable apt-daily.timer
+
+2021-02-25 22:30:32
+	* 시스템 부팅시 오류 확인 명령어
+	# https://www.lesstif.com/system-admin/systemd-analyze-booting-time-93127400.html
+
+	# time 부팅 시간에 대한 자세한 정보를 제공
+	$ sudo systemd-analyze
+
+	# 서비스별 부팅 시간 확인
+	$ sudo systemd-analyze blame
+
+	# 느린 유닛을 tree 로 보기
+	$ systemd-analyze critical-chain 
+
+
+	* systemd(system daemon) 을 관리하는 systemctl 명령어 사용법
+	# https://www.lesstif.com/system-admin/systemd-system-daemon-systemctl-24445064.html
+
+2021-02-27 07:48:26
+	# https://access.redhat.com/documentation/ko-kr/red_hat_enterprise_linux/6/html/power_management_guide/rfkill
+	# 시스템에는 Wi-Fi, 블루투스, 3G 장치와 같은 전파 송수신 장치가 포함
+	$ rfkill
+
+
+2021-03-03 13:22:37
+	* 열화상 카메라 AMG833
+	https://www.instructables.com/Thermal-Camera-AMG833-Raspberry-Pi/
+
+	1. Enable VNC and I2C interfaces:
+		$ sudo raspi-config
+			select "interfacing options"
+			activate VNC
+			activate I2C
+			select <FINISH>
+		$ sudo reboot
+
+	2. Check to see if I2C is setup correctly
+		$ sudo i2cdetect -y 1 (You should see a 69 on column 9)
+
+	3. Download and install packages outlined in Adafruit guide
+		$ sudo apt-get install -y build-essential python-pip python-dev python-smbus git
+		$ git clone https://github.com/adafruit/Adafruit_Python_GPIO.git
+		$ cd Adafruit_Python_GPIO
+		$ sudo python setup.py install
+
+	4. Install pygame and scipy
+		$ sudo apt-get install -y python3-scipy python3-pygame
+		$ sudo pip3 install colour Adafruit_AMG88xx
+
+	5. Run example script
+		$ cd ~/
+		$ git clone https://github.com/adafruit/Adafruit_AMG88xx_python.git
+		$ cd Adafruit_AMG88xx_python/examples
+		$ sudo python thermal_cam.py    
+
+2021-03-13 20:48:18
+	"run": {
+		"table": {
+			"command": "run_table.pyc"
+		},
+		"gpio": {
+			"command": "run_GPIO.pyc"
+		},
+		"gpwio": {
+			"command": "GPWIO.pyc"
+		},
+		"fsi": {
+			"command": "run_FSI.pyc"
+		},
+		"tailing": {
+			"command": "run_TAILING.pyc"
+		},
+		"gikent": {
+			"command": "run_GIKENT.pyc"
+		}
+	},
+
+2021-03-16 06:31:19
+	Error:
+		UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordinal not in range(128)
+	Key:
+		string.encode("utf-8")
+
+2021-03-17 10:30:34
+# FSI FD Serices Install and Setup
+	
+	* File 구성
+		config.json, FDX.pyc, FSI.pyc, run_FSI.pyc
+
+	* File 기능
+		+ config.json 
+			- 센서 모델 설정
+				: GUI 모델 선택과 연계됨
+			- 실행 모드 지정 
+				: 자세한 또는 단순 로그파일
+				: true / false
+			- 기본값
+				$ cat config.json
+				{
+					"debug":true,
+					"model" : {
+						"0" : "None",
+						"1" : "FD322",
+						"2" : "FD331",
+						"3" : "FD332",
+						"4" : "FD348",
+						"5" : "FD508",
+						"6" : "FD525",
+						"7" : "FD525R"
+					}
+				}
+
+		+ run_FSI.pyc
+			- FSI.json 생성
+			- Log Database 생성
+			- FSI.pyc 실행
+
+		+ FSI.pyc
+			- 센서(Device)용 프로그램
+			- 모든 이벤트를 취합
+			- 내용에 따라 Zone Daemon(FDX.pyc)를 Call 한다.
+			- Device(0.log) 파일 생성
+			- Zone 수만큼의 FDX.pyc 실행
+
+		+ FDX.pyc
+			- 센서(Device)에 포함된 각각의 Zone(Channel) 프로그램
+			- 이벤트 상황에 따른 기존의 ITS 기능 수행
+			- Zone(1/25.log) 파일 생성
+
+		+ FSI.json
+			- 실행시 센서및 GUI 내용에 따라 생성된 환경설정 파일
+			- run_FSI.pyc 실행시 생성되며
+			- FSI.pyc, FDX.pyc 프로그램이  본 내용을 참고 함
+	
+	* 실행시 프로세서 구성 예
+		$ ps -ef | grep python
+		pi 4393 1 5 09:28 pts/2  00:00:00 python FDX.pyc 1 52101
+		pi 4395 1 5 09:28 pts/2  00:00:00 python FDX.pyc 2 52102
+		pi 4398 1 5 09:28 pts/2  00:00:00 python FDX.pyc 13 52113
+		pi 4400 1 5 09:28 pts/2  00:00:00 python FSI.pyc
+
+	* 로그 파일
+		+ 폴더
+			- $ ls /var/www/html/its_web/data/log/FSI
+				0.log, 1.log, 2.log, ... 25.log
+			- 0.log -> FSI(Device)
+			- 1/25.log -> FDX(Channel)
+
+2021-03-19 17:33:06
+	GIT Sync
+		$ git clone https://github.com/daivoc/ecos_ITS_Download.git
+			Username for 'https://github.com': daivoc
+			Password for 'https://daivoc@github.com': 
+
+		$ ls
+			GIKENT  GPIO   MONITOR  ecos_ITS_Download 
+			GPACU   GPWIO  common   ecos_ITS_Window   
+
+		$ cd ecos_ITS_Download
+
+		$ ls
+			README.md  code  db  web
+
+		$ git pull
+			Username for 'https://github.com': daivoc
+			Password for 'https://daivoc@github.com': 
+			이미 업데이트 상태입니다.
+
+
+		## File Only
+		$ rcp -r pi@115.139.183.226:/home/pi/ITS/code/FSI /home/pi/
+		$ rcp -r pi@192.168.0.36:/home/pi/ecos_ITS_Download/code/FSI/* /home/pi/FSI
+
+		## Folder FSI Copy
+		$ rsync -avzr --delete pi@192.168.0.36:/home/pi/ecos_ITS_Download/code/FSI /home/pi/
+		$ rsync -avzr --delete pi@192.168.0.36:/home/pi/ecos_ITS_Download/code/API /home/pi/
+
+	#!/bin/bash
+		echo "Download Code and Web";
+		sshpass -pits_iot rsync --progress --delete -avzr -e ssh pi@119.207.126.79:/home/pi/ecos_ITS_Download/code/* /home/pi/;
+		sshpass -pits_iot rsync --progress --delete -avzr -e ssh pi@119.207.126.79:/home/pi/ecos_ITS_Download/web/* /var/www/html/its_web/;
+
+		echo "Database Download and Setup";
+		sshpass -pits_iot scp pi@119.207.126.79:/home/pi/ecos_ITS_Download/db/2021-03-30_192.168.0.20_db.sql /tmp;
+		echo "DROP DATABASE";
+		mysql -uits -pGXnLRNT9H50yKQ3G -e "DROP DATABASE IF EXISTS its_web";
+		echo "CREATE DATABASE";
+		mysql -uits -pGXnLRNT9H50yKQ3G -e "CREATE DATABASE its_web";
+		echo "UPLOAD DATABASE";
+		mysql -uits -pGXnLRNT9H50yKQ3G its_web < /tmp/2021-03-30_192.168.0.20_db.sql;
+		rm /tmp/2021-03-30_192.168.0.20_db.sql;
+
+		echo "File Permission Change";
+		find /home/pi/ /var/www/html/its_web/ -name config.json -exec chmod 777 {} \;
+		find /home/pi/ /var/www/html/its_web/ -name config.json -exec ls -al {} \;
+
+		chmod 777 /var/www/html/its_web/data;
+		chmod 777 /var/www/html/its_web/data/session;
+
+		echo "License Key Code Gen";
+		python ~/utility/licenseKey.pyc ECOS;
+
+		echo "Root File System Expand";
+		sudo raspi-config --expand-rootfs 2>&1 >/dev/null;
+		
+		echo "Update Keycode to ITS and Reboot ITS";
+
+
+2021-03-20 05:45:52
+	오디오 출력 /common/audioOut.pyc
+	- 참고 sshpass 를 통해 음원 전달을 한다.
+
+	- 실행예:
+		python audioOut.pyc source [ip address] [volume(1~100)]
+		python audioOut.pyc /usr/share/sounds/alsa/Front_Center.wav 192.168.0.60 80
+		python audioOut.pyc 2 192.168.0.60 80
+
+2021-03-20 15:45:16
+	IMS Remote Audio
+
+	버튼 = 음원, 타겟, 불륨
+	'🔈' = '1', 'ITS_ID', '70'
+	'🔉' = '1', 'ITS_ID', '80'
+	'🔊' = '1', 'ITS_ID', '100'
+	'⚡' = '4', 'ITS_ID', '100'
+	'☁' = '3' 'broadcast', '100'
+
+	대괄호: [ ]
+	중괄호: { }
+	소괄호: ( )
+	화살괄호: < >
+
+2021-03-21 10:02:08
+	* API Function(Help)
+		+ gpio, audio, system
+		+ 모든 명령은 대괄호 "[]" 내에 JSON Format인 중괄호 "{}"로 구성되며
+		+ 대괄호 내에 다수의 중괄호를 콤마","로 구분한다.
+			- 예
+				[ { ... } ]
+				[ { ... }, { ... }, { ... } ]
+		+ 중괄호는 명령과 변수로 구성된다.
+			- 예
+				{ "명령" : "변수1": "1", "변수2": "1" }
+		+ 명령 요청에 대한 응답은 요청측 IP를 모함한 JSON Format으로 반환된다.
+			- 예
+				$ echo '[ { ... } ]' | nc 192.168.0.60 54001 -q 0
+					{"category": "gpio", "ip": "192.168.0.100", "response": {"R02": 0}}
+					{"category": "audio", "ip": "192.168.0.100", "response": {"sent": "1"}}
+					{"category": "audio", "ip": "192.168.0.100", "response": {"sent": "/usr/share/sounds/alsa/Front_Center.wav"}}
+					{"category": "system", "ip": "192.168.0.100", "response": {"sent": "stop_audio"}}
+
+	* gpio - Input, Output, Power
+		"gpio": {
+			"status":"상태값 : 0,1,3,6,7,8,9", 
+			"id":"포트번호 : R01 ~ R16", 
+			"hold":"상태 유지시간 : 초", 
+			"msg":"예약 필드" 
+		}
+		+ status
+			0 : Set - Relay Off
+			1 : Set - Relay On
+			3 : Get - Relay Status by each
+			6 : Get - Power Status
+			7 : Get - Relay Status
+			8 : Get - Sensor Status
+			9 : Get - Power, Relay, Sensor Status
+
+		- 예제
+			{ "gpio": { "status": "1", "id": "R02", "hold": "", "msg": ""} }
+				return - {"R02": 1}
+			{ "gpio": { "status": "0", "id": "R02", "hold": "", "msg": ""} }
+				return - {"R02": 0}
+
+			{ "gpio": { "status": "3", "id": "R02", "hold": "", "msg": ""} }
+				return - {"R02": 0}
+
+			{ "gpio": { "status": "1", "id": "R01", "hold": "", "msg": ""} }
+			{ "gpio": { "status": "0", "id": "R01", "hold": "", "msg": ""} }
+			{ "gpio": { "status": "1", "id": "R03", "hold": "3.03", "msg": ""} }
+
+			{ "gpio": { "status": "3", "id": "R02", "hold": "", "msg": ""} }
+				return - {"R02": 0}
+			{ "gpio": { "status": "9", "id": "", "hold": "", "msg": ""} }
+				return - {"R01": 1, "S09": 0, "R03": 1, "R02": 1, "R05": 1, "R04": 1, "R07": 1, "R06": 1, "S13": 0, "S12": 0, "S11": 0, "S10": 0, "S16": 0, "S15": 0, "S14": 0, "P02": 0, "P01": 0, "R08": 1}
+
+	* audio
+		"audio": {
+			"source": "음원 : 원격(음원이 재생되는 시스템)에 있거나 URL접근이 가능한 소스", 
+			"volume": "볼륨 : 0 ~ 100", 
+			"loop": "반복횟수 : 정수"
+		}
+
+		- 예제
+			{ "audio": { "source": "1", "volume": "80", "loop": "2" } }
+			{ "audio": { "source": "/usr/share/sounds/alsa/Front_Center.wav", "volume": "80", "loop": "2" } }
+			{ "audio": { "source": "https://www.mfiles.co.uk/mp3-downloads/chopin-nocturne-op9-no2.mp3", "volume": "80", "loop": "1" } }
+
+	* system
+		"system": { 
+			"command": "stop_audio", 
+			"value": "" 
+		}
+
+		- 예제
+			{ "system": { "command": "stop_audio", "value": "" }}
+				return - {"category": "system", "ip": "192.168.0.100", "response": {"sent": "stop_audio"}}
+
+	* 복합명령
+		[{ "gpio": { "status": "1", "id": "R01", "hold": "3.01", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R03", "hold": "3.03", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R05", "hold": "3.05", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R07", "hold": "3.07", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R09", "hold": "3.09", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R11", "hold": "3.11", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R13", "hold": "3.13", "msg": ""} },
+		{ "gpio": { "status": "1", "id": "R15", "hold": "3.15", "msg": ""} }]
+
+		[{ "system": { "command": "stop_audio", "value": "" }},
+		{ "audio": { "source": "https://www.mfiles.co.uk/mp3-downloads/chopin-nocturne-op9-no2.mp3", "volume": "80", "loop": "1" } }]
+
+		echo '[ { ... }, { ... } ]' | nc 192.168.0.60 54001 -q 0
+
+
+2021-03-22 15:12:53
+	웹켐에서 직접 이미지 복사 하기
+	Direct snapshot from webcam
+	https://wikidocs.net/3185
+
+	$ sudo apt-get install fswebcam
+	$ fswebcam image.jpg
+	$ fswebcam -r 1280x720 image2.jpg
+	$ fswebcam -r 1280x720 --no-banner image3.jpg
+
+	이것보다 OpenCv로 데몬을 뛰우고 저장하는게 빠른듣...
+		import cv2
+		cam = cv2.VideoCapture(0)
+		s, img = cam.read()
+		cv2.imwrite('pic.png', img)
+
+2021-03-25 10:44:03
+	타임스템프 리스트 보기
+	ls -lt --time-style=full-iso *.png
+	OpenCv 과거 사진 저장 
+	Spooling Image
+	G:\Development\ecos_ITS\its_API\streaming.py
+
+	CCTV의 스트리밍을 일정량(maxCount)의 스넵샷으로 저장하는 기능
+	스넵샷을 maxCount 횟수까지 저장하는 주기는 환경에 따라 시간이 변동적이다.
+	CCTV의 성능에 따라 저장속도나 량은 가변적으로 상황에 따른 튜닝이 필요하다.
+	이미지는 /var/www/html/its_web/data/cam/dirCur 에 저장 된다.
+
+	스트리밍 프로토클은 Local Camera(/dev/video0) 외에 RTSP, AVI, MJPG가 가능 하다.
+		# cap = cv2.VideoCapture(0) # On Board 카메라 
+		# cap = cv2.VideoCapture("/dev/video0") # On Board 카메라 
+		# cap = cv2.VideoCapture("video.avi") # On Board 카메라 
+		# cap = cv2.VideoCapture("http://admin:admin@192.168.0.140/cgi-bin/mjpg/video.cgi?channel=0&subtype=1") # MJPG
+		# cap = cv2.VideoCapture("rtsp://admin:admin@192.168.0.140/cam/realmonitor?channel=1&subtype=00") # RTSP
+		# cap = cv2.VideoCapture("rtsp://admin:admin@96.48.233.195:5540") # Standard RTSP Camera
+
+	응용:
+		이벤트 발생:
+			- 폴더 "dirRoot" 내에 "dirTmp"란 빈 폴더를 생성(트리거)하면
+			- 프로그램은 최근 저장된(dirCur) 스넵샷 최대 갯수(maxCount)를 현재시간(연월일시분초)으로 제목변경(저장)
+			- 저장시 폴더명의 마지막이 초단위로 이는 1초 이내 1번 이상 요청은 무시을 의미함
+			- 트리거용으로 생성된 폴더 "dirTmp"를 "dirCur"로 바꿔 스넵샷 저장을 지속한다.
+			- 모든 이벤트 스넵샷은 "dirRoot"내에 저장된다.
+			- 최종 이벤트 스넵샷은 웹("http://ips.ip/theme/ecos-its_optex/utility/ubergallery/")으로 접근
+
+	참고:
+		- 웹켐인 경우 기본 640 X 480 초당 20장 정도를 저장 한다.
+		
+		- 파일 생성일 초단위로 보는 명령
+			ls -lt --time-style=full-iso dirCur/
+
+
+2021-04-01 18:43:36
+	* MySQL 충돌 테이블에 대한 많은 이유. 
+	* 하드 드라이브 구성의 불량 섹터
+	* 갑작스런 서버 재부팅 - Poweroff 없이 전원끄기
+
+	* 터미널에서 복구 방법 (MYSQL)
+		+ Check
+			$ mysqlcheck -uits -pGXnLRNT9H50yKQ3G --check its_web
+
+		+ Repair
+			$ mysqlcheck -uits -pGXnLRNT9H50yKQ3G --auto-repair its_web
+
+		+ Optimize
+			$ mysqlcheck -uits -pGXnLRNT9H50yKQ3G --optimize its_web
+
+2021-04-03 05:26:21
+	센드메일 설치 https://blog.kimsfactory.com/entry/Ubuntu-%EC%9A%B0%EB%B6%84%ED%88%AC-%EC%84%BC%EB%93%9C%EB%A9%94%EC%9D%BC-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0-sendmail
+
+	[sendmail 설치]
+	$ sudo apt-get install sendmail
+
+	[설정변경]
+	$ sudo vi /etc/mail/sendmail.mc
+		FEATURE(`no_default_msa')dnl
+		dnl DAEMON_OPTIONS(`Family=inet6, Name=MTA-v6, Port=smtp, Addr=::1')dnl
+		DAEMON_OPTIONS(`Family=inet,  Name=MTA-v4, Port=smtp, Addr=127.0.0.1')dnl
+		dnl DAEMON_OPTIONS(`Family=inet6, Name=MSP-v6, Port=submission, M=Ea, Addr=::1')dnl
+		DAEMON_OPTIONS(`Family=inet,  Name=MSP-v4, Port=submission, M=Ea, Addr=127.0.0.1')dnl
+		127.0.0.1 => 0.0.0.0 으로 변경
+
+	[config 파일 생성]
+	$ sudo m4 /etc/mail/sendmail.mc
+
+	[설정변경]
+	$ sudo vi /etc/mail/access 맨 마지막에 추가
+		192.168.0 RELAY
+
+	[sendmail 다시시작]
+	$ sudo service sendmail restart
+
+	[메일전송테스트]
+	$ telnet localhost 25
+		Trying 127.0.0.1...
+		Connected to localhost.
+		Escape character is '^]'.
+		220 ubuntu ESMTP Sendmail 8.14.4/8.14.4/Debian-2ubuntu2.1; Fri, 10 Mar 2017 10:29:07 +0200; (No UCE/UBE) logging access from: localhost(OK)-localhost [127.0.0.1]
+		라고 나오면 성공!
+
+2021-04-04 13:15:30
+	######################################
+	## 목적 : 사용자 고정 아이피 설정
+	## 설명 : /etc/netplan/01-network-manager-all.yaml 적용 예, /etc/network/interfaces 도 사용가능
+	######################################
+	기존 방법 - 권장
+		$ sudo vi /etc/network/interfaces 
+			auto enp2s0
+			iface enp2s0 inet static
+			address 192.168.0.8
+			netmask 255.255.255.0
+			gateway 192.168.0.1
+
+	New !!!!
+		Network IP Change
+		$ ip link
+			인터페이스 확인 예: ens3, enp3s0
+
+		$ sudo nano /etc/netplan/01-network-manager-all.yaml
+		network:
+			version: 2
+			renderer: NetworkManager
+			ethernets:
+				enp2s0:
+					# dhcp4: true
+					addresses: [192.168.0.8/24]
+					gateway4: 192.168.0.1
+					nameservers:
+						addresses: [8.8.8.8, 4.4.4.4]
+		$ sudo netplan apply
+
+2021-04-04 17:02:33
+	https://askubuntu.com/questions/1090631/start-job-is-running-for-wait-for-network-to-be-configured-ubuntu-server-18-04
+	* error Start job is running for wait for network to be configured. Ubuntu server 20.04
+	$ sudo vi /etc/netplan/00-installer-config.yaml
+		network:
+		ethernets:
+			enp0s31f6:
+				addresses: [192.168.0.8/24]
+				gateway4: 192.168.0.1
+				nameservers:
+					addresses: [4.2.2.2, 8.8.8.8]
+				dhcp4: false
+				dhcp6: false
+				optional: true
+			enp2s0:
+			#     addresses: [192.168.0.9/24]
+			#     gateway4: 192.168.0.1
+			#     nameservers:
+			#       addresses: [4.2.2.2, 8.8.8.8]
+				dhcp4: false
+				dhcp6: false
+				optional: true
+		version: 2
+
+	$ sudo netplan --debug generate
+
+	$ sudo netplan apply
+
+	$ sudo reboot	
+
+2021-04-10 07:54:31
+	utility > setup_its.sh 기능
+		웹 갱신
+		프로그램 갱신
+		데이터베이스 갱신
+		설정파일 권한변경
+			타이틀 등록 - ECOS
+			라이센스 등록
+			신규 IP 등록 - IP
+			프로그램 등록 - (사용자 등록)
+			ITS Server 등록
+		SD 저장공간 확장
+
+	utility > licenseKey.sh 기능
+		타이틀 등록 - (사용자 등록)
+		라이센스 등록
+		신규 IP 등록 - (사용자 IP 등록)
+		프로그램 등록 - (사용자 등록)
+		ITS Server 등록
+
+	* ITS SD Image Download
+		URL : http://119.207.126.79/its_server/ecosSdImg/tinyfilemanager.php
+		ID  : pi
+		PASS: its_iot
+
+	* ITS Server 
+		URL : http://119.207.126.79/its_server/
+		ID  : manager
+		PASS: manager
+
+	* setup_its.sh 실행 예
+		pi@ecos:~/utility $ ./setup_its.sh
+		Be careful.  It will be renewal all Database, Program and GUI.
+		Are you sure? y
+		>>> Adding the fingerprint
+		# 119.207.126.79:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2
+		# 119.207.126.79:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2
+		# 119.207.126.79:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2
+		>>> Download Code and Web
+		receiving incremental file list
+
+		sent 1,964 bytes  received 287,495 bytes  115,783.60 bytes/sec
+		total size is 108,157,771  speedup is 373.65
+		receiving incremental file list
+		cannot delete non-empty directory: data/config
+
+		sent 685 bytes  received 108,528 bytes  72,808.67 bytes/sec
+		total size is 45,651,210  speedup is 418.00
+		>>> Database Download and Setup
+		>>> DROP DATABASE
+		>>> CREATE DATABASE
+		>>> UPLOAD DATABASE
+		>>> File Permission Change
+		-rwxrwxrwx 1 pi pi 2978 Apr  2 17:50 /home/pi/SRF/config.json
+		-rwxrwxrwx 1 pi pi 1224 Apr  2 17:50 /home/pi/CAM/config.json
+		-rwxrwxrwx 1 pi pi 563 Apr  2 17:50 /home/pi/GPACU/config.json
+		-rwxrwxrwx 1 pi pi 2209 Apr  2 17:50 /home/pi/MONITOR/config.json
+		-rwxrwxrwx 1 pi pi 2 Apr  2 17:50 /home/pi/TAILING/config.json
+		-rwxrwxrwx 1 pi pi 2 Apr  2 17:50 /home/pi/GPIO/config.json
+		-rwxrwxrwx 1 pi pi 2 Apr  2 17:50 /home/pi/API/config.json
+		-rwxrwxrwx 1 pi pi 3 Apr  2 17:50 /home/pi/GPWIO/config.json
+		-rwxrwxrwx 1 pi pi 2 Apr  2 17:50 /home/pi/GIKENT/config.json
+		-rwxrwxrwx 1 pi pi 5399 Apr 10 09:16 /home/pi/common/config.json
+		-rwxrwxrwx 1 pi pi 908 Feb  6  2020 /home/pi/optex_BIND/config.json
+		-rwxrwxrwx 1 pi pi 8348 Dec  8 20:29 /home/pi/.config/config.json
+		-rwxrwxrwx 1 pi pi 169 Apr  2 17:50 /home/pi/FSI/config.json
+		-rwxrwxrwx 1 pi pi 690 Apr  2 17:50 /var/www/html/its_web/theme/ecos-its_optex/skin/board/w_optex_FSI/config.json
+		-rwxrwxrwx 1 pi pi 690 Apr  2 17:50 /var/www/html/its_web/theme/ecos-its_optex/skin/board/w_optex_FSI_FD/config.json
+		-rwxrwxrwx 1 pi pi 325 Apr  2 17:50 /var/www/html/its_web/theme/ecos-its_optex/skin/board/w_optex_GPIO/config.json
+		-rwxrwxrwx 1 pi pi 65 Apr  2 17:50 /var/www/html/its_web/theme/ecos-its_optex/skin/board/w_ecos_BASIC/config.json
+		>>> License Key Code Gen
+		Select Program
+		1:api       2:bss       3:camera    4:fsi
+		5:gikent    6:gpacu     7:gpio      8:gpwio
+		9:monitor  10:rls_r    11:table
+		Select number(order) with space: 1 3 5 7
+		Selected 'api camera gikent gpio ', continue? (y/n): y
+		ITS License: >>>> e75a42f0a1d075b7cfd8a3f6875c9eb562f14ea2ff26575a0f81d236149b7a0b <<<<
+		>>> Expand Root File System
+		Partition #2 contains a ext4 signature.
+		Re-reading the partition table failed.: Device or resource busy
+		/_/_/_/_/_/_/_/_/_/
+		/_/ Reboot ITS  /_/
+		/_/_/_/_/_/_/_/_/_/
+		pi@ecos:~/utility $
+
+
+2021-04-21 14:55:05
+
+	[Ubuntu] 아파치(Apache) OpenSSL 적용
+
+	https://all-record.tistory.com/189
+
+2021-04-26 08:04:12
+	How to clean up snap and loop devices from df output in Ubuntu 18.04 and 20.04
+	https://clintonminton.com/how-to-clean-up-snap-and-loop-devices-from-df-output-in-ubuntu-18-04/
+
+2021-04-29 14:30:54
+	인천공항 업데이트
+	- 테일게이트 로그 60일이전 자료 삭제
+		/var/www/html/its_web/theme/ecos-its_optex/utility/status/list_tailing.php
+	
+2021-04-30 08:12:22
+	exportDB - 데이터 베이스 마스터 서버에 백업
+
+
+2021-04-30 08:29:25
+	신규 유틸리티 기능 정리(인천공항 업그레이드 작업시 문제점 보완)
+
+	Utility -> 
+		- ipSetup.pyc (아이피 일괄 변경 - 오프라인 기능)
+			address  - ITS
+			netmask  - ITS
+			gateway  - ITS
+			watchdog - IMS IP
+			ntp srv - Network Time Server IP
+
+		- setup_its.sh (다운로드 서버 접속 - 온라인 기능)
+			일괄 프로그램, 웹 & GUI, 데이터 베이스, 실행 프로그램 설정
+
+		- productKey.pyc (setup_its.sh 프로그램 일부 - 오프라인 기능)
+			실행 프로그램 설정 
+
+		- licenseKey.pyc (Watchdog 정보공유 - 온라인 기능)
+			라이센스 등록
+
+		- licenseSrv.pyc (setup_its.sh 프로그램 일부 - 오프라인 기능)
+			다운로드 서버 아이피 변경
+
+2021-05-04 05:20:50
+	# **************************************************************
+	# * 최소 분(Min)을 기본단위로 초, 10초, 분, 시, 일, 주, 월, 년 주기
+	# **************************************************************
+	dateS = datetime.datetime.now().strftime("%Y%m%d%H%M%S") # UTC - YYYYMMDDHHMMSS
+	dateE = dateS
+	while True:
+		dateS = datetime.datetime.now().strftime("%Y%m%d%H%M%S") #
+		if dateS > dateE: # 1초 단위
+			pass
+			if dateS[0:13] > dateE[0:13]: # 10초 단위 
+				pass
+				if dateS[0:12] > dateE[0:12]: # 분 단위 
+					pass
+					if dateS[0:10] > dateE[0:10]: # 시간 단위 
+						pass
+						if dateS[0:8] > dateE[0:8]: # 날짜 단위 
+							pass
+							if datetime.datetime(int(dateS[0:4]),int(dateS[4:6]),int(dateS[6:8])).weekday() == 0: # 한주 단위 
+								pass
+							if dateS[0:6] > dateE[0:6]: # 월 단위 
+								pass
+								if dateS[0:4] > dateE[0:4]: # 년 단위 
+									pass
+		dateE = dateS # 이전 픽업시간 저장
+		time.sleep(live['readCycle']) # readCycle은 1초 이하로 설정
+
+2021-05-11 07:07:51
+	우분투 원격 데스크탑 접속 - Remote Desktop Xrdp
+		https://linuxconfig.org/ubuntu-20-04-remote-desktop-access-from-windows-10
+		첫 번째 단계는 xrdpUbuntu 20.04 데스크톱에 RDP (원격 데스크톱 프로토콜) 서버 를 설치하는 것입니다. 이렇게하려면 다음 명령을 실행하십시오.
+		$ sudo apt install xrdp
+		재부팅 후 시작을 활성화하고 원격 데스크톱 공유 서버를 실행합니다 xrdp.
+		$ sudo systemctl enable --now xrdp
+		여전히 Ubuntu 20.04 데스크톱에서 들어오는 트래픽에 대한 방화벽 포트 3389 를 엽니 다 .
+		$ sudo ufw는 모든 포트에서 3389 proto tcp로 허용
+		
+		윈도의 리모트 데스크톱으로 접속(별도 사용자 필요함)
+
+2021-05-11 07:26:02
+	Use the usermod command to add the user to the sudo group.
+	Create a New Sudo User
+		$ sudo usermod -aG sudo <username>
+<<<<<<< HEAD
+
+2021-05-19 05:53:18
+	# 우분투 원격접속 서버 설정
+
+	$ sudo apt-get install openssh-server
+	$ sudo service ssh start
+
+	$ sudo apt-get install xrdp
+	$ sudo vi /etc/polkit-1/localauthority/50-local.d/45-allow-colord.pkla
+		[Allow Colord all Users]
+		Identity=unix-user:*
+		Action=org.freedesktop.color-manager.create-device;org.freedesktop.color-manager.create-profile;org.freedesktop.color-manager.delete-device;org.freedesktop.color-manager.delete-profile;org.freedesktop.color-manager.modify-device;org.freedesktop.color-manager.modify-profile
+		ResultAny=no
+		ResultInactive=no
+		ResultActive=yes
+
+	# 포트 변경(선택) 기본 포트는 [3389]
+	$ sudo nano /etc/xrdp/xrdp.ini
+
+#############################
+
+2020-12-17 04:58:52
+	* 깃허브 설정 - 사전에 깃허브 개정내에 ecos_ITS_Window란 빈 repository가 있다는 가정
+	$ git init
+	$ git add .
+	$ git commit -m "first commit"
+	$ git branch -M main
+	$ git remote add origin git@github.com:daivoc/ecos_ITS_Download.git
+	$ git push -u origin main
+
+	$ ssh-keygen -t rsa -b 4096 -C "git@github.com" # 깃헙인 경우
+	$ ssh-keygen -t rsa -b 2048 -C "git@gitlab.com" # 깃헙 / 깃렙인 경우
+		Generating public/private rsa key pair.
+		Enter file in which to save the key (/c/Users/daivoc/.ssh/id_rsa):
+		/c/Users/daivoc/.ssh/id_rsa already exists.
+		Overwrite (y/n)? y
+		Enter passphrase (empty for no passphrase):
+		Enter same passphrase again:
+		Your identification has been saved in /c/Users/daivoc/.ssh/id_rsa
+		Your public key has been saved in /c/Users/daivoc/.ssh/id_rsa.pub
+		The key fingerprint is:
+		SHA256:8OIu2AxE5YUh8oI9ZXMeA3WjkIhAHm7bKXhqzPWjyk8 git@github.com
+		The key's randomart image is:
+		+---[RSA 4096]----+
+		|=+.oO** o        |
+		|=++=o* = .       |
+		|o=+ . +          |
+		|o.+..  o         |
+		|.+.+  . S        |
+		|oo+ .. .         |
+		|.+ E o.          |
+		|o o =..          |
+		| ooo ..          |
+		+----[SHA256]-----+
+
+	$ cat ~/.ssh/id_rsa.pub
+		ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDeR0qrF1p70BEo74g+6N0pKApMM4rHi3/yPQiNnYX2vh0ZHEfM+ytY/D5CEChFohhwtZgc1TfYtvwyrKrQ6qVYV9PweebF98VjwrxusErTCnF1RLQy0Yx7PASAaHjlotJAGmpp3QqqdNm8ePx2pAXpAWumFhKsKlmCQKG/0icMNaoPvdAVquy/wxavq7uS7kvcIHcKlCF2j0BpPzIveN0ZfnStcJMVVEOQkLDUJs/SEhLdPMB/nBSGOmPiAah06y/h6M0KJVnZDAPfzixGnuhucxGZ17J2KSLBEcr7ltFrOhjVx3y5to06Nh2vNGFzq7OZTr1QDslbNpVlZ3d26NXkq3e8L+65A95D+SlqK4rReSIpD/8msIL0e6mtwjoH7gDQCfhR1se7f/bunucZGBwLJZ1i44rIk5+IdqjnOOh3FYj1TuzVGTh86cXXuKzEjTTS978T/rkEXnbkguCku+TSqIocJmeHLwXzVcSe9WM79v00IOVVVUcAfOvjs+HVN/dUxYwrFnRLjfG1cDoNnAJK/NeKsIkBy05WOvJ9cEhxZ9EAK2igbRnFFEtnjjNG7qGPxZPK4DRkzpi1Dr69XLNyR3sOXYVbCAG6Pssq80BBGlFT+lG650onL59qaZ3kDqCEbdbNoD+Ki/zoVdH52hGT0v5ycgLwDiGHKc3eAQuMOQ== git@github.com
+
+	Web: daivoc:ecos_ITS_Window -> setup -> ssh key -> title and paste key
+
+2021-05-06 10:09:52
+	$ git clone https://github.com/daivoc/ecos_ITS_Download.git
+		Cloning into 'ecos_ITS_Download'...
+		Username for 'https://github.com': daivoc
+		Password for 'https://daivoc@github.com':
+		remote: Enumerating objects: 7581, done.
+		remote: Counting objects: 100% (28/28), done.
+		remote: Compressing objects: 100% (20/20), done.
+		remote: Total 7581 (delta 5), reused 28 (delta 5), pack-reused 7553
+		Receiving objects: 100% (7581/7581), 149.62 MiB | 9.25 MiB/s, done.
+		Resolving deltas: 100% (2512/2512), done.
+		Updating files: 100% (15302/15302), done.
+
+2021-05-19 08:22:12
+	# 오류 해결을 위한 팁 모음
+
+	git add . && git commit -m"Updated:ecos_ITS_Download" && git push
+
+	# git push 시 사용자 비번 자동 
+	git remote set-url origin git@github.com:daivoc/ecos_ITS_Download.git
+	git remote set-url origin git@github.com:daivoc/ITS_CODE.git
+
+	$ git remote remove origin
+	$ git remote add origin git@github.com:daivoc/ecos_ITS_Download.git
+	$ git remote add origin git@github.com:daivoc/ITS_CODE.git
+
+	$ git remote -v show
+		origin git@github.com:daivoc/ecos_ITS_Download.git (fetch)
+		origin git@github.com:daivoc/ecos_ITS_Download.git (push)
+
+	도움말
+		NAME
+			git-remote - Manage set of tracked repositories
+
+		SYNOPSIS
+			git remote [-v | --verbose]
+			git remote add [-t <branch>] [-m <master>] [-f] [--[no-]tags] [--mirror=<fetch|push>] <name> <url>
+			git remote rename <old> <new>
+			git remote remove <name>
+			git remote set-head <name> (-a | --auto | -d | --delete | <branch>)
+			git remote set-branches [--add] <name> <branch>...
+			git remote get-url [--push] [--all] <name>
+			git remote set-url [--push] <name> <newurl> [<oldurl>]
+			git remote set-url --add [--push] <name> <newurl>
+			git remote set-url --delete [--push] <name> <url>
+			git remote [-v | --verbose] show [-n] <name>...
+			git remote prune [-n | --dry-run] <name>...
+			git remote [-v | --verbose] update [-p | --prune] [(<group> | <remote>)...]
+
+2021-05-11 08:36:26
+	Python 기본 링크 
+	$ cd /bin
+	$ sudo ln -s python2.7 /bin/python
+	$ ls -l /bin/pyt*
+		lrwxrwxrwx 1 root root       9  5월 11 08:39 /bin/python -> python2.7
+		lrwxrwxrwx 1 root root       9  3월 13  2020 /bin/python2 -> python2.7
+		-rwxr-xr-x 1 root root 3674216  3월  8 22:02 /bin/python2.7
+		lrwxrwxrwx 1 root root       9  5월 10 22:25 /bin/python3 -> python3.8
+		-rwxr-xr-x 1 root root 5486384  1월 28 00:41 /bin/python3.8

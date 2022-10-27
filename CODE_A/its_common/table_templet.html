@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__script_jquery_ui_js__
+__style_jquery_ui_css__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+	function clear_effect(id) {
+		var event_id = id + '_event';
+		var heart_id = id + '_heart';
+		var error_id = id + '_error';
+
+		$('#'+event_id).stop( true, true ); // 남아있는 effect buffer 초기화
+		$('#'+heart_id).stop( true, true ); // 남아있는 effect buffer 초기화
+		$('#'+error_id).stop( true, true ); // 남아있는 effect buffer 초기화
+		
+		$('#'+event_id, '#'+heart_id).css('color', 'silver');
+		$('#'+error_id).css('color', 'white');
+		
+	}
+	function blink_text(id) {
+		$(id).effect( "highlight", {color: 'green'}, 1000 );
+		// $(id).fadeOut(500);
+		// $(id).fadeIn(200);
+		// $(id).css('color', 'green')
+	}
+	function blink_text_color(id) {
+		$(id).effect( "highlight", {color: 'red'}, 1000 );
+		// $(id).fadeOut(500);
+		// $(id).fadeIn(200);
+		// $(id).css('color', 'red')
+	}
+	function blink_table_color(id) {
+		$(id).css('color', 'white');
+		$(id).fadeOut(500);
+		$(id).css('color', 'crimson')
+		$(id).fadeIn(200);
+	}
+	
+	var socketio = io.connect();
+	socketio.on("message_to_client", function(data) {
+		var id = data['id'];
+		var name = data['name'];
+		var ip = data['ip'];
+		var model = data['model'];
+		var board = data['board'];
+		var tableID = data['tableID'];
+		var status = data['status'];
+		var msg = data['msg'];
+		
+		var now = new Date();
+		var nowTime = now.getFullYear() + "-" + (now.getMonth()+1) + "-" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+		
+		var event_id = id + '_event';
+		var heart_id = id + '_heart';
+		var error_id = id + '_error';
+		var list_id = id + '_list';
+
+		if($('#'+heart_id).length == 0) { // 검색 heart_id가 있으면 건너뜀, 없으면 출력
+			$("#groupHEART").append('<span class="sensor_h" id="'+heart_id+'">'+name+'</span>');
+			$("#groupEVENT").append('<span class="sensor_e" id="'+event_id+'">'+name+'</span>');
+			$("#groupERROR").append('<span class="sensor_er" id="'+error_id+'">'+name+'</span>');
+			// $("#list_table").append('<tr id='+list_id+'><td class=list_name>'+name+'</td><td class=list_ip>'+ip+'</td><td class=list_model>'+model+'</td><td class=listboard_>'+board+'</td><td class=list_tableID>'+tableID+'</td><td class=list_nowTime>'+nowTime+'</td><td class=list_status>'+status+'</td><td class=list_msg>'+msg+'</td></tr>');
+			// console.log(data);
+			
+		}
+
+		clear_effect(id);
+		if(status=='1' || status=='6'){ // 알람이벤트
+			$('#'+event_id).prop('title', nowTime);
+			
+			blink_text_color('#'+event_id);
+		} else if(status=='0' || status=='2'){ // 하트비트
+			$('#'+heart_id).prop('title', nowTime);
+			
+			blink_text('#'+heart_id);
+		} else { // if(status=='9'){ // 오류/단선
+			$('#'+error_id).prop('title', nowTime);
+		
+			blink_text_color('#'+error_id);
+		}
+	});
+	
+	$( document ).ready(function() {
+		$('#sensorTitle').click(function(){
+			$('#list_group').slideToggle();
+		});
+	});	
+</script>
+
+<script>
+</script>
+
+<style>
+#sensorTitle { color: silver; font-size: 6pt;text-align: center; display:none;}
+#OuterHEART, #OuterEVENT, #OuterERROR{ margin: 0 10px; text-align: center;}
+#titleHEART, #titleEVENT, #titleERROR { padding-top:10px; text-align: center; color: silver;}
+.sensor_h, .sensor_e { margin:0 2px; border: 1px solid #A0A0A0; font-size:8pt; background-color:silver; color:white; padding:1px 4px;display:inline-block;}
+.sensor_er { margin:0 2px; border: 1px solid #505050; font-size: 8pt; background-color: gray; color: white; padding: 1px 4px; display: inline-block;}
+
+.list_group {margin: 0 10px; text-align: center; overflow: hidden; display:none;}
+.list_table {border: 1px solid #e9e9e9; font-size: 8pt; display: inline-block; color: gray;}
+.list_table td {border-top: 1px solid #e9e9e9; overflow: hidden;}
+</style>
+
+</head> 
+
+<body>
+<div id='sensorTitle'>List View</div>
+<div class='list_group' id='list_group'>
+<table class='list_table' id='list_table'>
+<tr style='background-color:gray;color:white;'><td>name</td><td>ip</td><td>model</td><td>table</td><td>id</td><td>timestamp</td><td>eid</td><td>msg</td></tr>
+</table>
+</div>
+
+<div id='OuterHEART'><div id='titleHEART'>Heartbeat</div><div id='groupHEART'></div></div>
+<div id='OuterEVENT'><div id='titleEVENT'>Alarm Out</div><div id='groupEVENT'></div></div>
+<div id='OuterERROR'><div id='titleERROR'>Sensor Error</div><div id='groupERROR'></div></div>
+</body>
+</html>

@@ -1,0 +1,632 @@
+Install and Setup ITS, IMS
+
+- : 참조 링크
+$ : 명령어 실행
+> : 편집 내용
+# : 도움말
+
+Ubuntu 18.04 OS 
+	USB Download : Ubuntu 18.04
+	Select : Minimal Install 
+	Hard disk : Remove All
+	Setup
+		name : ecos
+		com name : ims-srv
+		user : pi
+		pass : its_iot
+		auto Login
+
+Raspberry Pi OS
+	# https://www.raspberrypi.org/downloads/raspberry-pi-os/
+
+Install
+Reboot
+Remove USB
+	Booting .....
+Open Terminal
+
+######################################
+## 목적 : SSH를 통한 접속
+## 설명 : 기본적으로 SSH서버를 설치 해야만 외부 접속이 가능 하다. 최초의 본 작업은 설치된 시스템의 콘솔로 로그인 한후 작업이 가능 하다.
+######################################
+Console:
+Install SSH Server
+	$ sudo apt install -y openssh-server
+		remote connect fron other systems
+	$ sudo apt install -y sshpass
+
+######################################
+## 목적 : 최신 업데이트 적용
+## 설명 : Update는 시스템 내에 설치된 내부 데이터베이스 정보의 업데이트를 뜻한다. 
+## Upgrade는 수정된 신규 프로그램의 업그레이드를 뜻한다.
+######################################
+Terminal:
+Update Software Packages
+	$ sudo apt update
+	$ sudo apt upgrade
+
+######################################
+## 목적 : 자동 업데이트 금지 
+## 설명 : 부팅후 새로운 업데이트가 있는지 윕서버 접속 시도를 방지한다.
+######################################
+Terminal:
+	$ sudo systemctl mask apt-daily-upgrade
+	$ sudo systemctl mask apt-daily
+	$ sudo systemctl disable apt-daily-upgrade.timer
+	$ sudo systemctl disable apt-daily.timer
+
+######################################
+## 목적 : 다양한 네트워크 프로그램을 설치 한다.
+## 설명 : 선택사항 Commands: arp, hostname, ifconfig, ipmaddr, iptunnel, mii-tool, nameif, netstat, plipconfig, rarp, route und slattach.
+######################################
+Install Network Tool
+	$ sudo apt install -y net-tools
+		$ ifconfig
+
+######################################
+## UBUNTU
+## 목적 : 네트워크 프로그램 재 설치 한다.
+## 설명 : netplan 제거후 /etc/network/interfaces 사용하기
+## https://askubuntu.com/questions/1031709/ubuntu-18-04-switch-back-to-etc-network-interfaces
+######################################
+	I. Reinstall the ifupdown package: 
+		$ sudo apt-get update
+		$ sudo apt-get install ifupdown
+
+	II. Configure your /etc/network/interfaces file with configuration stanzas such as:
+		$ sudo vi /etc/network/interfaces
+			# Include files from /etc/network/interfaces.d:
+			source-directory /etc/network/interfaces.d
+
+			auto lo
+			iface lo inet loopback
+
+			auto enp2s0
+			iface enp2s0 inet static
+			address 192.168.0.108
+			netmask 255.255.255.0
+			gateway 192.168.0.1
+
+	III. Make the configuration effective (no reboot needed):
+		$ sudo ifdown --force enp0s3 lo && ifup -a
+		$ sudo systemctl unmask networking
+		$ sudo systemctl enable networking
+		$ sudo systemctl restart networking
+	
+	IV. Disable and remove the unwanted services:
+		$ sudo systemctl stop systemd-networkd.socket systemd-networkd networkd-dispatcher systemd-networkd-wait-online
+		$ sudo systemctl disable systemd-networkd.socket systemd-networkd networkd-dispatcher systemd-networkd-wait-online
+		$ sudo systemctl mask systemd-networkd.socket systemd-networkd networkd-dispatcher systemd-networkd-wait-online
+		$ sudo apt-get --assume-yes purge nplan netplan.io
+
+	참고: 
+		$ sudo apt-get install netplan
+
+		예) DHCP
+		$ sudo vi /etc/netplan/00-installer-config.yaml
+			network:
+				ethernets:
+					enp2s0:
+						addresses: []
+						dhcp4: true
+						optional: true
+				version: 2
+
+		예) STATIC
+		$ sudo vi /etc/netplan/00-installer-config.yaml
+			version: 2
+			renderer: networkd
+			network:
+			ethernets:
+				enp2s0:
+					dhcp4: no
+					dhcp6: no
+					addresses: [192.168.0.33/24]
+					gateway4: 192.168.0.1
+
+######################################
+## 목적 : 웹서버 설치
+## 설명 : 웹서버의 기본 root 경로는 /var/www/html 이다.
+## https://www.server-world.info/en/note?os=Ubuntu_18.04&p=httpd&f=5
+######################################
+Install Apache Web Server
+	$ sudo apt install -y apache2 apache2-utils
+	$ sudo systemctl start apache2
+	$ sudo systemctl enable apache2
+		http://server-ip
+
+	# 디렉토리 리스트 접근 제한
+	$ sudo vi /etc/apache2/apache2.conf
+		<Directory /var/www/>
+		​     Options Indexes FollowSymLinks
+		​     AllowOverride None
+		​     Require all granted
+		​</Directory>
+		# Indexes 제거
+		<Directory /var/www/>
+		​     Options FollowSymLinks
+		​     AllowOverride None
+		​     Require all granted
+		​</Directory>
+
+	# 파이선 CGI 및 Root Path 설정
+		$ sudo vi /home/pi/API/api-ecos.conf
+			# https://www.server-world.info/en/note?os=Ubuntu_18.04&p=httpd&f=5
+			# processes .cgi and .py as CGI scripts
+
+			Alias /ecos /home/pi/API
+
+			<Directory /home/pi/API>
+				Require all granted
+				DirectoryIndex index.py
+				Options +ExecCGI
+				AddHandler cgi-script .cgi .py
+			</Directory>
+
+		$ cd /etc/apache2/conf-available
+		$ sudo ln -s ../../../home/pi/API/api-ecos.conf ./ecos.conf
+		$ sudo a2enmod cgid
+		$ sudo a2enconf ecos
+		# $ sudo a2disconf ecos
+			Enabling conf ecos.
+			To activate the new configuration, you need to run:
+			service apache2 reload
+		$ sudo systemctl restart apache2
+
+		$ vi /home/pi/API/index.py
+			#!/usr/bin/env python
+			print "Content-type: text/html\n\n"
+			print "<html>\n<body>"
+			print "<div style=\"width: 100%; font-size: 40px; font-weight: bold; text-align: center;\">"
+			print "Welcome to ECOS API"
+			print "</div>\n</body>\n</html>"
+		$ chmod 755 /home/pi/API/index.py
+
+		# test 
+			http://local.host/ecos
+
+######################################
+## 목적 : 데이터베이스(MariaDB) 설치
+## 설명 : 설치 과정에서 root개정 비밀번호를 요구하며 그외 설정은 기본(Enter)으로 한다.
+######################################
+Install MariaDB Database Server
+	$ sudo apt install -y mariadb-server mariadb-client
+	$ sudo systemctl start mariadb
+	$ sudo systemctl enable mariadb
+	$ sudo mysql_secure_installation
+		set root password(its_iot) and default set(Enter)
+
+######################################
+## 목적 : PHP7.2 설치
+## 설명 : 관련 라이브러리도 동시에 설치 한다.(libapache2 mysql common pcli php7.2-common json opcache readline)
+######################################
+Install PHP7.2
+	$ sudo apt install -y php7.2 libapache2-mod-php7.2 php7.2-mbstring php7.2-mysql php-common php7.2-cli php7.2-common php7.2-json php7.2-opcache php7.2-readline php7.2-gd
+	$ sudo a2enmod php7.2 
+	$ sudo systemctl restart apache2
+		$ sudo nano /var/www/html/info.php
+			<?php phpinfo(); ?>
+		http://server-ip/info.php
+
+######################################
+## 목적 : Python 설치
+## 설명 : pip(파이선 전용 라이브러리 성치 툴), 데이터 베이스 라이브러리 추가 설치. 
+######################################
+Install Python and Modules
+	$ sudo apt install -y python python-mysqldb python-requests python-pip python-xmltodict python-pil python-numpy python-opencv
+
+	$ sudo apt install -y python3
+	$ sudo apt install -y python3-mysqldb
+	$ sudo apt install -y python3-pip
+	# $ sudo apt install -y python3 python3-mysqldb python3-pip
+
+######################################
+## 목적 : NodeJS 설치
+## 설명 : npm(NodeJS 전용 라이브러리 설치 툴) 
+######################################
+Install NodeJS
+	$ sudo apt install -y nodejs
+	$ sudo apt install -y npm
+	# $ sudo apt install -y nodejs npm
+
+######################################
+## 목적 : Omxplayer 및 mplayer설치
+## 설명 : 음원 출력 
+######################################
+Update
+	$ sudo apt-get update
+Install mplayer
+	$ sudo apt install -y mplayer
+Install omxplayer
+	$ sudo apt install -y omxplayer
+Install oggenc
+	$ sudo apt-get install -y vorbis-tools
+
+######################################
+## 목적 : phpMyAdmin 설치
+## 설명 : 사용자(its) 및 신규데이터베이스(its_web) 생성
+######################################
+Download and Install phpMyAdmin on Ubuntu 20.04
+	$ sudo apt update
+	$ sudo apt install -y phpmyadmin
+		[*] apache2
+		password of mysql : its_iot
+
+	Troubleshoot phpMyAdmin Login Error
+		$ sudo mysql -u root
+			> create user its@localhost identified by 'GXnLRNT9H50yKQ3G';
+			> grant all privileges on *.* to its@localhost with grant option;
+			> flush privileges;
+			> exit;
+
+			http://server-ip/phpmyadmin
+				> Login
+				user : its
+				pass : GXnLRNT9H50yKQ3G
+
+				> Databases > Create Database
+				name : its_web
+				type : utf_general_ci
+				> Create
+				> Logout
+
+			# phpMyAdmin 및 PHP 7.2 count ()의 오류 경고
+				# 편집 sql.lib.php에서 nano.
+				$ sudo cp /usr/share/phpmyadmin/libraries/sql.lib.php /usr/share/phpmyadmin/libraries/sql.lib.php.bak
+				$ sudo nano /usr/share/phpmyadmin/libraries/sql.lib.php
+					CTRL+를 누르고 W검색 (count($analyzed_sql_results['select_expr'] == 1)
+					다음으로 교체 ((count($analyzed_sql_results['select_expr']) == 1)
+					파일을 저장하고 종료합니다.
+
+######################################
+## 목적 : 우분투 18.04 Mysql DB 원격 접속 설정방법
+## 설명 : IMS Server의 Database Remote
+## https://www.thepythoncode.com/article/connect-to-a-remote-mysql-server-in-python
+## https://4urdev.tistory.com/82
+######################################
+	$ sudo su
+	# mysql -u root
+		// 외부에서 접근 가능한 사용자 권한 부여
+		// GRANT ALL PRIVILEGES ON *.* TO '아이디'@'192.168.0.%' IDENTIFIED BY '패스워드'; 
+
+		> GRANT ALL PRIVILEGES ON *.* TO 'its'@'%' IDENTIFIED BY 'GXnLRNT9H50yKQ3G';
+		> quit
+	# cd /etc/mysql/mariadb.conf.d
+	# vi 50-server.cnf
+		// 외부 클라이언트 아이피 접속 제한 풀기
+		> # bind-address          = 127.0.0.1
+		> bind-address            = 0.0.0.0
+	# service mysql restart
+
+######################################
+## 목적 : SNMP 서버/클라이언트 설치
+## 설명 : 선택사항
+######################################
+	https://vander.host/knowledgebase/operating-systems/how-to-get-snmp-daemon-working-on-ubuntu-18-04-lts/
+	# 서버 사이드
+		$ sudo apt-get install snmpd
+		$ sudo cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+		# 방화벽 관련
+		$ sudo cat /etc/snmp/snmpd.conf
+			com2sec readonly your_secret_community
+			syslocation "Server Location"
+			syscontact Firstname Lastname
+			sysservices 76
+			master yes
+			agentaddress udp:161
+			rocommunity your_secret_community
+		$ sudo service snmpd restart
+		# 설치확인
+		$ netstat -ulnp | grep 161
+			udp      0      0 0.0.0.0:161      0.0.0.0:*      33914/snmpd
+	# 클라이언트 사이드
+		$ sudo apt-get install snmp
+		# 테스트
+		$ snmpwalk -c your_secret_community -v1 localhost
+
+######################################
+## 목적 : 브라우저 터미날 shellinabox 
+## 설명 : /etc/netplan/01-network-manager-all.yaml 적용 예, /etc/network/interfaces 도 사용가능
+##  - UBUNTU 서버인 경우 권하지 않음(HTTPS를 통한 IP:Port 접근 불가함)
+######################################
+보안상 권하지 않음
+	$ sudo apt-get install openssl shellinabox -y
+		/etc/default/shellinabox - 접속 포트 설정(기본값:4200)
+
+######################################
+## 목적 : 브라우저 터미날 cockpit 
+## 설명 : https://cockpit-project.org/running
+## 접속 포트 설정(기본값:9090)
+######################################
+	$ sudo apt-get install cockpit
+
+######################################
+## 목적 : 시간 서버와 연동하기 위한 작업
+## 설명 : 두가지 방법(NTP, CHRONY)중 크로니(최신버전) 사용
+## 참고 : http://115.139.183.226:8000/optex_web/bbs/board.php?bo_table=g100t100&wr_id=280&sfl=wr_subject%7C%7Cwr_content&stx=ntp&sop=and
+######################################
+Timezone 설정
+	$ sudo raspi-config
+		Localisation Options -> Change Timezone
+NTP 설정
+	# chrony 설치
+	$ sudo apt -y install chrony  
+
+	# chrony 구성 파일을 변경
+	$ sudo vi /etc/chrony/chrony.conf
+		# 서버 주소 : 기존값(pool)은 주석 처리 하고 내부서버(NTP) 추가
+		server 192.168.0.128
+	# 재시작
+	$ sudo service chrony restart
+	# 시간상태
+	$ chronyc sources -v
+
+	#자세한 정보 보기
+	$ sudo chronyc tracking
+	$ sudo chronyc clients
+
+	# 빠른 동기화
+	$ sudo chronyc makestep
+
+	# 클라이언트 측에서 접속 소스확인
+	$ chronyc sources -v
+
+######################################
+## 목적 : ECOS Program 다운로드 및 설치
+## 설명 : ITS 프로그램, 데이터베이스, 웹
+######################################
+ECOS Program Serup
+	# 서버내에 백업 폴더
+	# 필요한 소스를 복사 한다. (db, web, code)
+		# 목록 보기 - 본목록은 its의 common/updateBackup.sh를 실행하면 만들어 지는 백업 데이타임
+			$ cd
+			$ ssh pi@115.139.183.226 "ls /home/pi/update/ECOS/"
+				date_ip_db.sql
+				date_ip_its.tar
+				date_ip_web.tar
+
+			$ scp -r -P 22 pi@115.139.183.226:/home/pi/update/ECOS/date_ip* /tmp
+			$ scp -r -P 22 pi@115.139.183.226:/home/pi/ecos_ITS/its_common/common/watchdog.pyc .
+			$ scp -r -P 22 pi@115.139.183.226:/home/pi/ecos_ITS/its_common/common/systemConfig.pyc .
+			# ex: $ scp -r -P 22 pi@115.139.183.226:/home/pi/update/ECOS/2020-09-15_192.168.0.10_web.tar /tmp
+
+	# 프로그램
+		$ cd && tar -zxvf /tmp/date_ip_its.tar .
+	# 데이터베이스
+		$ cd /tmp && mysql -u its -pGXnLRNT9H50yKQ3G its_web < /tmp/date_ip_db.sql
+		# 실행후 IP 확인 : ITS -> 정보수정 -> IP Addr 
+	# 웹(GUI)
+		# DocumentRoot Line 12
+			$ sudo nano /etc/apache2/sites-available/000-default.conf
+				DocumentRoot /var/www/html -> DocumentRoot /var/www/html/its_web
+		# Upload Max Limit
+			$ sudo nano /etc/php/7.2/apache2/php.ini
+				upload_max_filesize = 2M -> upload_max_filesize = 200M
+    			post_max_size = 2M -> post_max_size = 200M
+
+			$ sudo /etc/init.d/apache2 restart
+		$ sudo mkdir /var/www/html/its_web && sudo chown pi:pi /var/www/html/its_web
+		$ cd /var/www/html/its_web && sudo tar -zxvf /tmp/date_ip_web.tar .
+		$ sudo chmod -R 707 /var/www/html/its_web/data
+
+######################################
+## 목적 : rc.local 설정
+## 설명 : vi 또는 nano 사용
+######################################
+Auto Run Script when Booting
+	# 우분투 18.04에서 rc.local 사용이 종료됨
+	# /etc/rc.local 생성
+	$ sudo nano /etc/rc.local
+		#!/bin/sh -e
+		# ITS Auto start
+		## for RPI 
+		# su pi -c 'cd /home/pi/common/ && /usr/bin/python systemConfig.pyc > /tmp/run_systemConfig.txt'
+		## for UBUNTU - 주의 : ims 실행은 확인 되었으나 다른 프로그램은 검증 않됨
+		# su root -c 'cd /home/pi/common/ && /usr/bin/python systemConfig.pyc > /tmp/run_systemConfig.txt'
+		exit 0
+	$ sudo chmod +x /etc/rc.local
+
+######################################
+## 목적 : sudoers 설정
+## 설명 : reboot, poweroff, date
+######################################
+Permission of Reboot and Poewrdown
+	# 브라우저에서 날짜, 리부팅, 끄기 권한 부여, 파일 마지막에 추가함
+	$ sudo nano /etc/sudoers
+		www-data ALL=(root) NOPASSWD: /sbin/reboot
+		www-data ALL=(root) NOPASSWD: /sbin/poweroff
+		www-data ALL=(root) NOPASSWD: /bin/date
+
+######################################
+## 목적 : 사용자 고정 아이피 설정
+## 설명 : /etc/netplan/01-network-manager-all.yaml 적용 예, /etc/network/interfaces 도 사용가능
+######################################
+기존 방법 - 권장
+	$ sudo vi /etc/network/interfaces 
+		auto eth0
+		iface eth0 inet static
+		address 192.168.0.128
+		netmask 255.255.255.0
+		gateway 192.168.0.1
+
+New !!!!
+	Network IP Change
+	$ ip link
+		인터페이스 확인 예: ens3, enp3s0
+
+	$ sudo nano /etc/netplan/01-network-manager-all.yaml
+	network:
+		version: 2
+		renderer: NetworkManager
+		ethernets:
+			enp2s0:
+				dhcp4: no
+				addresses:
+					- 192.168.12.33/24
+				gateway4: 192.168.12.3
+				nameservers:
+					addresses: [8.8.8.8, 1.1.1.1]
+	$ sudo netplan apply
+
+######################################
+## 목적 : 시스템 메세지 팝업 비활성화
+## 설명 : /var/crash/ - 오류 내용 저장
+######################################
+(Desktop) 시스템 오류 팝업/보고 - https://www.binarytides.com/ubuntu-fix-system-program-problem-error/
+	$ ls /var/crash/
+	$ sudo rm /var/crash/*
+	$ sudo nano /etc/default/apport
+		enabled=1 -> enabled=0
+
+######################################
+## 목적 : 자동로그인
+## 설명 : GUI 설정
+######################################
+(Desktop) Enable Automatic Login 
+	# 우 상단 전원 -> ecos -> 계정설정 -> 자동로그인
+
+######################################
+## 목적 : 구글 크롬 설치
+## 설명 : GUI 설정
+######################################
+(Desktop) 우분투 18.04 LTS 구글 크롬 (Google Chrome) 64비트 브라우저 설치
+	> 프로그램 표시(Applications) > 우분투소프트웨어 > 검색(chromium)
+
+######################################
+## 목적 : 화면잠금 및 절전모드 해제
+## 설명 : GUI 설정
+######################################
+(Disktop) 스크린세이브 절전모드
+	> 프로그램 표시(Applications) > 설정(Setting) > 개인정보(Privace) > 화면잠금(Screen Lock)
+		자동화면잠금 -> 끔, 알림표시 -> 끔
+	> 프로그램 표시(Applications) > 설정(Setting) > 전원(Power)
+		절전 -> 안함
+
+######################################
+## 목적 : 바로가기(Dock)위치변경
+## 설명 : GUI 설정
+######################################
+(Disktop) 독(Dock) 위치
+	> 프로그램 표시(Applications) > 설정(Setting) > 독(Dock) > 화면위치 > 하단
+
+######################################
+## 목적 : 휴지통 감추기
+## 설명 : GUI 설정
+######################################
+(Disktop) 
+	# 휴지통 감추기 / 보이기
+	$ gsettings set org.gnome.nautilus.desktop trash-icon-visible false
+	$ gsettings set org.gnome.nautilus.desktop trash-icon-visible true
+
+######################################
+## 목적 : 바탕화면 ECOS 배경 이미지 및 색 변경
+## 설명 : GUI 설정
+######################################
+(Disktop) 
+	# 배경 이미지 : 
+		$ gsettings set org.gnome.desktop.background picture-uri file:///var/www/html/its_web/theme/ecos-its_optex/img/logo.png
+		$ gsettings set org.gnome.desktop.background picture-uri file:///var/www/html/its_web/theme/ecos-its_optex/img/ptzCamera.png
+		# 현재 설정된 이미지 보기
+		$ gsettings get org.gnome.desktop.background picture-uri
+			-> 'file:///usr/share/backgrounds/warty-final-ubuntu.png'
+		$ gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/warty-final-ubuntu.png
+		$ gsettings set org.gnome.desktop.background picture-uri file:////usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png
+		$ gsettings set org.gnome.desktop.background picture-uri file:////usr/share/backgrounds/Raindrops_On_The_Table_by_Alex_Fazit.jpg
+		
+		# 스타일
+			gsettings set org.gnome.desktop.background picture-options 'none'
+			gsettings set org.gnome.desktop.background picture-options 'wallpaper'
+		>>  gsettings set org.gnome.desktop.background picture-options 'centered'
+			gsettings set org.gnome.desktop.background picture-options 'scaled'
+			gsettings set org.gnome.desktop.background picture-options 'stretched'
+			gsettings set org.gnome.desktop.background picture-options 'zoom'
+			gsettings set org.gnome.desktop.background picture-options 'spanned'
+
+		# 바탕색
+			gsettings set org.gnome.desktop.background primary-color "#000000"
+			gsettings set org.gnome.desktop.background secondary-color "#000000"
+			gsettings set org.gnome.desktop.background color-shading-type "solid"
+
+######################################
+## 목적 : 바로가기(Dock)에 IMS Kiosk 적용
+## 설명 : GUI 설정
+######################################
+(Desktop) ims.Desktop
+	$ vi ~/.local/share/applications/ims.desktop
+		#!/usr/bin/env xdg-open
+		[Desktop Entry]
+		Version=1.0
+		Type=Application
+		Terminal=false
+		# Exec=chromium --kiosk http://192.168.0.4
+		Exec=firefox --kiosk http://192.168.0.4
+		Name=IMS
+		Comment=ECOS IMS
+		Icon=/var/www/html/its_web/theme/ecos-its_optex/img/podoTransICO.png
+	
+	> 프로그램 표시(Applications) > IMS -> 우클릭(즐겨찾기 추가)
+
+######################################
+## 목적 : 로그인시 자동실행
+## 설명 : GUI 설정
+######################################
+(Desktop) Login시 브라우져 자동실행
+	> 프로그램 표시(Applications) > 시작프로그램(Start) > 추가 
+		Name : IMS
+		Command : chromium --kiosk http://192.168.0.4
+		또는 
+		Command : firefox --kiosk http://192.168.0.4
+
+(Ubuntu) 방화벽
+	Enable and Disable UFW
+
+	$ sudo ufw enable
+	$ sudo ufw status verbose
+	$ sudo ufw show raw
+	$ sudo ufw disable
+
+	Allow
+	$ sudo ufw allow <port>/<optional: protocol>
+		$ sudo ufw allow 53
+		$ sudo ufw allow 53/tcp
+		$ sudo ufw allow 53/udp
+	Deny
+	$ sudo ufw deny <port>/<optional: protocol>
+		$ sudo ufw deny 53
+		$ sudo ufw deny 53/tcp
+		$ sudo ufw deny 53/udp
+	Delete Existing Rule
+		$ sudo ufw delete deny 80/tcp
+	Services
+		$ sudo ufw allow <service name> # /etc/services
+		$ sudo ufw allow ssh
+		$ sudo ufw deny <service name>
+		$ sudo ufw deny ssh
+
+	Allow by Specific IP
+		$ sudo ufw allow from <ip address>
+		$ sudo ufw allow from 207.46.232.182
+	Allow by Subnet
+		$ sudo ufw allow from 192.168.1.0/24
+	Allow by specific port and IP address
+		$ sudo ufw allow from <target> to <destination> port <port number>
+		$ sudo ufw allow from 192.168.0.4 to any port 22
+	Allow by specific port, IP address and protocol
+		$ sudo ufw allow from <target> to <destination> port <port number> proto <protocol name>
+		$ sudo ufw allow from 192.168.0.4 to any port 22 proto tcp
+
+	Deny by specific IP
+		$ sudo ufw deny from <ip address>
+		$ sudo ufw deny from 207.46.232.182
+	Deny by specific port and IP address
+		$ sudo ufw deny from <ip address> to <protocol> port <port number>
+		$ sudo ufw deny from 192.168.0.1 to any port 22
+
+	# 영문
+	- https://help.ubuntu.com/community/UFW
+	# 한글
+	- https://happist.com/561474/%EC%9A%B0%EB%B6%84%ED%88%AC-18-04%EB%A1%9C-%EC%84%9C%EB%B2%84-%EC%9A%B4%EC%98%81-ufw%EB%A1%9C-%EB%B0%A9%ED%99%94%EB%B2%BD-%EC%84%A4%EC%A0%95
+
+
+$ sudo reboot
+- 끝 - 

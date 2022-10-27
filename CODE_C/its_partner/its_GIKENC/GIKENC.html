@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__style_bootstrap_js__
+__style_bootstrap_css__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+var cfg = {};
+
+audio=new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+function beep(vol, freq, duration){
+	return new Promise((resolve, reject) => {
+		try{
+			v=audio.createOscillator();
+			u=audio.createGain();
+			audio.resume();
+			v.connect(u);
+			v.frequency.value=freq;
+			v.type="square";
+			u.connect(audio.destination);
+			u.gain.value=vol*0.01;
+			v.start(audio.currentTime);
+			v.stop(audio.currentTime+duration*0.001);
+			v.onended = () => {
+				resolve();
+			};
+		}catch(error){
+			reject(error);
+		}
+	});
+} // beep(10, 520, 200)
+
+__realtime_image_script__
+
+$( document ).ready(function() {
+
+	var socketio = io.connect();
+	// 부모 프로세서에 명령어 요청
+
+	$('#sensorInfo').click(function(event){
+		$('.eventTable').toggle('slow');
+	});
+
+	$('.gChkBox').click(function(event){
+		gChkBox = {};
+		gChkBox['beep'] = $('#beep').prop('checked');
+		gChkBox['snapshut'] = $('#snapshut').prop('checked');
+		socketio.emit('gChkBox', gChkBox);
+	});
+
+	socketio.on("dateTotalOn", function(data) {
+		console.log(data);
+	});
+
+	socketio.on("eventTotalOn", function(data) {
+		console.log(data);
+	});
+
+	socketio.on("kill_client", function(data) {
+		// console.log(data);
+		$("body").html('Call admin.');
+	});
+
+	// eventGroup = {trigger:[1, 0, 0, 0, 0, 0, 0, 0], newEvent:[1, 0, 0, 0, 0, 0, 0, 0], allEvent:[-2, 0, -1, 0, -1, 0, 2, 0], sumEvent:[4, 6, 4, 5, 0, 1, 2, 0] }
+	socketio.on('eventGroup', function(data) {
+		// console.log(data);
+		// 카운트 값 테이블에 업데이트
+		for (const [key, value] of Object.entries(data)) {
+			// console.log(key, value);
+			for(var i=0;i < value.length;i++){
+				if (key+'_'+i == 'newEvent_0') {
+					$('#approved_0').html(value[i]);
+				} else if (key+'_'+i == 'newEvent_1') {
+					$('#unknown_0').html(value[i]);
+				} else if (key+'_'+i == 'sumEvent_0') {
+					$('#todaySumA').html(value[i]);
+				} else if (key+'_'+i == 'sumEvent_1') {
+					$('#todaySumU').html(value[i]);
+				} else if (key+'_'+i == 'allEvent_0') {
+					$('#aT_0').html(value[i]);
+				} else if (key+'_'+i == 'allEvent_1') {
+					$('#uT_0').html(value[i]);
+				}
+				// 전체테이블 업데이트 - eventTable
+				$('#'+key+'_'+i).html(value[i]);
+			}
+		}
+		// 시간 등록
+		var d = new Date();
+		$("#dateEvent").html("@ " + d.getFullYear() + "-" + ( d.getMonth() + 1 ) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
+		// 	비프음 발생
+		// if ($('#beep').is(':checked')){ // <- jQuery는 간혈적 오류가 발생 한다.
+		if(document.getElementById("beep").checked == true) {
+			beep(10, 100, 100)
+		} else {
+			;
+		}
+	});
+
+	// 부모로 부터 받은 환경값 적용
+	socketio.on('statusChkBox', function(data) {
+		for (const [key, value] of Object.entries(data)) {
+			// console.log(key, value);
+			$('#'+key).prop('checked', value);
+		}
+	});
+	
+	socketio.emit('status_chkBox'); // 상태 업데이트 요청
+	socketio.emit('date_total', 1); // Yesterday
+});	
+</script>
+
+<style>
+body { all: unset; }
+body { text-align:center; font-family: none;}
+
+
+.gInfo { margin: 0 2vw;font-size:4vw;float: left; }
+.gDatetime { font-size:2vw; color:silver; float: right;text-align: right; }
+.gTailing { font-size:2vw; color:silver; float: left; }
+
+.gKeyIn { color:white; background-color: white;}
+.gBykey { color:white; background-color: darkcyan;font-size: 15vw;}
+.gUnknown { color:white; background-color: #941f35;font-size: 15vw;}
+.gLive { color:white; background-color: crimson;}
+
+.gTitle { font-size: 4vw;
+	color: gray;
+	padding: 0.5vw 2vw;
+	width: 15vw;
+	white-space: nowrap;
+	float: left;
+	overflow: hidden; }
+.gNum { border-radius: 2vw;
+	padding-bottom: 1vw;
+	margin: 1vw;
+	border: 1px solid #bbb;
+	text-shadow: 1vw 1vw 1vw #00000080;
+	box-shadow: inset 1vw 1vw 1vw 1vw #10101060;
+	width: 30vw;
+	float: right; }
+
+.gikenImage { width:100%; }
+
+.gTotalA { color:white; background-color:#003664;}
+.gTotalU { color:white; background-color:#462f54;}
+.gTotalT { color:white; background-color:darkgreen;}
+.gTotalO { color:white; background-color:#1a6d10;}
+.gTotalI { color:white; background-color:#847b0e;}
+
+.statusLive, .statusPast, .statusToday, .statusCommand { width: 100vw; clear: both; display: flex; }
+.statusCommand { padding: 0 1vw; }
+.statusToday, .statusPast { font-size: 6vw; }
+
+.gKeyCnt { display:none;
+	position: absolute;
+	font-size: 8vw;
+	background: white;
+	padding: 1vw;
+	margin: 6vw 2vw;
+	width: 12vw;
+	height: 12vw;
+	border-radius: 2vw;
+	text-shadow: 0.5vw 0.5vw 0.5vw #00000080;
+	box-shadow: 1vw 1vw 10px 1px #10101038;
+}
+.gLockCnt { display:none;
+	position: absolute;
+	font-size: 8vw;
+	color:white;
+	background: gray;
+	padding: 1vw;
+	margin: 6vw 2vw;
+	width: 12vw;
+	height: 12vw;
+	border-radius: 2vw;
+	text-shadow: 0.5vw 0.5vw 0.5vw #00000080;
+	box-shadow: 1vw 1vw 10px 1px #10101038;
+}
+
+.gBtnCmd {font-size: 1vh;
+	color: white;
+	border: 0;
+	margin: 1px;
+	background-color: silver;
+	padding: 0 4px 2px;
+	width: 98vw;
+	display: grid;
+}
+
+.gLiveWrap, .gPastWrap, .gTodayWrap { width: 48vw; float: left; border-radius: 2vw; margin: 1vw; background: #eee; border: 1px solid #bbb;}
+.hide { display:none; }
+
+.blinking {animation:blinkingText 1s infinite;}
+@keyframes blinkingText{
+	0%{	font-size:20pt;	}
+	50%{ font-size:10pt; }
+	100%{ font-size:20pt; }
+}
+
+.dateEvent {color:silver;font-size:2vw;text-align:end;padding-right:2vw;margin: 6px 0;}
+.lbCkBox {float:right;font-size:4vw;color:silver;}
+.gChkBox { margin: 1vw 2vw 0;width: 4vw;height: 4vw;float: right; }
+.liveImage {width:98vw;}
+
+.titleHead {color:silver;display:flex;font-size:2vw;line-height:4vw;background:black;}
+.tTitleHead {width:14vw;text-align:end;padding-right:4vw;font-weight:bold;}
+.gTitleHead {width:10vw;text-align:end;}
+
+.trigger, .newEvent, .allEvent, .sumEvent {display:flex;font-size:3vw;line-height:4vw;}
+.tTrigger, .tNewEvent, .tAllEvent, .tSumEvent {width:14vw;text-align:end;padding-right:4vw;}
+.gTrigger, .gNewEvent, .gAllEvent, .gSumEvent {width:10vw;text-align:end;}
+
+@media (max-width:280px) {
+	.cfgTop, .dateEvent, .eventTable, .gikenImage {display: none;}
+}
+
+</style>
+
+</head>
+
+<body>
+<div class='cfgTop'>
+	<div class="gInfo" id="sensorInfo">__roomID__</div>
+	<label class='lbCkBox' title="beep">Beep<input class="gChkBox" type="checkbox" id="beep" name="beep"></label>
+	<label class='lbCkBox' title="snapshut">Snap<input class="gChkBox" type="checkbox" id="snapshut" name="snapshut"></label>
+</div>
+
+<div class="statusLive">
+	<div class="gLiveWrap">
+		<div class="gTitle">정주행</div>
+		<div class="gKeyCnt" id="key_0">0</div>
+		<div class="gNum gBykey" id="approved_0">0</div>
+	</div>
+	<div class="gLiveWrap">
+		<div class="gTitle">역주행</div>
+		<div class="gLockCnt" id="denial_0">0</div>
+		<div class="gNum gUnknown" id="unknown_0">0</div>
+	</div>
+</div>
+<div class="statusToday">
+	<div class="gTodayWrap">
+		<div class="gTitle">정주행<br>(일계)</div>
+		<div class="gNum gTotalO" id="todaySumA">0</div>
+	</div>
+	<div class="gTodayWrap">
+		<div class="gTitle">역주행<br>(일계)</div>
+		<div class="gNum gTotalI" id="todaySumU">0</div>
+	</div>
+</div>
+<div class="statusPast">
+	<div class="gPastWrap">
+		<div class="gTitle">정주행<br>(합계)</div>
+		<div class="gNum gTotalA" id="aT_0">0</div>
+	</div>
+	<div class="gPastWrap">
+		<div class="gTitle">역주행<br>(합계)</div>
+		<div class="gNum gTotalU" id="uT_0">0</div>
+	</div>
+</div>
+
+<div class="dateEvent" id="dateEvent">dateEvent</div>
+<div class="eventTable hide">
+	<div class="titleHead">
+		<span class="tTitleHead">Events</span>
+		<span class="gTitleHead">D1_I</span>
+		<span class="gTitleHead">D1_O</span>
+		<span class="gTitleHead">D2_I</span>
+		<span class="gTitleHead">D2_O</span>
+		<span class="gTitleHead">D3_I</span>
+		<span class="gTitleHead">D3_O</span>
+		<span class="gTitleHead">D4_I</span>
+		<span class="gTitleHead">D4_O</span>
+	</div>
+	<div class="trigger">
+		<span class="tTrigger">Trigger</span>
+		<span class="gTrigger" id="trigger_0">0</span>
+		<span class="gTrigger" id="trigger_1">0</span>
+		<span class="gTrigger" id="trigger_2">0</span>
+		<span class="gTrigger" id="trigger_3">0</span>
+		<span class="gTrigger" id="trigger_4">0</span>
+		<span class="gTrigger" id="trigger_5">0</span>
+		<span class="gTrigger" id="trigger_6">0</span>
+		<span class="gTrigger" id="trigger_7">0</span>
+	</div>
+	<div class="newEvent">
+		<span class="tNewEvent">Count</span>
+		<span class="gNewEvent" id="newEvent_0">0</span>
+		<span class="gNewEvent" id="newEvent_1">0</span>
+		<span class="gNewEvent" id="newEvent_2">0</span>
+		<span class="gNewEvent" id="newEvent_3">0</span>
+		<span class="gNewEvent" id="newEvent_4">0</span>
+		<span class="gNewEvent" id="newEvent_5">0</span>
+		<span class="gNewEvent" id="newEvent_6">0</span>
+		<span class="gNewEvent" id="newEvent_7">0</span>
+	</div>
+	<div class="sumEvent">
+		<span class="tSumEvent">Today</span>
+		<span class="gSumEvent" id="sumEvent_0">0</span>
+		<span class="gSumEvent" id="sumEvent_1">0</span>
+		<span class="gSumEvent" id="sumEvent_2">0</span>
+		<span class="gSumEvent" id="sumEvent_3">0</span>
+		<span class="gSumEvent" id="sumEvent_4">0</span>
+		<span class="gSumEvent" id="sumEvent_5">0</span>
+		<span class="gSumEvent" id="sumEvent_6">0</span>
+		<span class="gSumEvent" id="sumEvent_7">0</span>
+	</div>
+	<div class="allEvent">
+		<span class="tAllEvent">3Month</span>
+		<span class="gAllEvent" id="allEvent_0">0</span>
+		<span class="gAllEvent" id="allEvent_1">0</span>
+		<span class="gAllEvent" id="allEvent_2">0</span>
+		<span class="gAllEvent" id="allEvent_3">0</span>
+		<span class="gAllEvent" id="allEvent_4">0</span>
+		<span class="gAllEvent" id="allEvent_5">0</span>
+		<span class="gAllEvent" id="allEvent_6">0</span>
+		<span class="gAllEvent" id="allEvent_7">0</span>
+	</div>
+</div>
+
+<div class="gikenImage" id="gikenImage">
+	<img class="liveImage" id="liveImage">
+</div>
+
+</body>
+</html>

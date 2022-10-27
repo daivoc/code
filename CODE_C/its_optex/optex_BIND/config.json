@@ -1,0 +1,36 @@
+{
+    "mysql": {
+        "host": "localhost",
+        "name": "its_web",
+        "pass": "GXnLRNT9H50yKQ3G",
+        "user": "its"
+    },
+    "path": {
+        "audio": "/var/www/html/its_web/data/audio",
+        "img": "/var/www/html/its_web/data/image",
+        "its_web": "/var/www/html/its_web",
+        "log": "/var/www/html/its_web/data/log",
+        "rls_r": "/home/pi/optex_RLS_R",
+        "utility": "/home/pi/utility"
+    },
+    "status": {
+        "0": "NORMAL",
+        "1": "ACTIVE_EVENT",
+        "2": "HEARTBEAT",
+        "3": "RESERVED",
+        "4": "INFORMATION",
+        "5": "WARNING",
+        "6": "ERR_ENVIRONMENT",
+        "7": "ERR_CONNECT",
+        "8": "ERR_COVER",
+        "9": "ERR_EVENT"
+    },
+    "systemCmd": {
+        "mPlayer": "omxplayer",
+        "reboot": "sudo reboot"
+    },
+    "table": {
+        "rls_r": "g5_write_g200t210",
+        "bind": "w_log_BIND_data"
+    }
+}

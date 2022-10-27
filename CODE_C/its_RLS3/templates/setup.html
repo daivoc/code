@@ -1,0 +1,366 @@
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<title>RLS-3060V/50100V</title>
+<script src="/static/jquery-3.5.1.min.js"></script>
+<script src="/static/socket.io-3.0.4.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+var config = {};
+
+$(document).ready(function() {
+	var socket = io();
+
+	// 최초 접속시 서버로부터 환경설정(config.json)값을 가지고 온다.
+	socket.on('connect', function(cfg) {
+		// console.log(cfg);
+		if(cfg) {
+			$('#IP_Address').val(cfg.sensor.addr);
+			$('#Login_ID').val(cfg.sensor.user);
+			$('#Password').val(cfg.sensor.pass);
+			if (cfg.sensor.pickupDue) $('#Pickup_Cycle').val(cfg.sensor.pickupDue);
+			if (cfg.sensor.heartBeatDue) $('#Heartbeat').val(cfg.sensor.heartBeatDue);
+			$('#IMS_IP_Address_1ST').val(cfg.server.ims1st.addr);
+			$('#IMS_IP_Address_2ND').val(cfg.server.ims2nd.addr);
+
+			$('#User_IP_Address_1ST').val(cfg.server.user1st.addr);
+			$('#User_IP_Port_1ST').val(cfg.server.user1st.port);
+			$('#User_IP_Method_1ST').val(cfg.server.user1st.method);
+			$('#User_ID_Name_1ST').val(cfg.server.user1st.id);
+			$('#User_Password_1ST').val(cfg.server.user1st.password);
+			$('#User_IP_Command_1ST').val(cfg.server.user1st.command);
+
+			$('#User_IP_Address_2ND').val(cfg.server.user2nd.addr);
+			$('#User_IP_Port_2ND').val(cfg.server.user2nd.port);
+			$('#User_IP_Method_2ND').val(cfg.server.user2nd.method);
+			$('#User_ID_Name_2ND').val(cfg.server.user2nd.id);
+			$('#User_Password_2ND').val(cfg.server.user2nd.password);
+			$('#User_IP_Command_2ND').val(cfg.server.user2nd.command);
+
+			$('#Admin_Group_List').val(cfg.permission.filterIP.admin);
+			$('#Manager_Group_List').val(cfg.permission.filterIP.manager);
+			$('#Denial_Group_List').val(cfg.permission.filterIP.deny);
+
+			$('#sensor_serial').html(cfg.sensor.prefix+'_'+cfg.server.localhost.addr.replaceAll('.', '_')+'_'+cfg.sensor.heartBeatKey);
+
+			config = cfg;
+		}
+	});
+
+	socket.on('Return_JSON', function(data) {
+		scroll('#log', "<pre>"+JSON.stringify(data,null,2)+"</pre>");
+	})
+
+	socket.on('Return_STR', function(data) {
+		scroll('#log', "<pre>"+data+"</pre>");
+	})
+	
+	socket.on('Return_Is_Port_Open', function(data) {
+		if(data.status) {
+			window.open("http://"+config.server.localhost.addr+':'+data.port, data.port);
+		} else {
+			window.alert("Not Runnig Program of that Requested!!");
+		}
+		waitHide();
+	});
+	
+	socket.on('system_time', function(system_time) {
+		// console.log(system_time)
+		$('#system_time').html(system_time);
+	});
+
+
+	// Http Request
+	$('body').on('click', '#gInfoDevice', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInfoDevice);
+		waitShow();
+	});
+
+	$('body').on('click', '#gInfoStatus', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInfoStatus);
+		waitShow();
+	});
+
+	$('body').on('click', '#gInOutCurr', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInOutCurr);
+		waitShow();
+	});
+
+	$('body').on('click', '#gInOutDiff', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gInOutDiff);
+		waitShow();
+	});
+
+	$('body').on('click', '#gMounting', function(event) {
+		socket.emit('Request_Api', config.sensor.cmd.gMounting);
+		waitShow();
+	});
+
+	// Web Socket
+	$('body').on('click', '#wsDetectObj', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectObj, data:{"ctrl":"start","maxObject":50,"withCandidate":false} });
+		waitShow();
+	});
+
+	$('body').on('click', '#wsDetectArea', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectArea, data:{"ctrl":"start"} });
+		waitShow();
+	});
+
+	$('body').on('click', '#wsDetectMask', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectMask, data:{"ctrl":"start"} });
+		waitShow();
+	});
+
+	$('body').on('click', '#wsDetectEvent', function(event) {
+		socket.emit('wSocket_Api', { command:config.sensor.cmd.wsDetectEvent, data:{"ctrl":"start"} });
+		waitShow();
+	});
+
+	// Onvif_Api
+	$('body').on('click', '#ovGetDeviceInformation', function(event) {
+		socket.emit('Onvif_Api', { command:'ovGetDeviceInformation', data:'' });
+		waitShow();
+	});
+
+	$('body').on('click', '#ovSystemReboot', function(event) {
+		socket.emit('Onvif_Api', { command:'ovSystemReboot', data:'' });
+		waitShow();
+	});
+
+	// Other
+	$('body').on('click', '#mjpg', function(event) {
+		scroll('#log', '<div class="mjpg" style="background-image: url(http://'+config.sensor.vServer+config.sensor.cmd.mjpg+');"></div>'); 
+	});
+
+	$('body').on('click', '#shot', function(event) {
+		scroll('#log', '<img class="shot" src=http://'+config.sensor.vServer+config.sensor.cmd.shot+'>'); 
+	});
+
+	$('body').on('click', '#sensor', function(event) {
+		window.open("http://"+config.sensor.vServer, "Sensor Home");
+	});
+	
+	$('body').on('click', '#area_set', function(event) {
+		socket.emit('Is_Port_Open', config.port.mainZone);
+		waitShow();
+	});
+		
+	$('body').on('click', '#api3', function(event) {
+		socket.emit('Is_Port_Open', config.port.mainAPI3);
+		waitShow();
+	});
+
+	$('body').on('click', '#restart', function () { // 수정모드 내의 기능
+		var reponse = (confirm('Are you sure ? Restart Program'));
+		if(reponse) {
+			socket.emit('Restart_Self');
+		}
+	});
+
+	$('body').on('click', '#reboot', function () { // 수정모드 내의 기능
+		var reponse = (confirm('Are you sure ? Reboot ITS'));
+		if(reponse) {
+			socket.emit('Reboot_Self');
+		}
+	});
+
+	$('body').on('click', '#system_time', function () { // 수정모드 내의 기능
+		socket.emit('clockToggle');
+	});
+
+	$('body').on('click', '#Save_Config', function(event) {
+		var data = {};
+		data.sensor_addr = $('#IP_Address').val();
+		data.sensor_user = $('#Login_ID').val();
+		data.sensor_pass = $('#Password').val();
+		data.sensor_pickupDue = parseFloat($('#Pickup_Cycle').val());
+		data.sensor_heartBeatDue = parseFloat($('#Heartbeat').val());
+		data.server_ims1st_addr = $('#IMS_IP_Address_1ST').val();
+		data.server_ims2nd_addr = $('#IMS_IP_Address_2ND').val();
+
+		data.server_user1st_addr = $('#User_IP_Address_1ST').val();
+		data.server_user1st_port = parseFloat($('#User_IP_Port_1ST').val());
+		data.server_user1st_method = $('#User_IP_Method_1ST').val();
+		data.server_user1st_id = $('#User_ID_Name_1ST').val();
+		data.server_user1st_password = $('#User_Password_1ST').val();
+		data.server_user1st_command = $('#User_IP_Command_1ST').val();
+
+		data.server_user2nd_addr = $('#User_IP_Address_2ND').val();
+		data.server_user2nd_port = parseFloat($('#User_IP_Port_2ND').val());
+		data.server_user2nd_method = $('#User_IP_Method_2ND').val();
+		data.server_user2nd_id = $('#User_ID_Name_2ND').val();
+		data.server_user2nd_password = $('#User_Password_2ND').val();
+		data.server_user2nd_command = $('#User_IP_Command_2ND').val();
+
+		data.permission_filterIP_admin = $('#Admin_Group_List').val();
+		data.permission_filterIP_manager = $('#Manager_Group_List').val();
+		data.permission_filterIP_deny = $('#Denial_Group_List').val();
+		socket.emit('Save_Config', data);
+		waitShow();
+		return false;
+	});
+			
+	$('body').on('change', '#User_IP_Method_1ST', function(event) {
+		if ($(this).val() =="api3") {
+			$("#User_IP_Address_1ST").val(config.server.localhost.addr)
+			$("#User_IP_Port_1ST").val("34001")
+			$("#User_IP_Command_1ST").val('[{"gpio":{"status":"2","id":"io09","hold":"0.2"},"debug":true}]')
+		} else if ($(this).val() =="get" || $(this).val() =="post" ) {
+			$("#User_IP_Address_1ST").val("")
+			$("#User_IP_Port_1ST").val("80")
+			$("#User_IP_Command_1ST").val('/path/command?{id:value}')
+		} else {
+			$("#User_IP_Address_1ST").val("")
+			$("#User_IP_Port_1ST").val("")
+			$("#User_IP_Command_1ST").val(JSON.stringify(config.itsEventProtocol))
+		}
+	});
+			
+	$('body').on('change', '#User_IP_Method_2ND', function(event) {
+		if ($(this).val() =="api3") {
+			$("#User_IP_Address_2ND").val(config.server.localhost.addr)
+			$("#User_IP_Port_2ND").val("34001")
+			$("#User_IP_Command_2ND").val('[{"gpio":{"status":"2","id":"io10","hold":"0.2"},"debug":true}]')
+		} else if ($(this).val() =="get" || $(this).val() =="post" ) {
+			$("#User_IP_Address_2ND").val("")
+			$("#User_IP_Port_2ND").val("80")
+			$("#User_IP_Command_2ND").val('/path/command?{id:value}')
+		} else { // $(this).val() =="ws" || $(this).val() =="socket"
+			$("#User_IP_Address_2ND").val("")
+			$("#User_IP_Port_2ND").val("")
+			$("#User_IP_Command_2ND").val(JSON.stringify(config.itsEventProtocol))
+		}
+	});
+
+});
+
+function waitHide() { 
+	$("#log").css("background-size", "0vw");
+};
+function waitShow() { 
+	$("#log").css("background-size", "4vw");
+};
+function scroll(id, data) { 
+	// console.log(JSON.stringify(data.data,null,2))
+	$('#log').append(data);
+	$(id).scrollTop($(id)[0].scrollHeight);
+	waitHide();
+};
+
+</script>
+<style>
+/* *,html{margin:0;padding:0;border:0;} */
+html,body{background: ghostwhite;}
+input {width:-webkit-fill-available;border:1px solid silver;color:gray;font-size: 2vh;height:4vh;padding-left:1vh;}
+label {color:purple;}
+h4 {margin: 2vh 0 0 0;}
+
+#config {width: 66vw; margin-left:1vw;}
+#log {position:absolute;top:10vh;right:0;width:28vw;height:90vh;color:silver;overflow-y:scroll;overflow-x:auto;padding:1vh;font-size:1vw;}
+#log {background:black;background-image: url(/static/loading.gif);background-repeat: no-repeat;background-position: center;background-size:0;}
+#system_time {position:absolute;top:0;color:gray;font-size:1vw;}
+#sensor_serial {position:absolute;top:0;right:0;color:gray;font-size:1vw;}
+
+.checkSensor {display: flex;}
+.checkSensor button {width:-webkit-fill-available;font-size: 1vw;margin: 1px;}
+.mjpg {height: 20vh;background-size: contain;background-repeat: no-repeat;}
+.shot {height: 20vh;}
+
+.hide {display:none;}
+</style>
+</head>
+<body>
+	<h1>Config of Sensor <a style="font-size: 10pt;" href=/readme>Readme</a></h1>
+	<div id="log"></div>
+	<div id="config">
+		<h4>Sensor Access Information</h4>
+		<label for="Pickup_Cycle">IP_Address, Login_ID and Password</label>
+		<div style="display: flex;">
+			<input type="input" id="IP_Address" name="IP_Address" placeholder="IP Address" title="IP Address" value="" />
+			<input type="input" id="Login_ID" name="Login_ID" placeholder="Login ID" title="Login ID" value="" />
+			<input type="input" id="Password" name="Password" placeholder="Password" title="Password" value="" />
+		</div>
+		<label for="Pickup_Cycle">Pickup and Heartbeat Cycle(Sec)</label>
+		<div style="display: flex;">
+			<input type="number" id="Pickup_Cycle" name="Pickup_Cycle" step="0.1" min="0.1" max="10.0" placeholder="Pickup Cycle" title="Pickup Cycle" value="1.0" />
+			<input type="number" id="Heartbeat" name="Heartbeat" step="1" min="10" max="499" placeholder="Heartbeat" title="Heartbeat" value="60" />
+		</div>
+		<hr>
+		<h4>IMS Server Information</h4>
+		<label for="IMS_IP_Address_1ST">IMS_IP_Address_1ST</label><input type="input" id="IMS_IP_Address_1ST" name="IMS_IP_Address_1ST" placeholder="IMS IP Address" title="Only for IMS" value="" />
+		<label class="hide" for="IMS_IP_Address_2ND">IMS_IP_Address_2ND</label><input class="hide" type="input" id="IMS_IP_Address_2ND" name="IMS_IP_Address_2ND" placeholder="IMS IP Address" title="Only for IMS" value="" />
+		<hr>
+		<h4>User Server Information</h4>
+		<label for="User_IP_Address_1ST">User_IP_Address_1ST</label>
+		<div style="display: flex;">
+			<input type="input" style="width:14%;" id="User_IP_Address_1ST" name="User_IP_Address_1ST" placeholder="IP Address" title="IP Address" value="" />
+			<input type="input" style="width:10%;" id="User_IP_Port_1ST" name="User_IP_Port_1ST" placeholder="Port" title="Port" value="" />
+			<select name="User_IP_Method_1ST" style="width:10%;" id="User_IP_Method_1ST" title="Method">
+				<option value="">Method</option>
+				<option value="api3">API3</option>
+				<option value="get">Get</option>
+				<option value="post">Post</option>
+				<option value="ws">Websocket</option>
+				<option value="socket">Socket</option>
+			</select>
+			<input type="input" style="width:10%;" id="User_ID_Name_1ST" name="User_ID_Name_1ST" placeholder="User ID" title="User ID" value="" />
+			<input type="input" style="width:10%;" id="User_Password_1ST" name="User_Password_1ST" placeholder="Password" title="Password" value="" />
+			<input type="input" style="width:44%;" id="User_IP_Command_1ST" name="User_IP_Command_1ST" placeholder="Command" title="Command" value="" />
+		</div>
+		<label for="User_IP_Address_2ND">User_IP_Address_2ND</label>
+		<div style="display: flex;">
+			<input type="input" style="width:14%;" id="User_IP_Address_2ND" name="User_IP_Address_2ND" placeholder="IP Address" title="IP Address" value="" />
+			<input type="input" style="width:10%;" id="User_IP_Port_2ND" name="User_IP_Port_2ND" placeholder="Port" title="Port" value="" />
+			<select name="User_IP_Method_2ND" style="width:10%;" id="User_IP_Method_2ND" title="Method">
+				<option value="">Method</option>
+				<option value="api3">API3</option>
+				<option value="get">Get</option>
+				<option value="post">Post</option>
+				<option value="ws">Websocket</option>
+				<option value="socket">Socket</option>
+			</select>
+			<input type="input" style="width:10%;" id="User_ID_Name_2ND" name="User_ID_Name_2ND" placeholder="User ID" title="User ID" value="" />
+			<input type="input" style="width:10%;" id="User_Password_2ND" name="User_Password_2ND" placeholder="Password" title="Password" value="" />
+			<input type="input" style="width:44%;" id="User_IP_Command_2ND" name="User_IP_Command_2ND" placeholder="Command" title="Command" value="" />
+		</div>
+		<hr>
+		<h4>Access IP Filtering</h4>
+		<label for="Admin_Group_List">Admin_Group_List</label><input type="input" id="Admin_Group_List" name="Admin_Group_List" placeholder="IP List" title="IP with Comma separator" value="" />
+		<label for="Manager_Group_List">Manager_Group_List</label><input type="input" id="Manager_Group_List" name="Manager_Group_List" placeholder="IP List" title="IP with Comma separator" value="" />
+		<label for="Denial_Group_List">Denial_Group_List</label><input type="input" id="Denial_Group_List" name="Denial_Group_List" placeholder="IP List" title="IP with Comma separator" value="" />
+		<hr>
+		<h4>Sensor Test and Other Links</h4>
+		<div class="checkSensor">
+			<button id="gInfoDevice">gInfoDevice</button>
+			<button id="gInfoStatus">gInfoStatus</button>
+			<button id="gInOutCurr">gInOutCurr</button>
+			<button id="gInOutDiff">gInOutDiff</button>
+			<button id="gMounting">gMounting</button>
+		</div>
+		<div class="checkSensor">
+			<button id="wsDetectObj">wsDetectObj</button>
+			<button id="wsDetectArea">wsDetectArea</button>
+			<button id="wsDetectMask">wsDetectMask</button>
+			<button id="wsDetectEvent">wsDetectEvent</button>
+			<button class="" id="ovSystemReboot">ovSystemReboot</button>
+			<button class="" id="ovGetDeviceInformation">ovGetDeviceInformation</button>
+		</div>
+		<div class="checkSensor">
+			<button id="rtsp" disabled>rtsp</button>
+			<button id="mjpg">mjpg</button>
+			<button id="shot">shot</button>
+			<button id="sensor">sensor</button>
+			<button id="area_set">area_set</button>
+			<button id="api3">api3</button>
+			<button id="restart">restart</button>
+			<button id="reboot">reboot</button>
+		</div>
+		<hr>
+		<input type="button" id="Save_Config" value="Save_Config">
+	</div>
+	<div id="system_time">ITS Clock</div>
+	<div id="sensor_serial">sensor_serial</div>
+</body>
+</html>

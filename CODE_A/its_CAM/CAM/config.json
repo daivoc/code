@@ -1,0 +1,63 @@
+{
+	"system": {
+		"ip":""
+	},
+	"mysql":{
+		"host":"localhost",
+		"user":"its",
+		"pass":"GXnLRNT9H50yKQ3G",
+		"name":"its_web",
+		"error_count":8
+		
+	},
+	"path":{
+		"home":"/ICC",
+		"common":"/home/pi/common",
+		"utility":"/home/pi/utility",
+		"camera":"/home/pi/CAM",
+		"web":"/var/www/html/its_web",
+		"log":"/var/www/html/its_web/data/log",
+		"img":"/var/www/html/its_web/data/image"
+	},
+	"file":{
+		"html_src":"/home/pi/CAM/CAM.html",
+		"html_dst":"/home/pi/CAM/index.html",
+		"html_bg":"/home/pi/CAM/CAM.svg",
+		"img_logo":"/camera/image/logo.png"
+	},
+	"license":{
+		"op_code": "optex5971",
+		"manager_key": "1db043eecaf90a2548230c7fd7deaed64730ff103437a9a9dc9d45f2fdf47f90"
+	},
+	"interface":{
+		"portIn": 27000,
+		"portIO": 17000,
+		"portOut": 7000
+	},
+	"camera": {
+		"addr": "192.168.0.38",
+		"user": "root",
+		"pass": "pass",
+		"brand": "axis",
+		"serial": "axis",
+		"api": "AXIS_VAPIX_V3",
+		"camVideo": "/axis-cgi/mjpg/video.cgi",
+		"camImage": "/axis-cgi/jpg/image.cgi",
+		"resolution": {
+			"x": 0,
+			"y": 0
+		},
+		"ptzCommand": "/axis-cgi/com/ptz.cgi?camera=1&",
+		"calibration": {
+			"pan": 0,
+			"tilt": 0,
+			"zoom": 1,
+			"zoomValue":{
+				"min":1,
+				"max":9999,
+				"cMin":1,
+				"cMax":999
+			}
+		}
+	}
+}

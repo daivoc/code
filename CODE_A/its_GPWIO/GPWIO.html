@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10,user-scalable=yes">
+
+__script_jquery_js__
+__style_bootstrap_js__
+__style_bootstrap_css__
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+//////////////////////////////////////////////
+function activeAdd(id){
+    $('#'+id).addClass("active");
+};
+function activeDel(id){
+    $('#'+id).removeClass("active");
+};
+
+$( document ).ready(function() {
+	var socketio = io.connect();
+	socketio.on("io_status", function(data) {
+		var id = data['id'];
+		var status = data['status'];
+		var msg = data['msg'];
+		// console.log(data);
+		
+		if(status == 0) { 
+			activeDel(id);
+		} else {
+			activeAdd(id);
+		}
+	});
+
+    $(".btn").on('click', function() { 
+		socketio.emit('btnClick', $(this).attr('id'));
+    });	
+	
+	// 최초 1회 실행 - 지난 하루치 로그 요청
+	socketio.emit('getCurrentStatus');
+});	
+
+</script>
+
+<style>
+/* * { all: unset; } */
+div {
+margin:0;
+padding:0;
+border:0;
+outline:0;
+vertical-align:baseline;
+background:transparent;
+text-align: center; 
+line-height: 0;
+font-family: monospace;
+}
+.gBody { width: 100%; }
+.gBtn { width: 20vw;height: auto;font-size: 2vw;margin: 1px 0;padding: unset;overflow: hidden;line-height: 1;border-radius: 2px; }
+</style>
+</head> 
+
+<body>
+
+<div class="gAll" >
+	<div class="gBody">
+	<button id="S01" type="button" class="gBtn btn btn-outline-primary">S01</button>
+	<button id="S02" type="button" class="gBtn btn btn-outline-primary">S02</button>
+	<button id="S03" type="button" class="gBtn btn btn-outline-primary">S03</button>
+	<button id="S04" type="button" class="gBtn btn btn-outline-primary">S04</button>
+	</div> 
+	<div class="gBody"> 
+	<button id="S05" type="button" class="gBtn btn btn-outline-primary">S05</button>
+	<button id="S06" type="button" class="gBtn btn btn-outline-primary">S06</button>
+	<button id="S07" type="button" class="gBtn btn btn-outline-primary">S07</button>
+	<button id="S08" type="button" class="gBtn btn btn-outline-primary">S08</button>
+	</div>
+</div>
+<div>
+	<div class="gBody">
+	<button id="R01" type="button" class="gBtn btn btn-outline-success" data-toggle="button">R01</button>
+	<button id="R02" type="button" class="gBtn btn btn-outline-success" data-toggle="button">R02</button>
+	<button id="R03" type="button" class="gBtn btn btn-outline-success" data-toggle="button">R03</button>
+	<button id="R04" type="button" class="gBtn btn btn-outline-success" data-toggle="button">R04</button>
+	</div>
+</div>
+<div>
+	<div class="gBody">
+	<button id="P01" type="button" class="gBtn btn btn-outline-danger" data-toggle="button">P01</button>
+	</div>
+</div>
+
+</body>
+</html>
