@@ -4538,3 +4538,7 @@ ALTER TABLE `g5_write_g000t000` ENGINE=InnoDB;
 	Git always prompts "Are you sure you want to continue connecting (yes/no/[fingerprint])?"
 	https://stackoverflow.com/questions/63661505/git-always-prompts-are-you-sure-you-want-to-continue-connecting-yes-no-finger
 	Following the instructions on this GitHub page, I executed the command ssh -vT git@github.com
+
+	EXEC:
+	git config --global core.sshCommand "ssh -i $HOME/.config/ssh/id_rsa -o UserKnownHostsFile=$HOME/.config/ssh/known_hosts -F /dev/null"
+	
