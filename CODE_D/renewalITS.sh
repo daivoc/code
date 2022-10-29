@@ -51,7 +51,6 @@ yes_or_no " Do you want renewal of Database? " && Database="Y"
 # echo "$GUI, $Code, $Modules, $Database, $License, $Expand, $Reboot,"
 
 if [[ $GUI =~ [Yy]$ ]]; then
-
     for itsIP in $args; do
         echo -e "$BR>>> Upload Web $BX";
         sshpass -pits_iot rsync --progress --delete -avzr -e ssh ./web/* pi@$itsIP:/var/www/html/its_web/ 2> /dev/null;
