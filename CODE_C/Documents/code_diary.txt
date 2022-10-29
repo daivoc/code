@@ -4541,4 +4541,4 @@ ALTER TABLE `g5_write_g000t000` ENGINE=InnoDB;
 
 	EXEC:
 	git config --global core.sshCommand "ssh -i $HOME/.config/ssh/id_rsa -o UserKnownHostsFile=$HOME/.config/ssh/known_hosts -F /dev/null"
-	
+	https://docs.github.com/en/enterprise-cloud@latest/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection
