@@ -32,7 +32,6 @@ BX='\e[49m' # : 바탕색을 기본값으로
 ### rsync -avzr --delete --exclude='data' pi@192.168.0.9:/var/www/html/its_web /var/www/html/ 
 ### rsync -avzr --delete pi@192.168.0.9: /data
 
-## 파라미터가 없으면 종료 
 > $HOME/.ssh/known_hosts
 # ssh-keyscan -H -T1 "git@github.com" 2>/dev/null > $HOME/.ssh/known_hosts
 ipListS=()
