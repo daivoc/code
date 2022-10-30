@@ -1,0 +1,171 @@
+// http://gis.stackexchange.com/questions/71643/map-projection-lat-lon-to-pixel
+// npm install deg2rad
+// var deg2rad = require('deg2rad')
+
+var latS = 37.51627627088437;
+var lonS = 127.1052871816147;
+var latE = 37.5165013429064;
+var lonE = 127.10594407381905;
+
+// This also controls the aspect ratio of the projection
+// 폭과 높이는 table.html의 <SVG>의 크기와 같아야 한다. 
+var width = 1000;
+var height = 600;
+
+// console.log(process.argv.length);
+if (process.argv.length >= 5) {
+	var portIn = process.argv[2];
+	var portOut = process.argv[3];
+	var noOfZone = process.argv[4];
+	var beep = process.argv[5]; // 변수가 1이면 소리 출력
+} else {
+	var portIn = 8000;
+	var portOut = 9000;
+	var noOfZone = 100;
+	var beep = 1; // 변수가 1이면 소리 출력
+}
+
+
+// http://www.geodatasource.com/developers/java
+/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+/*::	This function converts decimal degrees to radians			:*/
+/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+function deg2rad(deg) {
+	return (deg * Math.PI / 180.0);
+}
+
+/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+/*::	This function converts radians to decimal degrees			:*/
+/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+function rad2deg(rad) {
+	return (rad * 180 / Math.PI);
+}
+
+// 좌표값으로 거리계산
+function distance(latS, lonS, latE, lonE, unit) {
+	theta = lonS - lonE;
+	dist = Math.sin(deg2rad(latS)) * Math.sin(deg2rad(latE)) + Math.cos(deg2rad(latS)) * Math.cos(deg2rad(latE)) * Math.cos(deg2rad(theta));
+	dist = Math.acos(dist);
+	dist = rad2deg(dist);
+	dist = dist * 60 * 1.1515; //  마일
+	if (unit == "K") { // 킬로
+		dist = dist * 1.609344;
+	} else if (unit == "M") { // 미터
+		dist = dist * 1609.344;
+	} else if (unit == "N") {
+		dist = dist * 0.8684;
+	}
+
+	return (dist);
+}
+
+// Formula for mercator projection y coordinate:
+function mercY(lat) { return Math.log(Math.tan(lat/2 + Math.PI/4)); }
+
+// Some constants to relate chosen area to screen coordinates
+var lat1 = deg2rad(latS);
+var lon1 = deg2rad(lonS);
+var lat2 = deg2rad(latE);
+var lon2 = deg2rad(lonE);
+
+var ymax = mercY(lat1);
+var ymin = mercY(lat2);
+// var xFactor = width/(lon2 - lon1);
+// var yFactor = height/(ymax - ymin);
+var xFactor = width/Math.abs(lon2 - lon1);
+var yFactor = height/Math.abs(ymax - ymin);
+// console.log(ymax, ymin, xFactor, yFactor);
+
+function mapProject(lat, lon) { // both in radians, use deg2rad if neccessary
+	global.xFactor, global.yFactor, global.lon1, global.ymax;
+	var array = [];
+	x = lon;
+	y = mercY(lat);
+	// array[0] = (x - lon1)*xFactor;
+	// array[1] = (ymax - y)*yFactor; // y points 
+	array[0] = Math.abs(x - lon1)*xFactor;
+	array[1] = Math.abs(ymax - y)*yFactor; // y points 
+	return array;
+}
+
+///////////////////////////////////////////////////
+// https://coderwall.com/p/ohjerg/read-large-text-files-in-nodejs
+// https://nodejs.org/api/readline.html
+// 위트가 호스트(Host:192.168.1.3 : 8000)에 보내는 정보
+// 관련 내용의 파싱 값을 포트 9000으로 전송
+// wits data -> port 8000 -> port 9000
+///////////////////////////////////////////////////
+var app = require('http').createServer(handler);
+var io = require('socket.io').listen(app);
+var fs = require('fs');
+var path = require('path');
+
+var appDir = path.dirname(require.main.filename);
+// var css = path.join(__dirname, 'css');
+// var js = path.join(__dirname, 'js');
+console.log(appDir)
+
+if (noOfZone > 1) {
+	var html = fs.readFileSync('table.html', 'utf8');
+} else {
+	var html = fs.readFileSync('table_single.html', 'utf8');
+}
+function handler(req, res) {
+	res.setHeader('Content-Type', 'text/html');
+	res.setHeader('Content-Length', Buffer.byteLength(html,'utf8'));
+    res.end(html);
+}
+
+// 소켓을 통해 자료를 table.html로 전송한다.
+function event_zone(id, name, lat_s, lng_s, lat_e, lng_e, dist, zone, beep) {
+	io.sockets.emit('message_to_client', { id: id, name: name, lat_s: lat_s, lng_s: lng_s, lat_e: lat_e, lng_e: lng_e, dist: dist, zone: zone, beep: beep });
+}
+
+app.listen(portOut); // Display server
+console.log('\nService server running at http://localhost:'+portOut+'/');
+
+//////////////////////////////////////////////////////////
+// 포트 8000으로 부터 받은 정보를 파싱한후 포트 9000으로 전달한다.
+// 알람인포를 파싱한후 소켓을 통한 메세지 전송 1) 
+//////////////////////////////////////////////////////////
+require('net').createServer(function (socket) {
+    // console.log("connected");
+    socket.on('data', function (data) {
+        // console.log(data.toString());
+		// alarmInfo 예: "A=1,B=32" 형식을 배열로 변공함
+		var alarmInfo = data.toString();
+		var obj = alarmInfo.split(",").reduce(function(o, c){
+		   var arr = c.split("=");
+		   return o[arr[0].trim()] = arr[1].trim(), o; // comma operator
+		},{});
+		var id = obj['id'];
+		var name = obj['name'];
+		var lat_s = obj['lat_s'];
+		var lng_s = obj['lng_s'];
+		var lat_e = obj['lat_e'];
+		var lng_e = obj['lng_e'];
+		var dist = obj['dist'];
+		var zone = obj['zone'];
+		
+		// ////////////////////////////////
+		// // 좌표값을 화면해상도 값으로 변환
+		// ////////////////////////////////
+		// var location = mapProject(deg2rad(lat_s), deg2rad(lng_s));
+		// var lat_s = location[0];
+		// var lng_s = location[1];
+
+		// var location = mapProject(deg2rad(lat_e), deg2rad(lng_e));
+		// var lat_e = location[0];
+		// var lng_e = location[1];
+		
+		event_zone(id, name, lat_s, lng_s, lat_e, lng_e, dist, zone, beep);
+		
+		// socket.emit('received', { zone: zone });
+		socket.emit('received');
+		// console.log(obj);
+		// console.log(zone);
+    });
+})
+
+.listen(portIn); // Receive server
+console.log('Receive server running at http://localhost:'+portIn+'/');
