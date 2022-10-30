@@ -38,15 +38,15 @@ ssh-keyscan -H -T1 "git@github.com" 2>/dev/null > $HOME/.ssh/known_hosts
 ipListS=()
 if [ "$#" -lt 1 ]; then
 	## Array variable
-	curIP='192.168.0.10'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.20'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.30'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.40'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.50'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.60'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.70'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.80'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
-	curIP='192.168.0.90'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass Connect to $curIP$X"; } || { echo -e "$Y---- Error Connect to $curIP$X"; }
+	curIP='192.168.0.10'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.20'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.30'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.40'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.50'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.60'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.70'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.80'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
+	curIP='192.168.0.90'; ssh-keyscan -H -T1 $curIP 2>/dev/null >> $HOME/.ssh/known_hosts && { ipListS+=("$curIP"); echo -e "$G>>>> Pass $curIP$X"; } || { echo -e "$Y---- Error $curIP$X"; }
 else
 	## IP Address
 	## ex: ./rsync_its.sh 192.168.0.29
