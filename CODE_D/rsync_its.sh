@@ -34,6 +34,7 @@ BX='\e[49m' # : 바탕색을 기본값으로
 
 ## 파라미터가 없으면 종료 
 > $HOME/.ssh/known_hosts
+ssh-keyscan -H -T1 "git@github.com" 2>/dev/null > $HOME/.ssh/known_hosts
 ipListS=()
 if [ "$#" -lt 1 ]; then
 	## Array variable
@@ -65,7 +66,7 @@ homeName=${PWD##*/}
 ITS_Key='Dragon'
 
 mkdir -p "$HOME/ecos"
-mkdir -p "$HOME/ecos/$ITS_Key"
+# mkdir -p "$HOME/ecos/$ITS_Key"
 
 ITS_Code="ecos/code/$homeName"
 ITS_PKG="ecos/package/$ITS_Key"
